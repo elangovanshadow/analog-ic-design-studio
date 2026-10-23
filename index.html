@@ -1,136 +1,252 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>Analog IC Design</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
+/* ===== Retro minimalist (NES-era) design system ===== */
 :root{
-  --bg:#f6f7fb; --panel:#ffffff; --ink:#1b2233; --mute:#5b647a; --line:#dfe3ee;
-  --acc:#2f5bea; --acc-ink:#ffffff; --acc-soft:#e6ecff;
-  --ok:#17803d; --ok-soft:#e1f5e8; --bad:#c62828; --bad-soft:#fde7e7;
-  --warn:#8a5a00; --warn-soft:#fff3d6; --code:#eef1f8;
-  --c1:#2f5bea; --c2:#d9480f; --c3:#0b7a75; --c4:#7a3db8;
-  --shadow:0 1px 2px rgba(20,30,60,.06),0 4px 14px rgba(20,30,60,.05);
+  --bg:#fbf3df; --bg2:#f3e7c9; --panel:#fffdf6; --ink:#17171f; --mute:#5a5a6e; --line:#17171f;
+  --acc:#2a62d8; --acc-ink:#ffffff; --acc-soft:#dbe6ff;
+  --ok:#0f8a2f; --ok-soft:#d8f2d8; --bad:#d02e26; --bad-soft:#fadcd9;
+  --warn:#9a6500; --warn-soft:#ffeeb8; --code:#efe6cc;
+  --coin:#f7c600; --brick:#c2500f; --pipe:#0f8a2f; --sky:#5c94fc;
+  --c1:#2a62d8; --c2:#c2500f; --c3:#0f8a2f; --c4:#7a3db8;
+  --bw:3px; --sh:4px; --shadow:var(--sh) var(--sh) 0 var(--line);
+  --ui:"Press Start 2P",ui-monospace,monospace;
+  --body:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --gx:max(16px,env(safe-area-inset-left)); --gr:max(16px,env(safe-area-inset-right));
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0f1320; --panel:#171c2e; --ink:#e7eaf5; --mute:#9aa4c0; --line:#2a3250;
-    --acc:#7c9bff; --acc-ink:#0b1022; --acc-soft:#1f2850;
-    --ok:#56d28a; --ok-soft:#12301f; --bad:#ff8a8a; --bad-soft:#3a1a1a;
-    --warn:#f5c065; --warn-soft:#352a10; --code:#1d2440;
-    --c1:#7c9bff; --c2:#ff9a62; --c3:#4fd1c5; --c4:#c39bff;
-    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --bg:#10121c; --bg2:#171a28; --panel:#1b1f30; --ink:#f2efe3; --mute:#9aa2bd; --line:#f2efe3;
+    --acc:#7fa6ff; --acc-ink:#0b0d16; --acc-soft:#232c4d;
+    --ok:#5ad46e; --ok-soft:#133020; --bad:#ff7a70; --bad-soft:#3a1a18;
+    --warn:#f7c85c; --warn-soft:#352a10; --code:#232840;
+    --coin:#f7c600; --brick:#e2702a; --pipe:#5ad46e; --sky:#5c94fc;
+    --c1:#7fa6ff; --c2:#ff9a62; --c3:#5ad46e; --c4:#c39bff;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0f1320; --panel:#171c2e; --ink:#e7eaf5; --mute:#9aa4c0; --line:#2a3250;
-  --acc:#7c9bff; --acc-ink:#0b1022; --acc-soft:#1f2850;
-  --ok:#56d28a; --ok-soft:#12301f; --bad:#ff8a8a; --bad-soft:#3a1a1a;
-  --warn:#f5c065; --warn-soft:#352a10; --code:#1d2440;
-  --c1:#7c9bff; --c2:#ff9a62; --c3:#4fd1c5; --c4:#c39bff;
-  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --bg:#10121c; --bg2:#171a28; --panel:#1b1f30; --ink:#f2efe3; --mute:#9aa2bd; --line:#f2efe3;
+  --acc:#7fa6ff; --acc-ink:#0b0d16; --acc-soft:#232c4d;
+  --ok:#5ad46e; --ok-soft:#133020; --bad:#ff7a70; --bad-soft:#3a1a18;
+  --warn:#f7c85c; --warn-soft:#352a10; --code:#232840;
+  --coin:#f7c600; --brick:#e2702a; --pipe:#5ad46e; --sky:#5c94fc;
+  --c1:#7fa6ff; --c2:#ff9a62; --c3:#5ad46e; --c4:#c39bff;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.68;
+  image-rendering:pixelated;overflow-x:hidden}
 #app{min-height:100vh;display:flex;flex-direction:column}
-header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px var(--gr) 10px var(--gx);background:var(--panel);border-bottom:1px solid var(--line)}
-header.top h1{font-size:1.05rem;margin:0;flex:1;font-weight:650;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-header.top h1 small{color:var(--mute);font-weight:500;margin-left:6px}
-.btn{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 12px;border-radius:9px;cursor:pointer;min-height:38px}
-.btn:hover{border-color:var(--acc)}
-.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc);font-weight:600}
-.btn.sm{padding:4px 10px;min-height:32px;font-size:.9rem}
-.btn:disabled{opacity:.45;cursor:default}
-.shell{display:flex;flex:1;min-height:0}
-aside.side{width:290px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:14px 10px 30px var(--gx);overflow:auto;position:sticky;top:57px;height:calc(100vh - 57px)}
-aside.side .prog{margin:2px 6px 14px 4px}
-.bar{height:8px;border-radius:6px;background:var(--code);overflow:hidden}
-.bar>i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
-.prog small{color:var(--mute);display:block;margin-top:4px}
-.part{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:16px 6px 6px}
-.chbtn{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;font:inherit;background:none;border:0;padding:8px 8px;border-radius:9px;color:var(--ink);cursor:pointer;line-height:1.3}
-.chbtn:hover{background:var(--code)}
-.chbtn.on{background:var(--acc-soft);font-weight:600}
-.chbtn .n{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:.78rem;color:var(--mute);margin-top:1px}
-.chbtn.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
-.chbtn.on .n{border-color:var(--acc);color:var(--acc)}
-.chbtn.done.on .n{color:#fff}
-main{flex:1;min-width:0;padding:18px var(--gr) 60px var(--gx);max-width:980px;margin:0 auto;width:100%}
-.chead{margin:0 0 4px}
-.chead h2{font-size:1.55rem;line-height:1.2;margin:0 0 4px}
-.chead .src{color:var(--mute);font-size:.88rem}
-.tabs{display:flex;gap:4px;margin:14px 0 16px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:thin}
-.tab{font:inherit;background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;cursor:pointer;color:var(--mute);white-space:nowrap}
-.tab.on{color:var(--acc);border-bottom-color:var(--acc);font-weight:650}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 16px;box-shadow:var(--shadow)}
-.card h3{margin:0 0 8px;font-size:1.05rem}
-.card h3 .step{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--acc);color:var(--acc-ink);font-size:.8rem;margin-right:8px}
-.lede{font-size:1.04rem}
-.analogy{background:var(--warn-soft);border-left:4px solid var(--warn);padding:10px 14px;border-radius:8px;margin:10px 0}
-dl.terms{margin:0;display:grid;grid-template-columns:minmax(110px,max-content) 1fr;gap:6px 16px}
-dl.terms dt{font-weight:650;color:var(--acc)}
+::selection{background:var(--coin);color:#17171f}
+h1,h2,h3,h4{font-family:var(--ui);font-weight:400;line-height:1.5;letter-spacing:.02em}
+b,strong{font-weight:700}
+a{color:var(--acc)}
+
+/* ---- header: a status bar ---- */
+header.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;
+  padding:10px var(--gr) 10px var(--gx);background:var(--panel);border-bottom:var(--bw) solid var(--line)}
+header.top h1{margin:0;font-size:11px;display:flex;align-items:baseline;gap:8px;flex:1;min-width:0}
+header.top h1 .tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header.top h1 small{font-family:var(--body);font-size:12px;color:var(--mute);white-space:nowrap}
+.pix{width:16px;height:16px;flex:none;display:inline-block;vertical-align:-2px}
+
+/* ---- chunky buttons with a press-down feel ---- */
+.btn{font-family:var(--ui);font-size:10px;line-height:1.4;color:var(--ink);background:var(--panel);
+  border:var(--bw) solid var(--line);border-radius:0;padding:9px 11px;cursor:pointer;
+  box-shadow:var(--shadow);transition:transform .04s,box-shadow .04s;text-align:left}
+.btn:hover{background:var(--bg2)}
+.btn:active{transform:translate(var(--sh),var(--sh));box-shadow:0 0 0 var(--line)}
+.btn.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--line)}
+.btn.sm{font-size:9px;padding:7px 9px}
+.btn:disabled{opacity:.4;cursor:default;box-shadow:var(--shadow);transform:none}
+.btn:focus-visible,.tab:focus-visible,.chbtn:focus-visible,.q-opt:focus-visible{outline:3px solid var(--coin);outline-offset:2px}
+
+.shell{flex:1;display:grid;grid-template-columns:272px 1fr;gap:0;align-items:start}
+
+/* ---- sidebar: level select ---- */
+aside.side{position:sticky;top:53px;max-height:calc(100vh - 53px);overflow:auto;padding:14px 12px 28px var(--gx);
+  background:var(--bg2);border-right:var(--bw) solid var(--line)}
+.prog{margin:0 0 14px}
+.bar{height:16px;border:var(--bw) solid var(--line);background:var(--panel);display:flex;overflow:hidden}
+.bar>i{display:block;background:var(--coin);height:100%;
+  background-image:linear-gradient(90deg,var(--coin) 0 50%,#e0b100 50% 100%);background-size:12px 100%}
+.prog small{display:block;margin-top:7px;font-family:var(--ui);font-size:8px;line-height:1.6;color:var(--mute)}
+.part{font-family:var(--ui);font-size:8px;letter-spacing:.06em;color:var(--brick);margin:16px 0 7px;text-transform:uppercase}
+.chbtn{width:100%;display:flex;gap:9px;align-items:flex-start;background:transparent;border:var(--bw) solid transparent;
+  border-radius:0;padding:7px 8px;margin:0 0 3px;cursor:pointer;color:var(--ink);font:inherit;font-size:13.5px;line-height:1.45;text-align:left}
+.chbtn:hover{background:var(--panel);border-color:var(--line)}
+.chbtn.on{background:var(--panel);border-color:var(--line);box-shadow:3px 3px 0 var(--line);font-weight:700}
+.chbtn .n{flex:none;width:24px;height:24px;display:grid;place-items:center;font-family:var(--ui);font-size:8px;
+  background:var(--coin);color:#17171f;border:2px solid var(--line)}
+.chbtn.done .n{background:var(--pipe);color:#fff}
+.chbtn.home .n{background:var(--sky);color:#fff}
+
+main{padding:20px var(--gr) 48px var(--gx);min-width:0;max-width:980px}
+.chead{margin:0 0 14px}
+.chead h2{margin:0 0 6px;font-size:13px;line-height:1.65}
+.chead .src{font-size:12.5px;color:var(--mute)}
+.mins{display:inline-block;font-family:var(--ui);font-size:8px;background:var(--coin);color:#17171f;
+  border:2px solid var(--line);padding:4px 6px;margin-right:6px;vertical-align:2px}
+
+/* ---- tabs ---- */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px;padding-bottom:0;border-bottom:var(--bw) solid var(--line)}
+.tab{font-family:var(--ui);font-size:9px;background:var(--bg2);color:var(--mute);border:var(--bw) solid var(--line);
+  border-bottom:none;border-radius:0;padding:10px 10px;cursor:pointer;position:relative;bottom:calc(var(--bw) * -1)}
+.tab.on{background:var(--panel);color:var(--ink);border-bottom:var(--bw) solid var(--panel)}
+
+/* ---- cards ---- */
+.card{background:var(--panel);border:var(--bw) solid var(--line);box-shadow:var(--shadow);padding:16px;margin:0 0 20px}
+.card h3{margin:0 0 12px;font-size:10px;display:flex;gap:9px;align-items:center;line-height:1.5}
+.card h3 .step{flex:none;width:24px;height:24px;display:grid;place-items:center;font-size:9px;
+  background:var(--brick);color:#fff;border:2px solid var(--line)}
+.lede{font-size:16px;margin:0 0 12px}
+.analogy{background:var(--acc-soft);border:var(--bw) solid var(--line);padding:12px;margin:12px 0}
+.analogy b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:6px;color:var(--acc)}
+
+/* ---- new beginner blocks ---- */
+.pre{background:var(--bg2);border:var(--bw) solid var(--line);padding:12px;margin:0 0 14px}
+.pre .lbl{font-family:var(--ui);font-size:9px;color:var(--brick);display:block;margin-bottom:8px}
+.pre ul{margin:6px 0 0;padding-left:20px}
+.pre li{margin:4px 0}
+.chiprow{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 2px}
+.chip{font-family:var(--ui);font-size:8px;line-height:1.7;background:var(--panel);border:2px solid var(--line);padding:6px 7px;cursor:pointer;color:var(--ink);max-width:100%}
+.chip:hover{background:var(--coin)}
+.chip.flat{cursor:default;background:var(--code)}
+ul.goals{list-style:none;margin:0;padding:0}
+ul.goals li{position:relative;padding-left:26px;margin:7px 0}
+ul.goals li::before{content:"";position:absolute;left:0;top:6px;width:12px;height:12px;background:var(--pipe);border:2px solid var(--line)}
+ul.plain{list-style:none;margin:0;padding:0}
+ul.plain li{position:relative;padding-left:26px;margin:10px 0;font-size:15.5px}
+ul.plain li::before{content:"";position:absolute;left:0;top:7px;width:12px;height:12px;background:var(--sky);border:2px solid var(--line)}
+.tryit{background:var(--warn-soft);border:var(--bw) solid var(--line);padding:12px}
+.tryit .q{font-weight:700;margin-bottom:10px}
+.tryit .hint{font-size:13.5px;color:var(--mute);margin:8px 0}
+.reveal{border-top:var(--bw) dashed var(--line);margin-top:12px;padding-top:12px}
+
+dl.terms{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0}
+dl.terms dt{font-weight:700;color:var(--brick)}
 dl.terms dd{margin:0}
-@media(max-width:560px){dl.terms{grid-template-columns:1fr}dl.terms dt{margin-top:6px}}
+@media(max-width:620px){dl.terms{grid-template-columns:1fr}dl.terms dt{margin-top:8px}}
 ol.steps,ul.ideas,ul.traps{margin:0;padding-left:22px}
-ol.steps li,ul.ideas li,ul.traps li{margin:6px 0}
-ul.traps li::marker{color:var(--bad)}
-ul.ideas li::marker{color:var(--ok)}
-.example{background:var(--acc-soft);border-radius:10px;padding:12px 14px}
-.example .q{font-weight:600;margin-bottom:6px}
-.example .ans{margin-top:8px;padding:8px 10px;background:var(--panel);border-radius:8px;border:1px dashed var(--acc);font-weight:650}
-.sketch{background:#fffdf5;border:1px solid #e5dfc6;border-radius:12px;padding:6px;margin:8px 0}
+ol.steps li,ul.ideas li,ul.traps li{margin:8px 0}
+ul.traps li::marker{content:"\2716  ";color:var(--bad)}
+ul.ideas li::marker{content:"\25A0  ";color:var(--acc)}
+.example{background:var(--code);border:var(--bw) solid var(--line);padding:12px}
+.example .q{font-weight:700;margin-bottom:10px}
+.example .ans{margin-top:10px;padding-top:10px;border-top:2px dashed var(--line);font-weight:700;color:var(--ok)}
+
+/* ---- figures ---- */
+.sketch{border:var(--bw) solid var(--line);background:#fffdf6;padding:6px;overflow:hidden}
 .sketch svg{display:block;width:100%;height:auto}
-.cap{color:var(--mute);font-size:.9rem;margin:4px 2px 0}
-.fig2{margin-top:12px}
-/* labs */
-.lab{display:grid;gap:14px}
-.ctl{display:grid;grid-template-columns:minmax(120px,160px) 1fr 84px;gap:8px 10px;align-items:center}
-.ctl label{font-size:.92rem;color:var(--mute)}
-.ctl input[type=range]{width:100%;accent-color:var(--acc)}
-.ctl output{font-variant-numeric:tabular-nums;text-align:right;font-weight:600;font-size:.92rem}
-@media(max-width:520px){.ctl{grid-template-columns:1fr 70px}.ctl label{grid-column:1/-1}}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-select,input[type=number],input[type=text]{font:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:36px;max-width:100%}
-canvas.plot{width:100%;height:260px;display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px}
-.out{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.kv{background:var(--code);border-radius:10px;padding:8px 10px}
-.kv b{display:block;font-size:.74rem;color:var(--mute);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
-.kv span{font-size:1.08rem;font-weight:650;font-variant-numeric:tabular-nums}
-.kv.good span{color:var(--ok)} .kv.badv span{color:var(--bad)}
-.work{background:var(--code);border-radius:10px;padding:10px 14px;font-size:.95rem}
-.work ol{margin:4px 0 0;padding-left:20px}
-.err{color:var(--bad);background:var(--bad-soft);padding:8px 10px;border-radius:8px}
-.note{color:var(--mute);font-size:.9rem}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.gallery figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.gallery img{display:block;width:100%;height:auto;cursor:zoom-in}
-.gallery figcaption{padding:8px 10px;font-size:.88rem;color:var(--mute)}
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:50;display:grid;place-items:center;padding:16px;cursor:zoom-out}
-.lightbox img{max-width:100%;max-height:100%;border-radius:8px}
-/* flashcards */
-.fc{perspective:1000px;margin:6px 0 12px}
-.fc .face{min-height:210px;display:grid;place-items:center;text-align:center;padding:22px;border-radius:16px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);cursor:pointer;font-size:1.12rem}
-.fc .face.back{background:var(--acc-soft);border-color:var(--acc)}
-.fc .tag{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin-bottom:8px}
-/* quiz */
-.q-opt{display:block;width:100%;text-align:left;font:inherit;padding:10px 12px;margin:8px 0;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-.q-opt:hover:not(:disabled){border-color:var(--acc)}
-.q-opt.right{border-color:var(--ok);background:var(--ok-soft)}
-.q-opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
-.q-opt:disabled{cursor:default}
-.expl{margin-top:8px;padding:9px 12px;border-radius:9px;background:var(--code)}
-.score{font-size:2.2rem;font-weight:750;text-align:center;margin:10px 0}
+.cap{font-size:12.5px;color:var(--mute);margin-top:8px}
+.fig2{margin-top:14px}
+
+/* ---- lab controls ---- */
+.lab{display:block}
+.ctl{display:grid;grid-template-columns:1fr 130px 76px;gap:8px;align-items:center;margin:10px 0}
+.ctl label{font-size:13px;color:var(--mute)}
+.ctl input[type=range]{width:100%;height:24px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+.ctl input[type=range]::-webkit-slider-runnable-track{height:12px;background:var(--panel);border:2px solid var(--line)}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:22px;margin-top:-7px;background:var(--acc);border:2px solid var(--line)}
+.ctl input[type=range]::-moz-range-track{height:12px;background:var(--panel);border:2px solid var(--line)}
+.ctl input[type=range]::-moz-range-thumb{width:14px;height:20px;border-radius:0;background:var(--acc);border:2px solid var(--line)}
+.ctl output{font-family:var(--ui);font-size:9px;text-align:right}
+@media(max-width:560px){.ctl{grid-template-columns:1fr 72px}.ctl label{grid-column:1/-1}}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.row>span{font-size:13px;color:var(--mute)}
+select,input[type=number],input[type=text]{font-family:var(--body);font-size:13.5px;padding:8px 9px;
+  border:var(--bw) solid var(--line);border-radius:0;background:var(--panel);color:var(--ink)}
+canvas.plot{width:100%;height:240px;display:block;border:var(--bw) solid var(--line);background:var(--panel);margin:12px 0}
+.out{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.kv{background:var(--bg2);border:var(--bw) solid var(--line);padding:8px 10px;min-width:118px}
+.kv b{display:block;font-family:var(--ui);font-size:7.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.kv span{font-family:var(--ui);font-size:11px}
+.kv.good span{color:var(--ok)}
+.kv.badv span{color:var(--bad)}
+.work{background:var(--code);border:var(--bw) solid var(--line);padding:12px;margin-top:12px;font-size:14px}
+.work b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:8px}
+.work ol{margin:0;padding-left:22px}
+.err{background:var(--bad-soft);border:var(--bw) solid var(--bad);padding:10px;color:var(--bad)}
+.note{font-size:13px;color:var(--mute)}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.gallery figure{margin:0}
+.gallery img{width:100%;border:var(--bw) solid var(--line);cursor:zoom-in;display:block}
+.gallery figcaption{font-size:12.5px;color:var(--mute);margin-top:6px}
+.lightbox{position:fixed;inset:0;background:rgba(10,10,16,.9);display:grid;place-items:center;z-index:100;padding:20px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:92vh;border:var(--bw) solid var(--coin)}
+
+/* ---- flashcards ---- */
+.fc{margin:14px 0}
+.fc .face{min-height:170px;display:grid;place-items:center;text-align:center;padding:22px;cursor:pointer;
+  background:var(--panel);border:var(--bw) solid var(--line);box-shadow:var(--shadow);font-size:16px}
+.fc .face.back{background:var(--acc-soft)}
+.fc .tag{display:block;font-family:var(--ui);font-size:8px;color:var(--mute);margin-bottom:12px;text-transform:uppercase}
+
+/* ---- quiz ---- */
+.q-opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;font:inherit;font-size:14.5px;cursor:pointer;
+  background:var(--panel);color:var(--ink);border:var(--bw) solid var(--line);box-shadow:3px 3px 0 var(--line)}
+.q-opt:hover:not(:disabled){background:var(--bg2)}
+.q-opt.right{background:var(--ok-soft);border-color:var(--ok);box-shadow:3px 3px 0 var(--ok)}
+.q-opt.wrong{background:var(--bad-soft);border-color:var(--bad);box-shadow:3px 3px 0 var(--bad)}
+.q-opt:disabled{cursor:default;opacity:1}
+.expl{margin-top:12px;background:var(--code);border:var(--bw) solid var(--line);padding:12px;font-size:14px}
+.score{font-family:var(--ui);font-size:18px;margin:14px 0;color:var(--acc)}
+
+/* ---- home page ---- */
+.hero{background:var(--sky);border:var(--bw) solid var(--line);box-shadow:var(--shadow);padding:22px 18px;margin:0 0 20px;color:#17171f}
+.hero h2{margin:0 0 12px;font-size:13px;line-height:1.7}
+.hero p{margin:0 0 10px;font-size:15.5px;max-width:62ch}
+.hero .sub{font-family:var(--ui);font-size:8px;letter-spacing:.08em;margin-bottom:12px;color:#17171f}
+.paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.path{background:var(--panel);border:var(--bw) solid var(--line);box-shadow:3px 3px 0 var(--line);padding:13px;cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.path:hover{background:var(--bg2)}
+.path b{display:block;font-family:var(--ui);font-size:9px;margin-bottom:8px;color:var(--brick)}
+.path span{font-size:13.5px;color:var(--mute)}
+.mapgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px;margin-top:8px}
+.mapbtn{display:flex;gap:8px;align-items:flex-start;background:var(--panel);border:var(--bw) solid var(--line);
+  padding:9px;cursor:pointer;font:inherit;font-size:13px;line-height:1.4;color:var(--ink);text-align:left}
+.mapbtn:hover{background:var(--coin)}
+.mapbtn .n{flex:none;width:20px;height:20px;display:grid;place-items:center;font-family:var(--ui);font-size:7px;
+  background:var(--coin);color:#17171f;border:2px solid var(--line)}
+.mapbtn.done .n{background:var(--pipe);color:#fff}
+.tabsx{display:grid;gap:9px}
+.tabx{display:grid;grid-template-columns:96px 1fr;gap:11px;align-items:start}
+.tabx .k{font-family:var(--ui);font-size:8px;background:var(--code);border:2px solid var(--line);padding:6px 4px;text-align:center}
+
+/* ---- glossary ---- */
+.gsearch{width:100%;max-width:340px}
+.gitem{border-bottom:2px dashed var(--line);padding:10px 0}
+.gitem:last-child{border-bottom:none}
+.gitem b{color:var(--brick)}
+.gitem .src{display:inline-block;font-family:var(--ui);font-size:7.5px;background:var(--code);border:2px solid var(--line);
+  padding:3px 5px;margin-left:7px;cursor:pointer;vertical-align:2px;white-space:nowrap}
+.gitem .src:hover{background:var(--coin)}
+
+/* ---- nav footer ---- */
+.nextnav{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
 .menu{display:none}
 .scrim{display:none}
-@media(max-width:820px){
-  .menu{display:inline-flex}
-  aside.side{position:fixed;left:0;top:0;bottom:0;height:100%;z-index:40;transform:translateX(-102%);transition:transform .22s;box-shadow:var(--shadow);width:min(320px,88vw)}
-  body.drawer aside.side{transform:none}
-  body.drawer .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30}
-  main{padding-top:14px}
-}
 sup,sub{font-size:.72em;line-height:0}
-.foot{color:var(--mute);font-size:.82rem;text-align:center;margin-top:28px}
+.foot{margin-top:26px;padding-top:14px;border-top:var(--bw) solid var(--line);font-size:12.5px;color:var(--mute)}
+
+@media(max-width:860px){
+  .shell{grid-template-columns:1fr}
+  aside.side{position:fixed;z-index:60;top:0;left:0;bottom:0;width:min(84vw,310px);max-height:none;
+    transform:translateX(-102%);transition:transform .18s;padding-top:18px;border-right:var(--bw) solid var(--line)}
+  body.drawer aside.side{transform:none}
+  body.drawer .scrim{display:block;position:fixed;inset:0;background:rgba(10,10,16,.55);z-index:50}
+  .menu{display:inline-block}
+  main{padding-top:16px}
+  header.top h1{font-size:9px}
+  header.top h1 small{display:none}
+  .chead h2{font-size:11px}
+  .hero h2{font-size:11px}
+  .card h3{font-size:9px}
+  .tabx{grid-template-columns:1fr}
+  .tabx .k{justify-self:start;text-align:left;padding:6px 7px}
+}
 
 </style>
 <script>
@@ -3004,18 +3120,378 @@ LABS.lay18=function(root){
   build();upd();
 };
 
+/* ==== x0.js ==== */
+/* Home page copy + course-wide reference material */
+window.HOME={
+  tagline:"ANALOG IC DESIGN - PLAYER 1",
+  lede:"A complete beginner course in analog integrated circuit design, built from Razavi's Design of Analog CMOS Integrated Circuits together with your own unit slides and Virtuoso lab shots.",
+  blurb:["Eighteen chapters, from what a transistor actually does to how a finished chip is laid out and packaged. Every chapter has the same five parts, so once you have worked through one you know your way around all of them.",
+    "You do not need any analog background. Each chapter starts by telling you what you need from the earlier ones, explains the idea in everyday words before any equation appears, then builds up to the real thing."],
+  need:{title:"What you need before you start",
+    items:["Ohm's law and Kirchhoff's laws. If V = IR and currents summing at a node feel natural, you are ready.",
+      "What a capacitor does: it stores charge, resists sudden voltage changes, and passes fast signals.",
+      "Logarithms, enough to know that log10(100) = 2. Decibels are built on this and we explain them in Chapter 1.",
+      "Basic calculus notation. You will see dV/dt and a few derivatives, but nothing has to be solved by hand.",
+      "That is genuinely all. Transistor physics, biasing, gain, feedback and noise are all taught here from scratch."]},
+  tabs:[["LEARN","The lesson itself. Read it top to bottom: what you need first, why the topic matters, an everyday picture, the words, the build-up, a worked example, then one to try yourself."],
+    ["LAB","A live calculator and plot for that chapter. Drag the sliders and watch what moves. Every lab shows its working, not just an answer, so you can check your own hand calculations against it."],
+    ["CARDS","Short question and answer pairs for recall. Tap to flip, shuffle when they start feeling too familiar."],
+    ["QUIZ","Multiple choice with an explanation after every answer. Score 70% or more and the chapter is ticked off in the sidebar."],
+    ["SKETCH","The two hand-drawn figures from the lesson, enlarged. The first is the everyday analogy, the second is the real circuit or concept."]],
+  paths:[{t:"FULL COURSE",d:"Chapters 1 to 18 in order. This is the intended route and the one the prerequisites are written for.",go:0},
+    {t:"FAST TRACK",d:"The core spine: 2, 3, 4, 5, 6, 8, 9, 10. Enough to read and design a real op amp.",go:1},
+    {t:"EXAM CRAM",d:"Skip to the cheat-sheet and traps in each Learn tab, then go straight to the quiz.",go:0}],
+  conventions:["Currents are in amps, voltages in volts, and every formula uses SI units unless a unit is written on the number.",
+    "V_ov means the overdrive, V_GS − V_TH. Razavi sometimes writes it V_GS − V_TH in full; they are the same thing.",
+    "Gains are written as plain ratios, with the minus sign kept when a stage inverts. Decibel values are always 20·log10 of a voltage ratio.",
+    "Small-signal quantities use lower case subscripts, g_m and r_O; bias quantities use upper case, I_D and V_GS.",
+    "Frequencies are given in hertz (f) unless the symbol is ω, which is radians per second: ω = 2πf."],
+  credits:"Content follows Razavi, Design of Analog CMOS Integrated Circuits, second edition, together with the unit slides and Virtuoso screenshots in your course folder. Progress is stored in this browser only."};
+
+/* ==== x1.js ==== */
+/* Beginner layer, chapters 1-5 */
+window.BEGX=window.BEGX||{};
+BEGX.ch1={
+  mins:12,
+  pre:{need:[],recall:[
+    "Ohm's law, V = I R, and what a capacitor does (stores charge, passes fast changes).",
+    "That a logarithm turns multiplication into addition. We use log10 for decibels.",
+    "Nothing else. This chapter starts from the beginning."]},
+  goals:["Say in your own words what an analog circuit is and why it is harder than a digital one.",
+    "Convert a signal-to-noise ratio into decibels and into effective ADC bits.",
+    "Name the five quantities every analog designer trades against each other."],
+  plain:["Digital circuits only have to tell apart two levels, high and low, so small errors do not matter.",
+    "Analog circuits carry the whole shape of a signal, so every bit of noise, heat and manufacturing variation shows up in the answer.",
+    "The real world is analog, so every chip needs analog circuits at its edges: a microphone, a radio aerial or a camera sensor all deliver a smooth, tiny, noisy voltage.",
+    "A designer can never make everything good at once. More gain usually costs speed or power, less noise costs area and current.",
+    "Decibels are just a compact way of writing a ratio: 20 times the log10 of the ratio for voltages."],
+  tryit:{q:"A sensor gives 1 mV rms of signal and the amplifier adds 20 µV rms of noise. What is the SNR in dB, and how many ideal ADC bits does that justify?",
+    hint:"First the plain ratio, then 20·log10 of it, then ENOB = (SNR − 1.76)/6.02.",
+    a:"Ratio = 1 mV / 20 µV = 50. SNR = 20·log10(50) = 34.0 dB. ENOB = (34.0 − 1.76)/6.02 = 5.4 bits. Anything beyond a 6-bit converter would just be digitising noise."}};
+BEGX.ch2={
+  mins:18,
+  pre:{need:[1],recall:[
+    "A transistor has three terminals we care about: gate, drain and source (plus the body underneath).",
+    "Current is charge per second; a voltage across a resistance makes a current.",
+    "From Chapter 1: analog circuits care about exact values, not just high and low."]},
+  goals:["Explain what a MOSFET does using the water-tap picture, with no equations.",
+    "Decide whether a device is off, in the triode region or in saturation from its terminal voltages.",
+    "Work out drain current and transconductance from the square-law equations."],
+  plain:["A MOSFET is a tap. The gate voltage is the handle, and it controls how much current flows from drain to source.",
+    "Nothing flows until the gate voltage passes a threshold, V_TH. How far past the threshold you are is called the overdrive, V_ov.",
+    "If the drain voltage is low, the device behaves like a resistor whose value you set with the gate: this is the triode region.",
+    "Once the drain voltage is high enough (above the overdrive), the current stops caring about the drain and depends almost only on the gate: this is saturation, and it is where we build amplifiers.",
+    "Transconductance, g_m, is the single most useful number in this book: it says how many amps of output current you get per volt of input at the gate."],
+  tryit:{q:"An NMOS has V_TH = 0.4 V, µ_(n)C_(ox) = 200 µA/V^2 and W/L = 10. You apply V_GS = 1.2 V and V_DS = 1 V. Is it saturated? Find I_D and g_m.",
+    hint:"Overdrive first. Saturation needs V_DS at least as large as the overdrive.",
+    a:"V_ov = 1.2 − 0.4 = 0.8 V. V_DS = 1 V > 0.8 V, so yes, saturated. I_D = ½ × 200 µA/V^2 × 10 × 0.8^2 = 640 µA. g_m = 2 I_D / V_ov = 2 × 640 µA / 0.8 V = 1.6 mA/V."}};
+BEGX.ch3={
+  mins:20,
+  pre:{need:[2],recall:[
+    "Saturation current depends on the gate, not the drain. That is what makes gain possible.",
+    "g_m = 2 I_D / V_ov, and r_O is the finite output resistance of a saturated device.",
+    "Resistors in parallel: the small one wins."]},
+  goals:["Recognise the three single-transistor stages on sight and say what each one is for.",
+    "Estimate the gain of a common-source stage in one line.",
+    "Choose the right stage when you need voltage gain, a buffer, or a high-frequency path."],
+  plain:["There are only three ways to use one transistor, decided by which terminal you drive and which one you take the output from.",
+    "Common source: in at the gate, out at the drain. It gives voltage gain and flips the signal upside down. This is the workhorse amplifier.",
+    "Common drain, also called a source follower: in at the gate, out at the source. The voltage comes out almost unchanged but it can now drive a heavy load. It is a buffer, not an amplifier.",
+    "Common gate: in at the source, out at the drain. Low input resistance, no signal inversion, and good at high frequencies.",
+    "The gain of a common-source stage is minus g_m times whatever resistance sits at the drain, so to get more gain you either raise g_m or raise that resistance."],
+  tryit:{q:"A common-source stage has g_m = 0.5 mA/V and a 20 kΩ drain resistor. Ignore r_O. What is the gain, as a number and in dB?",
+    hint:"A_v = −g_m R_D. For dB take 20·log10 of the magnitude.",
+    a:"A_v = −0.5 mA/V × 20 kΩ = −10. The magnitude is 10, so the gain is 20·log10(10) = 20 dB, with a 180° inversion."}};
+BEGX.ch4={
+  mins:18,
+  pre:{need:[2,3],recall:[
+    "The gain of a common-source stage is −g_m R_D.",
+    "A saturated transistor with a fixed gate voltage acts as a current source.",
+    "Two devices with the same size and the same V_GS carry the same current."]},
+  goals:["Explain why two transistors sharing a tail current reject noise that hits both inputs.",
+    "Find the gain and the tail current split of a differential pair.",
+    "Say what happens as the input difference grows past the overdrive."],
+  plain:["A differential pair is two matched transistors whose sources are tied together and fed by one fixed tail current.",
+    "The circuit only responds to the difference between the two inputs. Anything that moves both inputs together, such as supply noise or interference picked up by both wires, is largely ignored.",
+    "The tail current is fixed, so when one side takes more, the other takes exactly that much less. The sum never changes.",
+    "For small inputs the split is proportional to the input difference, and the gain is the same −g_m R_D as a single stage.",
+    "Push the input difference past about √2 times the overdrive and one side takes the whole tail current: the pair has fully switched and stops amplifying."],
+  tryit:{q:"A differential pair has a tail current of 200 µA, each device runs at V_ov = 0.2 V, and each drain has a 10 kΩ resistor. What is the small-signal differential gain?",
+    hint:"Each device carries half the tail current. Get g_m from that, then use −g_m R_D.",
+    a:"Each side carries 100 µA. g_m = 2 I_D / V_ov = 2 × 100 µA / 0.2 V = 1 mA/V. Gain = −g_m R_D = −1 mA/V × 10 kΩ = −10."}};
+BEGX.ch5={
+  mins:16,
+  pre:{need:[2,4],recall:[
+    "Matched devices with the same V_GS carry currents in proportion to their W/L.",
+    "A saturated device behaves as a current source with output resistance r_O.",
+    "Diode-connected means gate tied to drain, which forces the device to set its own V_GS."]},
+  goals:["Explain how a mirror copies a current without needing to know V_TH or µC_(ox).",
+    "Scale a copy up or down by choosing W/L ratios.",
+    "Say why a cascode mirror is more accurate and what it costs."],
+  plain:["Biasing a transistor by guessing a gate voltage is hopeless, because V_TH and mobility drift with process and temperature.",
+    "Instead, force a known current through one diode-connected transistor. Whatever gate voltage that needs, it is exactly the right one for that current.",
+    "Share that gate voltage with a second, matched transistor and it carries the same current, scaled by the ratio of the device sizes.",
+    "The copy is only as good as the match. Different drain voltages make the copies differ, because of channel-length modulation.",
+    "A cascode stacks a second device on top to hold the drain voltage steady, which makes the copy far more accurate but eats into the available voltage swing."],
+  tryit:{q:"A reference branch carries 50 µA through a device of W/L = 5. You want an output branch of 200 µA from the same gate voltage. What W/L do you need, and what is one way the real copy will be off?",
+    hint:"Current scales with W/L at the same V_GS.",
+    a:"You need four times the current, so W/L = 20 (best built as four copies of the W/L = 5 unit side by side). The real copy drifts if the two drains sit at different voltages, because channel-length modulation changes the current by roughly (1 + λV_DS)."}};
+
+/* ==== x2.js ==== */
+/* Beginner layer, chapters 6-10 */
+BEGX.ch6={
+  mins:20,
+  pre:{need:[3],recall:[
+    "A capacitor passes fast changes and blocks slow ones.",
+    "The gain of a common-source stage is −g_m R_D at low frequency.",
+    "A resistance R feeding a capacitance C to ground makes a corner at 1/(2πRC)."]},
+  goals:["Find every important capacitance in a stage and say which node it loads.",
+    "Estimate the bandwidth of a stage by finding its lowest pole.",
+    "Explain the Miller effect and why it usually sets the input pole."],
+  plain:["Nothing is instant. Every transistor terminal and every wire carries a small capacitance that has to be charged before a voltage can change.",
+    "A resistance together with a capacitance makes a corner frequency, above which the gain starts to fall. That corner is called a pole.",
+    "A circuit has several poles. The lowest one normally decides the bandwidth, and it is called the dominant pole.",
+    "The nasty one is the capacitor bridging the input and the output of an inverting stage. When the input rises by one volt, the output falls by the gain in volts, so the capacitor sees the whole difference and acts (1 + gain) times bigger at the input. This is the Miller effect.",
+    "Because of Miller, a tiny 10 fF gate-drain capacitance in a stage with a gain of 50 loads the input like 510 fF, and it is usually what limits the speed."],
+  tryit:{q:"A node has 10 kΩ of resistance to ground and 100 fF of capacitance to ground. Where is its pole? Separately, how big does a 20 fF gate-drain capacitor look at the input of a stage whose gain magnitude is 10?",
+    hint:"f = 1/(2πRC) for the first. For the second, multiply by (1 + gain).",
+    a:"f = 1/(2π × 10 kΩ × 100 fF) = 159 MHz. The 20 fF capacitor looks like (1 + 10) × 20 fF = 220 fF at the input, eleven times its physical value."}};
+BEGX.ch7={
+  mins:18,
+  pre:{need:[2,3],recall:[
+    "SNR from Chapter 1: the ratio of wanted signal to unwanted noise.",
+    "g_m is the gain per volt of a transistor; r_O is its output resistance.",
+    "Powers add when sources are independent, so voltages add as squares."]},
+  goals:["Name the two main noise sources in a MOSFET circuit and say where each comes from.",
+    "Compute the thermal noise of a resistor over a given bandwidth.",
+    "Explain what input-referred noise means and why it is the fair way to compare amplifiers."],
+  plain:["Every resistor hisses. The electrons inside jiggle with temperature, and that jiggle appears as a tiny random voltage across the resistor, even with nothing connected.",
+    "A transistor hisses for the same reason, through its channel, which is why noise falls as you spend more current on g_m.",
+    "There is a second kind, flicker or 1/f noise, caused by charge getting trapped and released at the gate oxide. It dominates at low frequencies and is worse in small devices.",
+    "Noise voltages from independent sources do not simply add. Their powers add, so you square each one, add, and take the square root.",
+    "To compare two amplifiers fairly, divide the output noise by the gain. That gives the input-referred noise: the imaginary noise at the input that would explain what you see at the output."],
+  tryit:{q:"A 10 kΩ resistor feeds a circuit with a 1 MHz noise bandwidth at room temperature. How much rms noise voltage does the resistor contribute? Take 4kT = 1.66e-20 J.",
+    hint:"The noise density squared is 4kTR, in V^2/Hz. Multiply by the bandwidth, then take the square root.",
+    a:"4kTR = 1.66e-20 × 10 kΩ = 1.66e-16 V^2/Hz, so the density is 12.9 nV/√Hz. Over 1 MHz: 12.9 nV/√Hz × √(1e6) = 12.9 µV rms."}};
+BEGX.ch8={
+  mins:20,
+  pre:{need:[3,4],recall:[
+    "An amplifier has a large but imprecise gain that drifts with temperature and process.",
+    "A resistive divider is accurate because it depends on a ratio, not on absolute values.",
+    "Impedance means how hard a node pushes back when you try to drive it."]},
+  goals:["Write down the closed-loop gain of a feedback amplifier and say what each symbol means.",
+    "Show numerically why feedback makes gain insensitive to the raw amplifier.",
+    "Name the four feedback topologies and what each one does to the input and output impedance."],
+  plain:["Feedback means taking a fraction of the output, subtracting it from the input, and amplifying what is left.",
+    "The result is a gain of A/(1 + βA), where A is the raw gain and β is the fraction fed back. When βA is large this is almost exactly 1/β.",
+    "That is the whole point: 1/β is set by a ratio of resistors or capacitors, which you can build accurately, instead of by a transistor gain, which you cannot.",
+    "You pay for it with gain. The factor (1 + βA) that divides your gain is the same factor that divides your distortion and multiplies your bandwidth.",
+    "Feedback also reshapes impedances. Sampling the output voltage lowers the output impedance; sampling the current raises it. The same idea applies at the input."],
+  tryit:{q:"An amplifier has a raw gain of 1000 and you feed back β = 0.1. Find the closed-loop gain. Then suppose process variation halves the raw gain to 500. How much does the closed-loop gain change?",
+    hint:"A/(1 + βA) both times, then compare.",
+    a:"1000/(1 + 100) = 9.901. With A = 500: 500/(1 + 50) = 9.804. The raw gain fell by 50%, but the closed-loop gain fell by only 0.98%. That insensitivity is what you bought."}};
+BEGX.ch9={
+  mins:22,
+  pre:{need:[3,4,5],recall:[
+    "Cascoding raises output resistance and therefore gain, but costs voltage headroom.",
+    "A differential pair with a current-mirror load turns a differential input into a single output.",
+    "Gain of a stage is roughly g_m times the resistance seen at its output node."]},
+  goals:["Recognise the telescopic, folded-cascode and two-stage op amps and rank them for gain, swing, speed and power.",
+    "Estimate the gain of each topology from g_m and r_O.",
+    "Pick a topology to fit a given supply voltage and swing requirement."],
+  plain:["An op amp is just a differential amplifier with as much gain as you can afford, meant to be used inside a feedback loop.",
+    "A telescopic op amp stacks everything in one column. It is the fastest and lowest power, but all those stacked devices leave little room for the signal to swing.",
+    "A folded cascode bends the signal path sideways through an opposite-type device. You get the swing back and the input can sit near a supply rail, at the cost of more current.",
+    "A two-stage op amp puts a simple gain stage after the first one. It gives the largest gain and swing, but the second stage adds a pole, so it needs compensating (Chapter 10).",
+    "Gain, swing, speed, noise and power cannot all be maximised. Choosing a topology is choosing which one to give up."],
+  tryit:{q:"A two-stage op amp has a first stage with a gain of 50 and a second stage with a gain of 40. What is the total gain as a number and in dB?",
+    hint:"Stages in series multiply. For dB take 20·log10.",
+    a:"Total gain = 50 × 40 = 2000, which is 20·log10(2000) = 66 dB. Each stage inverts, so two inversions bring the signal back the right way up."}};
+BEGX.ch10={
+  mins:22,
+  pre:{need:[6,8],recall:[
+    "Every pole adds up to 90° of phase lag and bends the gain down by 20 dB per decade.",
+    "Closed-loop gain is A/(1 + βA), so trouble comes when βA approaches −1.",
+    "The unity-gain frequency is where the loop gain magnitude falls to 1."]},
+  goals:["Read a Bode plot and find the phase margin.",
+    "Say what phase margin means for ringing and settling in the time domain.",
+    "Explain how Miller compensation and a nulling resistor fix a two-stage op amp."],
+  plain:["Feedback only helps if the signal you feed back still has roughly the right sign by the time it gets back around the loop.",
+    "Every pole delays the signal a little more. If the loop gain is still above 1 when the total delay reaches half a cycle, the subtraction becomes an addition and the circuit oscillates.",
+    "Phase margin is how much phase you have in hand at the frequency where the loop gain passes 1. Around 60° gives a clean, fast settle; below 45° the output rings; at 0° it oscillates.",
+    "The usual fix is to deliberately make one pole much lower than all the others, so the gain is already below 1 before the other poles can do any damage.",
+    "In a two-stage op amp you do this with a capacitor around the second stage. The Miller effect makes it look huge, which pushes the first pole down and the second pole up at the same time. A small series resistor cancels the troublesome right-half-plane zero it creates."],
+  tryit:{q:"An op amp has a DC gain of 100,000 and a dominant pole at 1 kHz. Where is its unity-gain frequency? If a second pole sits at 200 MHz, roughly what phase margin do you have in unity-gain feedback?",
+    hint:"Unity-gain frequency is gain times the dominant pole. Phase margin is 90° minus the lag from the second pole, arctan(f_u/f_2).",
+    a:"f_u = 100,000 × 1 kHz = 100 MHz. The second pole contributes arctan(100/200) = 26.6° of lag, so the phase margin is about 90 − 26.6 = 63°. That is comfortable, and it will settle with only a small overshoot."}};
+
+/* ==== x3.js ==== */
+/* Beginner layer, chapters 11-14 */
+BEGX.ch11={
+  mins:18,
+  pre:{need:[5],recall:[
+    "A current mirror copies a current you trust rather than one you guessed.",
+    "Thermal voltage V_T = kT/q is about 26 mV at room temperature and grows with temperature.",
+    "A bipolar base-emitter voltage, V_BE, is about 0.75 V and falls as the chip warms."]},
+  goals:["Explain what CTAT and PTAT mean and give an example of each.",
+    "Show how adding the two in the right proportion cancels the temperature drift.",
+    "Say why the answer always lands near 1.2 V."],
+  plain:["Everything on a chip drifts with temperature, so a reference voltage has to be built from two drifts that cancel.",
+    "A diode voltage falls as the chip warms, by roughly 1.5 mV for every degree. Anything that behaves like that is called CTAT, complementary to absolute temperature.",
+    "The difference between two diode voltages running at different current densities rises with temperature, in exact proportion to it. That is PTAT, proportional to absolute temperature.",
+    "Multiply the rising one by the right constant, add it to the falling one, and the two slopes cancel. What is left barely moves with temperature.",
+    "The sum always comes out near 1.2 V, because that is the bandgap of silicon extrapolated back to absolute zero. The circuit is really measuring a property of the material."],
+  tryit:{q:"Two bipolar devices run at a current density ratio of 8. Their V_BE difference is V_T·ln(8). At 300 K, how big is it, what is its temperature slope, and by what factor must you multiply it to cancel a −1.5 mV/K diode drift?",
+    hint:"V_T = 25.85 mV at 300 K, and a PTAT voltage has a slope equal to its value divided by the absolute temperature.",
+    a:"ΔV_BE = 25.85 mV × ln(8) = 25.85 × 2.079 = 53.8 mV. Being PTAT, its slope is 53.8 mV / 300 K = +0.179 mV/K. To cancel −1.5 mV/K you need a factor of 1.5/0.179 = 8.4. The reference is then V_BE + 8.4 × ΔV_BE ≈ 0.75 + 0.45 = 1.20 V."}};
+BEGX.ch12={
+  mins:20,
+  pre:{need:[5,8],recall:[
+    "Charge on a capacitor is Q = C V, and charge has nowhere to go unless you give it a path.",
+    "An op amp in feedback drives its two inputs to the same voltage.",
+    "Capacitor ratios on a chip are accurate to a fraction of a percent, far better than resistor values."]},
+  goals:["Describe a two-phase clock and what happens on each phase.",
+    "Work out the gain of a switched-capacitor amplifier from a capacitor ratio.",
+    "Name the three error sources: finite op-amp gain, charge injection and kT/C noise."],
+  plain:["Instead of a continuous signal, these circuits work on snapshots. A switch closes, a capacitor charges up to the input, and the switch opens again.",
+    "On the next clock phase that trapped charge is pushed onto a second capacitor by an op amp. Charge is conserved, so the output is the input times the ratio of the two capacitors.",
+    "That is the whole appeal: the gain is a ratio of capacitors, and ratios are what silicon does well. Nothing depends on a resistor value or a transistor parameter.",
+    "A switch is just a transistor, and its on-resistance changes with the signal voltage. Using an NMOS and a PMOS in parallel keeps the resistance more even across the range.",
+    "Three things spoil the result: the op amp does not have infinite gain, the switch dumps a little charge into the capacitor when it opens, and the sampling itself captures a noise voltage of √(kT/C)."],
+  tryit:{q:"A switched-capacitor amplifier samples on C1 = 2 pF and holds on C2 = 0.5 pF. What is the gain? Separately, what rms noise does sampling onto a 1 pF capacitor capture at room temperature?",
+    hint:"Gain is C1/C2. Sampled noise is √(kT/C), with kT = 4.14e-21 J.",
+    a:"Gain = 2 pF / 0.5 pF = 4. Sampled noise = √(4.14e-21 / 1e-12) = 64 µV rms. Note it does not depend on the switch resistance at all: making the switch bigger does not help, only a bigger capacitor does."}};
+BEGX.ch13={
+  mins:18,
+  pre:{need:[3,8],recall:[
+    "Feedback divides distortion by the same (1 + βA) factor that it divides gain.",
+    "A perfectly linear amplifier multiplies the input by a constant and adds nothing new.",
+    "Matched devices are never exactly matched; the difference is random."]},
+  goals:["Explain what harmonic distortion is and where the new frequencies come from.",
+    "Compute THD from the individual harmonic terms.",
+    "Use the Pelgrom area law to predict how much two devices will differ."],
+  plain:["A real amplifier does not just scale the signal. Its output curve bends slightly, and that bend creates copies of the signal at two, three and more times the original frequency.",
+    "Those copies are the harmonics. Total harmonic distortion is their combined size compared with the wanted signal, found by squaring each one, adding and taking the square root.",
+    "If two tones go in, the bend also makes sum and difference frequencies. The awkward ones land right next to the wanted signal and cannot be filtered away, which is why radio designers quote IIP3.",
+    "Push the input hard enough and the gain starts to sag. The 1-dB compression point is where the real gain has dropped one decibel below the ideal straight line.",
+    "Mismatch is the other imperfection. Two transistors drawn identically still differ, and the spread shrinks as the square root of their area: four times the area halves the mismatch."],
+  tryit:{q:"An amplifier produces a second harmonic 1% as large as the fundamental and a third harmonic 0.5% as large. What is the THD, as a percentage and in dB?",
+    hint:"Square each, add, take the square root. For dB take 20·log10 of the ratio.",
+    a:"THD = √(0.01^2 + 0.005^2) = √(1.25e-4) = 0.0112, so 1.12%. In decibels that is 20·log10(0.0112) = −39 dB. The second harmonic dominates, which is typical of a circuit that is not fully differential."}};
+BEGX.ch14={
+  mins:18,
+  pre:{need:[6,8,10],recall:[
+    "Each stage in a loop contributes both gain and phase lag.",
+    "Oscillation is what happens when the loop gain reaches 1 with 360° of phase shift.",
+    "An inductor and a capacitor in parallel exchange energy at one particular frequency."]},
+  goals:["State the two Barkhausen conditions and apply them to a ring of inverters.",
+    "Work out the frequency of a ring oscillator from the stage delay.",
+    "Compare a ring oscillator with an LC oscillator for frequency, noise and area."],
+  plain:["An oscillator is a feedback loop deliberately built to be unstable. Everything Chapter 10 told you to avoid, you now arrange on purpose.",
+    "For a steady oscillation you need two things at the same frequency: the signal must come back around the loop at full size, and it must come back in phase.",
+    "A ring of an odd number of inverters does this naturally. The inversion supplies half the phase shift and the delays supply the rest. The frequency is one over twice the number of stages times the delay per stage.",
+    "A ring is small, tunable over a wide range and needs no inductor, but it is noisy, because every stage adds its own jitter.",
+    "An LC oscillator instead uses a resonant tank, with a transistor pair supplying just enough negative resistance to cancel the tank losses. It is far cleaner in phase noise but tunes over a narrow range and the inductor eats area."],
+  tryit:{q:"A ring oscillator has 5 inverter stages, each with a propagation delay of 50 ps. What frequency does it run at, and what happens if you slow each stage to 100 ps?",
+    hint:"f = 1/(2·N·t_pd). A signal edge must travel the ring twice to complete one period.",
+    a:"f = 1/(2 × 5 × 50 ps) = 1/(500 ps) = 2 GHz. Doubling the delay to 100 ps halves the frequency to 1 GHz. That is exactly the knob a voltage-controlled oscillator turns: starve the stages of current and they slow down."}};
+
+/* ==== x4.js ==== */
+/* Beginner layer, chapters 15-18 */
+BEGX.ch15={
+  mins:20,
+  pre:{need:[8,10,14],recall:[
+    "An oscillator whose frequency you can steer with a voltage is a VCO.",
+    "A feedback loop forces the quantity it senses to match the reference.",
+    "Phase margin and damping describe the same thing: how cleanly a loop settles."]},
+  goals:["Describe the four blocks of a charge-pump PLL and what each one does.",
+    "Explain why a divider in the loop multiplies the output frequency.",
+    "Relate loop bandwidth and damping to how fast the PLL locks and how much it rings."],
+  plain:["A PLL is a loop that keeps one oscillator in step with another, by comparing not frequency but phase.",
+    "A phase detector measures how far ahead or behind the VCO is. A charge pump turns that into a push or pull of current, and a filter turns it into a slow control voltage.",
+    "That control voltage steers the VCO. If the VCO runs late the loop speeds it up, and vice versa, until the phases line up and stay there.",
+    "Put a divide-by-N counter in the feedback path and the loop locks when the divided output matches the reference. The output therefore runs at N times the reference, which is how a 10 MHz crystal becomes a multi-gigahertz clock.",
+    "Two numbers describe the behaviour: the natural frequency sets how fast it locks, and the damping factor sets how much it overshoots on the way. Around 0.7 to 1 is the usual target."],
+  tryit:{q:"A PLL locks a VCO to a 10 MHz crystal and must output 2.4 GHz. What divide ratio do you need? If the VCO gain is 500 MHz/V, how far does the output move when the control voltage drifts by 0.2 V?",
+    hint:"N is the ratio of output to reference frequency. Frequency shift is K_VCO times the voltage change.",
+    a:"N = 2.4 GHz / 10 MHz = 240. A 0.2 V drift would move the free-running frequency by 500 MHz/V × 0.2 V = 100 MHz, but in lock the loop corrects it: that is exactly the error the feedback removes."}};
+BEGX.ch16={
+  mins:18,
+  pre:{need:[2],recall:[
+    "The square law: I_D = ½ µC_(ox) (W/L) V_ov^2 in saturation.",
+    "Overdrive V_ov = V_GS − V_TH, and g_m = 2I_D/V_ov under the square law.",
+    "Below threshold the device is not quite off; a small current still leaks."]},
+  goals:["Say what velocity saturation does to the current and to g_m.",
+    "Use the subthreshold slope to work out leakage over several decades.",
+    "Explain why analog design got harder as transistors shrank."],
+  plain:["The square law was derived assuming electrons speed up without limit as you pull harder on them. In a short channel the field is enormous and they hit a speed limit instead.",
+    "Once velocity saturates, the current stops growing as the square of the overdrive and grows roughly in proportion to it. You get less current, and less g_m, than the textbook formula promises.",
+    "Below the threshold the current does not stop; it falls off exponentially. The subthreshold slope says how many millivolts of gate voltage you need to cut it by a factor of ten, and it can never be better than about 60 mV per decade at room temperature.",
+    "That 60 mV floor is why supply voltages stopped falling. You need enough gate voltage above threshold to turn the device properly on, and enough below to turn it properly off.",
+    "Scaling makes digital circuits faster and smaller but gives analog designers less headroom, lower intrinsic gain and worse matching. That is why analog blocks do not shrink the way logic does."],
+  tryit:{q:"A device has V_ov = 0.6 V, and the critical field times channel length, E_(c)L, is 0.5 V. By what factor does velocity saturation reduce the current below the square-law value? Separately, with a subthreshold slope of 90 mV/decade, how much gate voltage cuts the leakage by 10,000×?",
+    hint:"The current is divided by (1 + V_ov/(E_(c)L)). Four decades needs four times the slope.",
+    a:"The factor is 1/(1 + 0.6/0.5) = 1/2.2 = 0.45, so you get only 45% of what the square law predicted. For the leakage: 10,000 is four decades, so 4 × 90 mV = 360 mV of gate swing."}};
+BEGX.ch17={
+  mins:16,
+  pre:{need:[2],recall:[
+    "A MOSFET is built from doped regions, a thin oxide and a gate on top.",
+    "Resistance rises with length and falls with width and thickness.",
+    "An n-well is the local patch of n-type silicon that a PMOS sits in."]},
+  goals:["List the basic fabrication steps in order and say what each one adds.",
+    "Compute a layer resistance from its sheet resistance and its shape.",
+    "Explain what self-aligned means and why it matters for speed."],
+  plain:["A chip is built one patterned layer at a time. Each layer uses a mask, which is a stencil that decides where the next operation happens and where it does not.",
+    "The operations themselves are few: print a pattern in light-sensitive resist, grow oxide, shoot in dopant ions, deposit a material, or etch material away. Everything else is a combination of those.",
+    "Implant energy decides how deep the dopant goes; the beam current and time decide how much. A later heating step repairs the damage but also lets the dopant spread sideways.",
+    "The polysilicon gate is laid down before the source and drain are implanted, so the gate itself blocks the implant and the source and drain line up with it automatically. That is what self-aligned means, and it keeps the overlap capacitance small.",
+    "Resistance of any layer is quoted as sheet resistance in ohms per square. Count how many squares long your shape is, multiply, and you have the resistance: the actual size does not matter, only the ratio of length to width."],
+  tryit:{q:"A polysilicon resistor has a sheet resistance of 50 Ω per square. You draw it 30 µm long and 3 µm wide. What is its resistance? What happens if you double both dimensions?",
+    hint:"Count squares: length divided by width.",
+    a:"Squares = 30/3 = 10, so R = 10 × 50 Ω = 500 Ω. Doubling both dimensions keeps the ratio at 10, so the resistance stays 500 Ω. You get the same value with four times the area, which matches far better."}};
+BEGX.ch18={
+  mins:18,
+  pre:{need:[13,17],recall:[
+    "Mismatch between two devices shrinks as the square root of their area.",
+    "Every wire has resistance and capacitance, and every bond wire has inductance.",
+    "A differential circuit rejects whatever hits both sides equally."]},
+  goals:["Explain why matched devices are interleaved rather than just placed side by side.",
+    "Work out whether a given placement cancels a linear process gradient.",
+    "Estimate supply bounce from bond-wire inductance and a current step."],
+  plain:["A wafer is never perfectly uniform. Oxide thickness and doping drift slowly across the die, so two devices a short distance apart are systematically different.",
+    "If the drift is a straight line across the array, you can cancel it by making both devices sit at the same average position. Arrange them A B B A and both have their centre at the same place: that is a common centroid.",
+    "Interleaving them A B A B is better than A B, but it does not cancel a linear gradient completely, because the two centres are still one slot apart.",
+    "Devices at the end of a row see different neighbours from those in the middle, and etch differently. Dummy devices at both ends give every real device the same surroundings.",
+    "Off the die, each bond wire adds about a nanohenry per millimetre. A fast current step through that inductance lifts the on-chip ground by L times di/dt, which is why decoupling capacitors sit as close to the pads as possible."],
+  tryit:{q:"A 2 nH bond wire carries a current step of 30 mA in 2 ns. How much does the on-chip supply bounce? Separately, you quadruple the area of a matched pair: what happens to their mismatch?",
+    hint:"ΔV = L·di/dt. Mismatch follows 1/√(WL).",
+    a:"ΔV = 2 nH × (30 mA / 2 ns) = 2e-9 × 1.5e7 = 30 mV. For a circuit resolving millivolts, that is enormous. Quadrupling the area halves the mismatch, since √4 = 2."}};
+
 /* ==== ui.js ==== */
-/* UI shell: sidebar, tabs (Learn, Lab, Flashcards, Quiz, Sketch), progress, theme */
+/* UI shell: home, glossary, chapter tabs (Learn, Lab, Flashcards, Quiz, Sketch) */
 (function(){
-  const KEY='analog_ic_site_v1';
+  const KEY='analog_ic_site_v2';
   const store={
     get(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}},
     set(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
   };
   let P=store.get();P.done=P.done||{};P.best=P.best||{};P.last=P.last||0;P.theme=P.theme||'auto';
   const save=()=>store.set(P);
-  const S={ch:Math.min(P.last||0,CH.length-1),tab:'learn',fc:{i:0,flip:false,order:null},quiz:null};
+  const BX=window.BEGX||{};
+  const S={view:P.seen?'ch':'home',ch:Math.min(P.last||0,CH.length-1),tab:'learn',fc:{i:0,flip:false,order:null},quiz:null,gq:''};
   let rootEl,sideEl,mainEl,headEl;
+
+  /* ---------- tiny pixel art ---------- */
+  function pix(rows,pal,px){
+    px=px||2;const W=rows[0].length*px,H=rows.length*px;let r='';
+    rows.forEach((row,y)=>{[...row].forEach((c,x)=>{const f=pal[c];if(f)r+=`<rect x="${x*px}" y="${y*px}" width="${px}" height="${px}" fill="${f}"/>`;});});
+    return `<svg class="pix" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" style="width:${W}px;height:${H}px">${r}</svg>`;
+  }
+  const COIN=['..oooo..','.oyyyyo.','oyyooyyo','oyyooyyo','oyyooyyo','oyyooyyo','.oyyyyo.','..oooo..'];
+  const STAR=['...oo...','...oo...','..oyyo..','.oyyyyo.','oyyyyyyo','.oyyyyo.','.oy..yo.','.o....o.'];
+  const coinSVG=()=>pix(COIN,{o:'#17171f',y:'#f7c600'});
+  const starSVG=()=>pix(STAR,{o:'#17171f',y:'#f7c600'});
+  function icon(svg){const s=h('span');s.innerHTML=svg;return s;}
 
   function applyTheme(){
     const r=document.documentElement;
@@ -3023,31 +3499,46 @@ LABS.lay18=function(root){
     try{redrawAll();}catch(e){}
   }
   function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  const byNum=n=>CH.findIndex(c=>c.num===n);
 
+  /* ---------- glossary built from every chapter ---------- */
+  const GLOSS=[];
+  CH.forEach((c,i)=>{(c.beg&&c.beg.terms||[]).forEach(([t,d])=>GLOSS.push({t:t,d:d,i:i,num:c.num}));});
+  GLOSS.sort((a,b)=>a.t.toLowerCase().localeCompare(b.t.toLowerCase()));
+
+  /* ---------- sidebar ---------- */
   function renderSide(){
     const doneN=CH.filter(c=>P.done[c.id]).length;
     sideEl.innerHTML='';
-    const parts=[];CH.forEach((c,i)=>{if(!parts.includes(c.part))parts.push(c.part);});
-    sideEl.append(
-      h('div',{class:'prog'},h('div',{class:'bar'},h('i',{style:{width:(100*doneN/CH.length)+'%'}})),h('small',doneN+' of '+CH.length+' chapters done (quiz ≥ 70%)'))
-    );
+    sideEl.append(h('div',{class:'prog'},
+      h('div',{class:'bar'},h('i',{style:{width:(100*doneN/CH.length)+'%'}})),
+      h('small',doneN+' / '+CH.length+' CLEARED')));
+    sideEl.append(h('button',{class:'chbtn home'+(S.view==='home'?' on':''),onclick:()=>{goView('home');}},
+      h('span',{class:'n'},'★'),h('span','Start here')));
+    sideEl.append(h('button',{class:'chbtn home'+(S.view==='gloss'?' on':''),onclick:()=>{goView('gloss');}},
+      h('span',{class:'n'},'?'),h('span','Glossary')));
+    const parts=[];CH.forEach(c=>{if(!parts.includes(c.part))parts.push(c.part);});
     parts.forEach(pt=>{
       sideEl.append(h('div',{class:'part'},pt));
       CH.forEach((c,i)=>{if(c.part!==pt)return;
-        sideEl.append(h('button',{class:'chbtn'+(i===S.ch?' on':'')+(P.done[c.id]?' done':''),onclick:()=>{go(i,'learn');document.body.classList.remove('drawer');}},
+        sideEl.append(h('button',{class:'chbtn'+(S.view==='ch'&&i===S.ch?' on':'')+(P.done[c.id]?' done':''),
+          onclick:()=>{go(i,'learn');}},
           h('span',{class:'n'},P.done[c.id]?'✓':String(c.num)),h('span',c.title)));
       });
     });
   }
-
+  function closeDrawer(){document.body.classList.remove('drawer');}
+  function goView(v){S.view=v;if(v!=='home')P.seen=1;save();closeDrawer();renderSide();renderMain();window.scrollTo({top:0});}
   function go(i,tab){
-    S.ch=i;S.tab=tab||'learn';S.fc={i:0,flip:false,order:null};S.quiz=null;P.last=i;save();
-    renderSide();renderMain();window.scrollTo({top:0});
+    S.view='ch';S.ch=i;S.tab=tab||'learn';S.fc={i:0,flip:false,order:null};S.quiz=null;P.last=i;P.seen=1;save();
+    closeDrawer();renderSide();renderMain();window.scrollTo({top:0});
   }
+  window.APPGO=go;
 
   function tabsBar(){
-    const T=[['learn','Learn'],['lab','Lab'],['cards','Flashcards'],['quiz','Quiz'],['sketch','Sketch']];
-    return h('div',{class:'tabs',role:'tablist'},T.map(([k,t])=>h('button',{class:'tab'+(S.tab===k?' on':''),role:'tab',onclick:()=>{S.tab=k;if(k==='quiz')S.quiz=null;renderMain();}},t)));
+    const T=[['learn','Learn'],['lab','Lab'],['cards','Cards'],['quiz','Quiz'],['sketch','Sketch']];
+    return h('div',{class:'tabs',role:'tablist'},T.map(([k,t])=>h('button',{class:'tab'+(S.tab===k?' on':''),role:'tab',
+      onclick:()=>{S.tab=k;if(k==='quiz')S.quiz=null;renderMain();window.scrollTo({top:0});}},t)));
   }
 
   function figBox(key,cap){
@@ -3057,39 +3548,120 @@ LABS.lay18=function(root){
     return h('div',box,cap?h('div',{class:'cap'},cap):null);
   }
 
+  /* ---------- home ---------- */
+  function home(){
+    const out=[];
+    const hero=h('div',{class:'hero'});
+    hero.append(h('div',{class:'sub'},HOME.tagline),h('h2','Learn analog chip design from zero'),h('p',HOME.lede));
+    HOME.blurb.forEach(b=>hero.append(h('p',b)));
+    out.push(hero);
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'1'),'Where to start'),
+      h('div',{class:'paths'},HOME.paths.map(p=>h('button',{class:'path',onclick:()=>go(p.go,'learn')},
+        h('b',p.t),h('span',p.d))))));
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'2'),HOME.need.title),
+      h('ul',{class:'goals'},HOME.need.items.map(x=>h('li',x)))));
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'3'),'How each chapter works'),
+      h('div',{class:'tabsx'},HOME.tabs.map(([k,d])=>h('div',{class:'tabx'},h('span',{class:'k'},k),h('span',d))))));
+    const map=h('div');
+    const parts=[];CH.forEach(c=>{if(!parts.includes(c.part))parts.push(c.part);});
+    parts.forEach(pt=>{
+      map.append(h('div',{class:'part'},pt));
+      const g=h('div',{class:'mapgrid'});
+      CH.forEach((c,i)=>{if(c.part!==pt)return;
+        g.append(h('button',{class:'mapbtn'+(P.done[c.id]?' done':''),onclick:()=>go(i,'learn')},
+          h('span',{class:'n'},P.done[c.id]?'✓':String(c.num)),h('span',c.title)));});
+      map.append(g);
+    });
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'4'),'The whole course'),map));
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'5'),'Notation used throughout'),
+      h('ul',{class:'ideas'},HOME.conventions.map(x=>h('li',x)))));
+    out.push(h('div',{class:'row'},
+      h('button',{class:'btn pri',onclick:()=>go(0,'learn')},'Start Chapter 1 →'),
+      h('button',{class:'btn',onclick:()=>goView('gloss')},'Open glossary')));
+    return out;
+  }
+
+  /* ---------- glossary ---------- */
+  function gloss(){
+    const list=h('div');
+    const draw=()=>{
+      list.innerHTML='';
+      const q=S.gq.trim().toLowerCase();
+      const items=GLOSS.filter(g=>!q||g.t.toLowerCase().includes(q)||g.d.toLowerCase().includes(q));
+      if(!items.length){list.append(h('p',{class:'note'},'No word matches that. Try a shorter piece of the word.'));return;}
+      items.forEach(g=>{
+        const jump=h('span',{class:'src',onclick:()=>go(g.i,'learn')},'CH '+g.num);
+        list.append(h('div',{class:'gitem'},h('b',g.t),jump,h('div',g.d)));
+      });
+    };
+    const box=h('input',{type:'text',class:'gsearch',placeholder:'Search a word, e.g. overdrive',value:S.gq,
+      oninput:e=>{S.gq=e.target.value;draw();}});
+    draw();
+    return [h('div',{class:'card'},
+      h('h3',h('span',{class:'step'},'?'),'Glossary'),
+      h('p',{class:'note'},'Every word defined anywhere in the course, in one place. '+GLOSS.length+' entries. Tap a chapter badge to jump to where it is taught.'),
+      h('div',{class:'row'},box),list)];
+  }
+
+  /* ---------- learn ---------- */
   function learn(c){
-    const b=c.beg;const out=[];
-    out.push(h('div',{class:'card'},
-      h('h3',h('span',{class:'step'},'1'),'Start here'),
+    const b=c.beg,x=BX[c.id]||{},out=[];let n=0;
+    const step=()=>String(++n);
+    if(x.pre){
+      const need=(x.pre.need||[]).map(num=>{const i=byNum(num);const t=i>=0?CH[i].title:'';
+        return h('button',{class:'chip',onclick:()=>go(i,'learn')},'CH '+num+' · '+t);});
+      out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Before you start'),
+        h('div',{class:'pre'},
+          h('span',{class:'lbl'},need.length?'Read these first':'No prerequisites'),
+          need.length?h('div',{class:'chiprow'},need):h('p',{class:'note'},'This is the first chapter. Jump straight in.'),
+          h('span',{class:'lbl',style:{marginTop:'12px'}},'You should be comfortable with'),
+          h('ul',(x.pre.recall||[]).map(r=>h('li',r)))),
+        x.goals?[h('h3',{style:{marginTop:'16px'}},h('span',{class:'step'},'✓'),'By the end you can'),
+          h('ul',{class:'goals'},x.goals.map(g=>h('li',g)))]:null));
+    }
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Why this matters'),
       h('p',{class:'lede'},b.why),
-      h('div',{class:'analogy'},h('b','Everyday picture: '),b.analogy),
+      h('div',{class:'analogy'},h('b','Everyday picture'),b.analogy),
       c.figs&&c.figs[0]?figBox(c.figs[0],c.figCaps&&c.figCaps[0]):null));
-    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'2'),'Words you will meet'),
+    if(x.plain)out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'The idea in plain words'),
+      h('p',{class:'note'},'No equations here. If you remember only one card from this chapter, make it this one.'),
+      h('ul',{class:'plain'},x.plain.map(s=>h('li',s)))));
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Words you will meet'),
       h('dl',{class:'terms'},b.terms.map(([t,d])=>[h('dt',t),h('dd',d)]))));
-    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'3'),'Step by step'),
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Step by step'),
       h('ol',{class:'steps'},b.steps.map(s=>h('li',s))),
       c.figs&&c.figs[1]?h('div',{class:'fig2'},figBox(c.figs[1],c.figCaps&&c.figCaps[1])):null));
-    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'4'),'Worked example'),
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Worked example'),
       h('div',{class:'example'},h('div',{class:'q'},b.example.q),
         h('ol',{class:'steps'},b.example.steps.map(s=>h('li',s))),
         h('div',{class:'ans'},'Answer: '+b.example.a))));
-    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'5'),'Revision cheat-sheet'),
+    if(x.tryit){
+      const slot=h('div');
+      const hintBtn=h('button',{class:'btn sm',onclick:()=>{hintBtn.replaceWith(h('div',{class:'hint'},'Hint: '+x.tryit.hint));}},'Show hint');
+      const ansBtn=h('button',{class:'btn pri',onclick:()=>{slot.innerHTML='';slot.append(h('div',{class:'reveal'},h('b','Answer '),h('div',x.tryit.a)));}},'Reveal answer');
+      out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Try it yourself'),
+        h('div',{class:'tryit'},h('div',{class:'q'},x.tryit.q),hintBtn,
+          h('div',{class:'row'},ansBtn),slot)));
+    }
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Revision cheat-sheet'),
       h('ul',{class:'ideas'},c.ideas.map(s=>h('li',s)))));
-    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'6'),'Traps to avoid'),
+    out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},step()),'Traps to avoid'),
       h('ul',{class:'traps'},c.traps.map(s=>h('li',s)))));
-    out.push(h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{S.tab='lab';renderMain();}},'Try the lab →')));
+    out.push(h('div',{class:'nextnav'},
+      h('button',{class:'btn pri',onclick:()=>{S.tab='lab';renderMain();window.scrollTo({top:0});}},'Try the lab →'),
+      h('button',{class:'btn',onclick:()=>{S.tab='quiz';S.quiz=null;renderMain();window.scrollTo({top:0});}},'Take the quiz')));
     return out;
   }
 
   function lab(c){
-    const wrap=h('div',{class:'lab'});
+    const wrap=h('div');
     const f=LABS[c.lab];
     const card=h('div',{class:'card'},h('h3',c.labTitle||'Lab'),c.labNote?h('p',{class:'note'},c.labNote):null);
     wrap.append(card);
     const host=h('div',{class:'lab'});card.append(host);
     try{f(host);}catch(e){host.append(h('div',{class:'err'},'Lab error: '+e.message));}
     if(c.gallery&&c.gallery.length){
-      wrap.append(h('div',{class:'card'},h('h3','From your own lab / slides'),
+      wrap.append(h('div',{class:'card'},h('h3','From your own lab and slides'),
         h('div',{class:'gallery'},c.gallery.map(g=>h('figure',
           h('img',{src:IMG[g.img],alt:g.cap,loading:'lazy',onclick:()=>{const lb=h('div',{class:'lightbox',onclick:()=>lb.remove()},h('img',{src:IMG[g.img],alt:g.cap}));document.body.append(lb);}}),
           h('figcaption',g.cap))))));
@@ -3122,17 +3694,21 @@ LABS.lay18=function(root){
       const was=P.best[c.id]||0;if(pct>was)P.best[c.id]=pct;
       if(pct>=70&&!P.done[c.id]){P.done[c.id]=true;}
       save();renderSide();
-      return h('div',{class:'card'},h('h3','Quiz finished'),h('div',{class:'score'},z.score+' / '+Q.length+'  ('+pct+'%)'),
-        h('p',pct>=70?'Chapter ticked off. Nice work — try the next chapter, or retake for a better score.':'You need 70% to tick this chapter off. Re-read the Learn tab and try again.'),
+      const won=pct>=70;
+      return h('div',{class:'card'},h('h3',won?'Stage cleared':'Try again'),
+        h('div',{class:'score'},z.score+' / '+Q.length+'  ('+pct+'%)'),
+        h('p',won?'Chapter ticked off in the sidebar. Carry on to the next one, or retake for a better score.':'You need 70% to clear this chapter. Re-read the Learn tab, especially the plain-words card, and try again.'),
         h('p',{class:'note'},'Best score on this chapter: '+(P.best[c.id]||pct)+'%'),
-        h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{S.quiz=null;renderMain();}},'Retake'),
+        h('div',{class:'nextnav'},h('button',{class:'btn pri',onclick:()=>{S.quiz=null;renderMain();}},'Retake'),
+          h('button',{class:'btn',onclick:()=>{S.tab='learn';renderMain();window.scrollTo({top:0});}},'Back to the lesson'),
           S.ch<CH.length-1?h('button',{class:'btn',onclick:()=>go(S.ch+1,'learn')},'Next chapter →'):null));
     }
     const q=Q[z.order[z.i]];
     if(!z.perm)z.perm=shuffle([0,1,2,3]);
     const opts=z.perm.map(k=>{
       const picked=z.picked!==null;const isRight=k===q.a;
-      return h('button',{class:'q-opt'+(picked?(isRight?' right':(k===z.picked?' wrong':'')):''),disabled:picked,onclick:()=>{z.picked=k;if(k===q.a)z.score++;renderMain();}},q.o[k]);
+      return h('button',{class:'q-opt'+(picked?(isRight?' right':(k===z.picked?' wrong':'')):''),disabled:picked,
+        onclick:()=>{z.picked=k;if(k===q.a)z.score++;renderMain();}},q.o[k]);
     });
     return h('div',{class:'card'},
       h('div',{class:'row'},h('b','Question '+(z.i+1)+' of '+Q.length),h('span',{class:'note'},'score so far '+z.score)),
@@ -3142,27 +3718,39 @@ LABS.lay18=function(root){
   }
 
   function sketch(c){
-    return h('div',c.figs.map((k,i)=>h('div',{class:'card'},h('h3',i===0?'Sketch 1 — the everyday picture':'Sketch 2 — the concept'),figBox(k,c.figCaps&&c.figCaps[i]))));
+    return h('div',c.figs.map((k,i)=>h('div',{class:'card'},
+      h('h3',i===0?'Sketch 1 — the everyday picture':'Sketch 2 — the concept'),figBox(k,c.figCaps&&c.figCaps[i]))));
   }
 
   function renderMain(){
     clearRedraws();
-    const c=CH[S.ch];
     mainEl.innerHTML='';
-    const body=S.tab==='learn'?learn(c):S.tab==='lab'?lab(c):S.tab==='cards'?cards(c):S.tab==='quiz'?quiz(c):sketch(c);
-    mainEl.append(
-      h('div',{class:'chead'},h('h2','Ch '+c.num+' · '+c.title),h('div',{class:'src'},c.src)),
-      tabsBar(),body,
-      h('div',{class:'foot'},'Built from Razavi, Design of Analog CMOS Integrated Circuits, and your own slides. Progress is saved in this browser.'));
+    if(S.view==='home'){mainEl.append(home());}
+    else if(S.view==='gloss'){mainEl.append(h('div',{class:'chead'},h('h2','Glossary'),h('div',{class:'src'},'All the words, across all 18 chapters')),gloss());}
+    else{
+      const c=CH[S.ch],x=BX[c.id]||{};
+      const body=S.tab==='learn'?learn(c):S.tab==='lab'?lab(c):S.tab==='cards'?cards(c):S.tab==='quiz'?quiz(c):sketch(c);
+      mainEl.append(
+        h('div',{class:'chead'},h('h2','CH '+c.num+' · '+c.title),
+          h('div',{class:'src'},x.mins?h('span',{class:'mins'},x.mins+' MIN READ'):null,c.src)),
+        tabsBar(),body,
+        h('div',{class:'nextnav'},
+          S.ch>0?h('button',{class:'btn',onclick:()=>go(S.ch-1,'learn')},'← Ch '+CH[S.ch-1].num):null,
+          h('button',{class:'btn',onclick:()=>goView('gloss')},'Glossary'),
+          S.ch<CH.length-1?h('button',{class:'btn',onclick:()=>go(S.ch+1,'learn')},'Ch '+CH[S.ch+1].num+' →'):null));
+    }
+    mainEl.append(h('div',{class:'foot'},HOME.credits));
     setTimeout(()=>{try{redrawAll();}catch(e){}},30);
   }
 
   function boot(){
     rootEl=h('div',{id:'app'});
+    const title=h('h1');title.innerHTML=coinSVG();
+    title.append(h('span',{class:'tt'},'Analog IC Design'),h('small','Razavi'));
     headEl=h('header',{class:'top'},
-      h('button',{class:'btn menu',onclick:()=>document.body.classList.toggle('drawer'),'aria-label':'Chapters'},'☰'),
-      h('h1','Analog IC Design',h('small','from Razavi')),
-      h('button',{class:'btn sm',id:'themebtn',onclick:()=>{P.theme=P.theme==='auto'?'light':P.theme==='light'?'dark':'auto';save();applyTheme();document.getElementById('themebtn').textContent='Theme: '+P.theme;}},'Theme: '+P.theme));
+      h('button',{class:'btn menu sm',onclick:()=>document.body.classList.toggle('drawer'),'aria-label':'Chapters'},'MENU'),
+      title,
+      h('button',{class:'btn sm',id:'themebtn',onclick:()=>{P.theme=P.theme==='auto'?'light':P.theme==='light'?'dark':'auto';save();applyTheme();document.getElementById('themebtn').textContent=P.theme.toUpperCase();}},P.theme.toUpperCase()));
     sideEl=h('aside',{class:'side'});mainEl=h('main');
     rootEl.append(headEl,h('div',{class:'shell'},sideEl,mainEl),h('div',{class:'scrim',onclick:()=>document.body.classList.remove('drawer')}));
     document.body.append(rootEl);
