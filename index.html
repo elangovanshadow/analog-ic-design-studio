@@ -154,6 +154,28 @@ ul.ideas li::marker{content:"\25A0  ";color:var(--acc)}
 .dnum{flex:none;font-family:var(--ui);font-size:8px;background:var(--brick);color:#fff;border:2px solid var(--line);padding:4px 5px}
 .dt{flex:1;font-weight:700;min-width:0}
 .dcount{flex:none;font-family:var(--ui);font-size:7.5px;color:var(--mute)}
+.dchip{flex:none;font-family:var(--ui);font-size:7px;padding:4px 5px;border:2px solid var(--line);background:var(--panel);color:var(--mute)}
+.dchip.mid{background:var(--coin);color:#17171f}
+.dchip.ok{background:var(--pipe);color:#fff}
+.dintro{background:var(--acc-soft);border:var(--bw) solid var(--line);padding:13px;margin:0 0 14px}
+.dintro b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:8px;color:var(--acc)}
+.dintro p{margin:0 0 9px;font-size:14.5px}
+.dtally{margin:0 0 14px}
+.dtally small,.dprog small{display:block;margin-top:6px;font-family:var(--ui);font-size:7.5px;line-height:1.7;color:var(--mute)}
+.dbar{height:14px;border:2px solid var(--line);background:var(--panel);overflow:hidden}
+.dbar>i{display:block;height:100%;background:var(--pipe)}
+.dprog{margin-bottom:12px}
+.dprog .dbar>i{background:var(--coin)}
+.dnext{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:2px dashed var(--line)}
+.dguess{background:var(--warn-soft);border:var(--bw) solid var(--line);padding:12px;margin-top:12px}
+.dguess b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:7px}
+.dguess p{margin:0 0 10px;font-size:14.5px}
+.dcheck{background:var(--bg2);border:var(--bw) solid var(--brick);padding:12px;margin-top:12px}
+.dcheck>b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:8px;color:var(--brick)}
+.dcheck .cq{margin:0 0 10px;font-weight:700;font-size:15px}
+.dnudge{background:var(--warn-soft);border:var(--bw) solid var(--line);padding:12px;margin:12px 0}
+.dnudge b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:7px;color:var(--brick)}
+.dnudge p{margin:0 0 10px;font-size:14.5px}
 .dbody:empty{display:none}
 .dbody{padding:12px}
 .dgoal{background:var(--code);border:2px solid var(--line);padding:10px;margin-bottom:12px;font-size:14px}
@@ -3500,6 +3522,155 @@ BEGX.ch18={
     hint:"ΔV = L·di/dt. Mismatch follows 1/√(WL).",
     a:"ΔV = 2 nH × (30 mA / 2 ns) = 2e-9 × 1.5e7 = 30 mV. For a circuit resolving millivolts, that is enormous. Quadrupling the area halves the mismatch, since √4 = 2."}};
 
+/* ==== xchk.js ==== */
+/* Checkpoint questions: one per derivation, asked part-way through so the steps cannot be skimmed.
+   Parallel to DERIV[chapter]; `at` = ask after this step index (0-based). */
+window.CHK={};
+CHK.ch1=[
+ {at:2,q:"We have a voltage ratio, but the decibel is defined on POWER. What is the next move?",
+  o:["Substitute the power ratio (V_2/V_1)^2 into the definition","Double the definition to 20·log10, since voltage is half of power","Take the square root of the voltage ratio first"],a:0,
+  e:"The whole derivation is that one substitution. Everything after it is a log identity."},
+ {at:4,q:"We now have the quantisation noise power, Δ^2/12. What is still missing before we can form an SNR?",
+  o:["The power of the largest signal that fits, a full-scale sine","The sampling rate","The number of bits, again"],a:0,
+  e:"SNR is a ratio, so you need both halves. The signal half is the biggest sine the range allows."}];
+CHK.ch2=[
+ {at:4,q:"We have I_D = W·C_(ox)(V_GS − V_TH − V(x))·µ·dV/dx, and I_D is the same at every point along the channel. What does that let you do?",
+  o:["Separate the variables and integrate x over the length and V over the drain voltage","Set V(x) = V_DS everywhere and simplify","Differentiate both sides with respect to x"],a:0,
+  e:"A constant on the left is exactly what makes the integration trivial: it comes straight out of the integral."},
+ {at:3,q:"To get from g_m = k·V_ov to g_m = 2I_D/V_ov, what do you actually do?",
+  o:["Divide I_D by g_m: the k cancels and V_ov/2 is left","Divide g_m by V_ov","Multiply g_m by I_D"],a:0,
+  e:"Both expressions share the factor k, so dividing one by the other removes it."}];
+CHK.ch3=[
+ {at:2,q:"The transistor pushes a current g_m·v_in. Where must that current flow?",
+  o:["Into R_D in parallel with r_O, since no current enters the gate","Into the gate capacitance","Half into R_D and half into r_O, whatever their values"],a:0,
+  e:"The gate takes no DC current, so the whole signal current has to go through the load."},
+ {at:1,q:"In a follower, v_gs = v_in − v_out. Why is it a DIFFERENCE here, when for a common-source stage it was just v_in?",
+  o:["The output is taken at the source, so the source moves with the signal","The body effect subtracts the output","The gate is grounded in this configuration"],a:0,
+  e:"That moving source is feedback, and it is the whole reason a follower's gain cannot exceed one."},
+ {at:2,q:"Gate grounded, source driven to v_x. What is v_gs?",
+  o:["−v_x","+v_x","Zero"],a:0,
+  e:"v_gs means gate minus source: 0 − v_x. That minus sign is what makes the input current positive."}];
+CHK.ch4=[
+ {at:4,q:"We have one relation linking the two currents to the input difference. What second fact is needed to solve for both?",
+  o:["The tail source fixes I_D1 + I_D2 = I_SS","Both devices have the same V_GS","The two drain resistors are equal"],a:0,
+  e:"Two unknowns need two equations. The tail current supplies the second, and it is what makes a pair a pair."},
+ {at:3,q:"The tail node does not move at all for a differential input. For small signals, what does that make it?",
+  o:["A virtual ground, so each half becomes a plain common-source stage","An open circuit, so no current flows","A current source of value g_m·ΔV"],a:0,
+  e:"Nothing that never moves can carry a signal, so you may treat it as grounded. That is the whole half-circuit trick."}];
+CHK.ch5=[
+ {at:3,q:"Both devices now share the same V_ov. What happens when you divide one square-law equation by the other?",
+  o:["Mobility, oxide capacitance and V_ov^2 all cancel, leaving only the size ratio","The V_ov terms add, doubling the current","You are left with the ratio of the two thresholds"],a:0,
+  e:"That cancellation is the entire value of a mirror: what survives is something you drew, not something the process gave you."},
+ {at:7,q:"Why does the cascode device's own v_gs come out as −i_x·r_O1?",
+  o:["Its gate is held fixed, so v_gs = 0 − v_s, and v_s is i_x·r_O1","Because the gate follows the drain","Because v_gs equals the test voltage v_x"],a:0,
+  e:"A fixed gate with a moving source is what creates the opposing current, and that opposition is what multiplies the output resistance."}];
+CHK.ch6=[
+ {at:2,q:"We have i = (v_in − v_out)·sC. What single substitution produces the entire Miller result?",
+  o:["Replace v_out with A_v·v_in","Replace s with jω and take the magnitude","Set v_out to zero"],a:0,
+  e:"Once the output is written in terms of the input, the capacitor's current is proportional to v_in alone, which is what an input capacitance means."},
+ {at:7,q:"At the drain, which two currents must cancel to create a zero?",
+  o:["The transistor's g_m·v_in and the feedforward s·C_GD·v_in through the bridging capacitor","The currents in R_D and C_L","The gate current and the drain current"],a:0,
+  e:"A zero is a conspiracy between two paths. Here the capacitor races the transistor, and at g_m/C_GD they tie."}];
+CHK.ch7=[
+ {at:3,q:"Before doing the integral, look at where R appears. What should you suspect?",
+  o:["R is in the numerator and also inside the bandwidth, so it may cancel","The answer must grow with R, since a bigger resistor is noisier","The answer must be independent of temperature"],a:0,
+  e:"That suspicion is right, and it is the point of the result: a noisier resistor also narrows the band by the same factor."},
+ {at:4,q:"To refer the output noise back to the input, what do you divide by?",
+  o:["The gain SQUARED, because we are working in noise power","The gain, because noise is a voltage","The output resistance"],a:0,
+  e:"Noise adds as power, so every transfer is applied as a magnitude squared. Forgetting the square is the most common slip in this chapter."}];
+CHK.ch8=[
+ {at:3,q:"Both sides of x_out = A(x_in − β·x_out) contain x_out. What is the next algebraic move?",
+  o:["Expand, gather the x_out terms on one side, and factor out (1 + Aβ)","Set β·x_out to zero because it is small","Take logs of both sides"],a:0,
+  e:"That factor (1 + Aβ) you are about to create is the most important quantity in the chapter."},
+ {at:3,q:"We have dA_(CL)/dA = 1/(1 + βA)^2. Why is this not yet the answer we want?",
+  o:["We want the FRACTIONAL change, so we must still scale by A and by 1/A_(CL)","We differentiated the wrong variable","The square should be a cube"],a:0,
+  e:"Absolute sensitivity is not useful on its own. What a designer cares about is percent out per percent in."},
+ {at:3,q:"We have A_(CL)(s) = A_0/(1 + s/ω_0 + βA_0). How do you read the new pole off this?",
+  o:["Divide top and bottom by (1 + βA_0) so the constant term becomes 1","Set s = 0","Let βA_0 go to zero"],a:0,
+  e:"A transfer function only shows its pole when it is written with a bare 1 as the constant term in the denominator."}];
+CHK.ch9=[
+ {at:3,q:"You now have the resistance looking up and the resistance looking down. What do you do with them?",
+  o:["Put them in parallel: the output node sees both at the same time","Add them in series","Keep the larger and ignore the other"],a:0,
+  e:"And since they are in parallel, the SMALLER one dominates. One weak side ruins the gain, which is why both stacks are cascoded."},
+ {at:4,q:"Two inverting stages in series. What is the sign of the overall gain?",
+  o:["Positive: two inversions cancel","Negative: each stage inverts","Undefined until you know the loads"],a:0,
+  e:"Worth tracking, because feedback around an amplifier with the wrong net sign is a latch, not an amplifier."}];
+CHK.ch10=[
+ {at:3,q:"A dominant pole sitting far below the unity-gain frequency contributes how much phase lag by the time you reach it?",
+  o:["Almost exactly 90°","About 45°","A full 180°"],a:0,
+  e:"That is why a single-pole amplifier is unconditionally stable: 90° used, 90° still in hand."},
+ {at:4,q:"C_C has lowered the FIRST pole. Many compensation schemes stop there. What makes Miller compensation different?",
+  o:["The same capacitor also pushes the SECOND pole up, by making the stage diode-connected at high frequency","It also removes the right-half-plane zero","It adds gain as well"],a:0,
+  e:"Pole splitting is the point. One component moves both poles, in opposite directions, by the second stage's gain."},
+ {at:4,q:"Why does putting R_z in series with C_C move the zero at all?",
+  o:["It changes the impedance of the feedforward branch, so the cancellation now happens at a different frequency","It lowers the second stage's gain","It adds a pole that masks the zero"],a:0,
+  e:"The zero is set by when the two currents tie. Change one branch's impedance and you change when that happens."}];
+CHK.ch11=[
+ {at:4,q:"In the subtraction, which troublesome quantity vanishes?",
+  o:["I_S, the saturation current, which is the most process- and temperature-sensitive term in the equation","The thermal voltage V_T","The collector current I_C only"],a:0,
+  e:"I_S varies by orders of magnitude across process and temperature. A reference built on it would be useless, so the design is arranged to subtract it away."},
+ {at:4,q:"You have formed V_(REF) = V_BE + K·ΔV_BE. What condition pins down K?",
+  o:["Set the derivative of V_(REF) with respect to temperature to zero","Set V_(REF) equal to 1.2 V","Set K equal to the ratio of the two currents"],a:0,
+  e:"You are asking for flatness, not for a particular voltage. The 1.2 V is a consequence, not a target."},
+ {at:3,q:"Adding a PTAT term cancels the piece proportional to T. What is left behind?",
+  o:["The constant term, which is the extrapolated bandgap V_(G0)","Zero volts","The thermal voltage V_T"],a:0,
+  e:"Cancel the slope and what remains is the intercept, and the intercept is a property of silicon itself."}];
+CHK.ch12=[
+ {at:4,q:"Why is the charge on the op amp's inverting node conserved?",
+  o:["It is surrounded by capacitors and a gate that takes no DC current, so charge has nowhere to leak","Because the op amp holds it at 0 V","Because the switches are open"],a:0,
+  e:"Being held at 0 V is a separate fact. It is the lack of any DC path that traps the charge, and the trapping is what gives the exact gain."},
+ {at:1,q:"With a finite gain A, why can the inverting input NOT sit exactly at zero?",
+  o:["The output is A times the input error, so a finite output demands a non-zero error","Because the switches leak","Because the capacitors are mismatched"],a:0,
+  e:"A virtual ground is virtual precisely because it is an approximation. Its residual is V_out/A, and that residual is the gain error."},
+ {at:2,q:"Why half a least significant bit, rather than a whole one?",
+  o:["A converter rounds to the nearest level, so the budget is half a step in either direction","Because noise doubles the error","It is an arbitrary convention"],a:0,
+  e:"Rounding already costs you half a step. Settling must not eat into the other half."}];
+CHK.ch13=[
+ {at:3,q:"The square term produced a tone at 2ω. Where did that frequency come from, physically?",
+  o:["From the bend in the transfer curve: the circuit MADE a frequency that was never at its input","From the sampling clock","From the power supply"],a:0,
+  e:"A linear circuit can only scale and shift what you feed it. Creating new frequencies is the signature of nonlinearity."},
+ {at:4,q:"Why does the gain SAG as the amplitude grows, instead of rising?",
+  o:["α_3 usually has the opposite sign to α_1, so the cubic term subtracts from the fundamental","Because α_2 is negative","Because the input resistance falls"],a:0,
+  e:"If α_3 had the same sign you would see expansion instead, which does happen in a few circuits and is just as troublesome."},
+ {at:3,q:"We have a fractional spread of 1/√N. What links N to something a designer controls?",
+  o:["N, the number of dopant atoms under the gate, is proportional to the gate area W·L","N is proportional to the drain current","N is the number of fingers"],a:0,
+  e:"That is the whole law. Matching is bought with area, and nothing else in the layout changes it."}];
+CHK.ch14=[
+ {at:4,q:"After one lap the signal returns INVERTED. Why does that make the period 2·N·t_pd rather than N·t_pd?",
+  o:["An inverted copy is only half a cycle; it must travel round again to return to its original state","Because each stage is counted twice over","Because the delay doubles at high frequency"],a:0,
+  e:"This is also why an even number of stages cannot oscillate: it returns un-inverted, so it simply latches."},
+ {at:3,q:"Why must each stage supply exactly 60° of phase?",
+  o:["The three inversions give 180°, and the remaining 180° is shared equally between three identical stages","Because 60° gives the best phase margin","Because there are six devices in the ring"],a:0,
+  e:"Identical stages must share equally, which is the only reason the sum can be split so cleanly."},
+ {at:5,q:"We found i_x = −g_m·v_x/2. What is the significance of that minus sign?",
+  o:["The pair PUSHES current back rather than absorbing it: this is a negative resistance","It means the circuit is inverting","It means the current leaves through the tail"],a:0,
+  e:"Positive resistance burns the oscillation away; negative resistance feeds it. The design job is making them cancel."}];
+CHK.ch15=[
+ {at:2,q:"The VCO turns volts into FREQUENCY. Why does it enter the loop as K_(VCO)/s rather than just K_(VCO)?",
+  o:["The loop compares phase, and phase is the integral of frequency, which is 1/s","Because of the loop filter capacitor","Because the divider divides by s"],a:0,
+  e:"That free integrator is why a PLL has zero steady-state phase error, and also why it is at least a second-order system."},
+ {at:1,q:"In lock, what is true of the phase detector's two inputs?",
+  o:["They sit at the same frequency, with no steady phase error","They differ in frequency by exactly N","They are 180° out of phase"],a:0,
+  e:"Everything else about a synthesiser follows from that one sentence."}];
+CHK.ch16=[
+ {at:2,q:"The velocity law has changed. What has to be redone?",
+  o:["The whole channel integration from Chapter 2, because v sits inside it","Only the final answer, scaled by a correction factor measured in the lab","Nothing: the square law still holds"],a:0,
+  e:"This is why Chapter 2's derivation was worth following. Change one assumption inside it and you can turn the handle again."},
+ {at:3,q:"Where does the ln(10) come from?",
+  o:["We asked for one DECADE, a factor of ten, and the current is exponential in V_GS","From the 10 in the decibel definition","Because ζ is about 10"],a:0,
+  e:"Any time a decade meets an exponential, ln(10) = 2.303 appears. That single factor is why the floor is 60 mV and not 26 mV."}];
+CHK.ch17=[
+ {at:3,q:"Why group the terms as (ρ/t)·(L/W) rather than any other way?",
+  o:["One bracket holds what the process fixes, the other holds what the designer draws","To cancel the thickness","Because ρ and t are numerically equal"],a:0,
+  e:"Almost every useful engineering formula is grouped this way: things you cannot change, times things you can."}];
+CHK.ch18=[
+ {at:4,q:"The mismatch came out as g·(X_A − X_B). What exactly does that say it depends on?",
+  o:["Only on the difference between the two devices' mean positions","On the total number of unit cells","On the absolute position on the wafer"],a:0,
+  e:"Which is why the fix is purely geometric: make the two means coincide and the gradient cannot reach you."},
+ {at:3,q:"Given ΔV = L·di/dt, why does a decoupling capacitor near the pads help?",
+  o:["The fast current is supplied by the capacitor instead of through the wire, so di/dt in the wire falls","It lowers the inductance of the bond wire","It raises the supply voltage"],a:0,
+  e:"You cannot easily change L, and you often cannot change the total Δi. What you CAN change is which path the fast part of the current takes."}];
+
 /* ==== xd1.js ==== */
 /* Step-by-step derivations, chapters 1-5 */
 window.DERIV=window.DERIV||{};
@@ -4237,15 +4408,20 @@ window.SYNC=(function(){
 
   function merge(a,b){
     a=a||{};b=b||{};
-    const out={done:{},best:{},last:0,theme:a.theme||b.theme||'auto',seen:a.seen||b.seen||0};
+    const out={done:{},best:{},dv:{},dvdone:{},last:0,theme:a.theme||b.theme||'auto',seen:a.seen||b.seen||0};
     [a,b].forEach(x=>{
       Object.keys(x.done||{}).forEach(k=>{if(x.done[k])out.done[k]=true;});
+      Object.keys(x.dvdone||{}).forEach(k=>{if(x.dvdone[k])out.dvdone[k]=true;});
       Object.keys(x.best||{}).forEach(k=>{out.best[k]=Math.max(out.best[k]||0,Number(x.best[k])||0);});
+      Object.keys(x.dv||{}).forEach(k=>{out.dv[k]=Math.max(out.dv[k]||0,Number(x.dv[k])||0);});
     });
     out.last=Math.max(Number(a.last)||0,Number(b.last)||0);
+    const da=a.dvday||{d:'',n:0},db=b.dvday||{d:'',n:0};
+    out.dvday=(da.d>db.d)?da:(db.d>da.d)?db:{d:da.d||db.d||'',n:Math.max(da.n||0,db.n||0)};
     return out;
   }
-  function clean(p){return {done:p.done||{},best:p.best||{},last:p.last||0,theme:p.theme||'auto',seen:p.seen||0};}
+  function clean(p){return {done:p.done||{},best:p.best||{},dv:p.dv||{},dvdone:p.dvdone||{},
+    dvday:p.dvday||{d:'',n:0},last:p.last||0,theme:p.theme||'auto',seen:p.seen||0};}
 
   async function start(c){
     cfg=c;
@@ -4392,6 +4568,8 @@ window.SYNC=(function(){
     body.append(h('div',{class:'out'},
       kv('Chapters cleared',doneN+' / '+CH.length,doneN?'good':null),
       kv('Quizzes taken',String(scored.length)),
+      kv('Derivations walked',dvStats().done+' / '+dvStats().total,dvStats().done?'good':null),
+      kv('Walked today',String(dvStats().day)),
       kv('Where you are','Ch '+CH[Math.min(P.last||0,CH.length-1)].num),
       kv('Saving',st.state==='cloud'?'Account':'Browser',st.state==='cloud'?'good':null)));
     body.append(h('p',{class:'note'},st.note));
@@ -4420,9 +4598,20 @@ window.SYNC=(function(){
     const reset=h('button',{class:'btn sm',onclick:()=>{
       if(!armed){armed=true;reset.textContent='Tap again to erase';reset.className='btn sm danger';
         setTimeout(()=>{if(armed){armed=false;reset.textContent='Reset progress';reset.className='btn sm';}},5000);return;}
-      P.done={};P.best={};P.last=0;save();try{SYNC.wipe();}catch(e){}
+      P.done={};P.best={};P.dv={};P.dvdone={};P.dvday={d:'',n:0};P.last=0;save();try{SYNC.wipe();}catch(e){}
       armed=false;renderSide();renderMain();
     }},'Reset progress');
+    const st2=dvStats();
+    if(st2.done<st2.total){
+      let tgt=-1,ti=0;
+      CH.some((c,ci)=>{const D=(window.DERIV||{})[c.id]||[];
+        const j=D.findIndex((_,x)=>!(P.dvdone||{})[dkey(c,x)]);
+        if(j>=0){tgt=ci;ti=j;return true;}return false;});
+      if(tgt>=0)body.append(h('div',{class:'dnudge'},
+        h('b','Next derivation waiting'),
+        h('p','Ch '+CH[tgt].num+' · '+(window.DERIV[CH[tgt].id][ti].t)+'. One step takes about twenty seconds, and you are allowed to stop after it.'),
+        h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{S.pendingDeriv=ti;go(tgt,'learn');}},'Open it at step 1'))));
+    }
     body.append(h('div',{class:'row'},show,reset),
       h('div',{class:'row'},ta,load),codeOut);
     return h('div',{class:'card'},h('h3',h('span',{class:'step'},'★'),'Your progress'),
@@ -4487,31 +4676,143 @@ window.SYNC=(function(){
   }
 
   /* ---------- derivations ---------- */
+  const dkey=(c,i)=>c.id+':'+i;
+  const today=()=>new Date().toISOString().slice(0,10);
+  function bumpDay(){
+    P.dvday=P.dvday||{d:'',n:0};
+    if(P.dvday.d!==today())P.dvday={d:today(),n:0};
+    P.dvday.n++;
+  }
+  function dvStats(){
+    let total=0,done=0;
+    CH.forEach(c=>{const D=(window.DERIV||{})[c.id]||[];total+=D.length;
+      D.forEach((_,i)=>{if((P.dvdone||{})[dkey(c,i)])done++;});});
+    const day=(P.dvday&&P.dvday.d===today())?P.dvday.n:0;
+    return {total,done,day};
+  }
+
+  function derivOne(c,d,i,chk,onChange){
+    const key=dkey(c,i);
+    P.dv=P.dv||{};P.dvdone=P.dvdone||{};
+    const N=d.steps.length;
+    const done=()=>!!P.dvdone[key];
+    let k=Math.min(P.dv[key]||0,N);        // steps revealed
+    let open=false, guessing=false, chkState=null, showAll=false;
+    const body=h('div',{class:'dbody'});
+    const chip=h('span',{class:'dchip'});
+    const mark=h('span',{class:'dmark'},'+');
+
+    const setChip=()=>{
+      if(done()){chip.textContent='DONE';chip.className='dchip ok';}
+      else if(k>0){chip.textContent=k+'/'+N;chip.className='dchip mid';}
+      else {chip.textContent='NOT YET';chip.className='dchip';}
+    };
+    const persist=()=>{P.dv[key]=Math.max(P.dv[key]||0,k);save();setChip();onChange&&onChange();};
+
+    const render=()=>{
+      body.innerHTML='';
+      if(!open)return;
+      body.append(h('div',{class:'dgoal'},h('b','What this answers'),d.goal));
+      if(showAll||done()){
+        body.append(h('ol',{class:'dsteps'},d.steps.map(x=>h('li',x))));
+        if(d.fig)body.append(h('div',{class:'dfig'},figBox(d.fig,null)));
+        body.append(h('div',{class:'dres'},h('b','Result'),d.result));
+        if(d.note)body.append(h('div',{class:'dnote'},h('b','Worth knowing'),d.note));
+        if(!done())body.append(h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{
+          P.dvdone[key]=true;k=N;bumpDay();persist();render();}},'I followed that ✓')));
+        else body.append(h('div',{class:'row'},h('button',{class:'btn sm',onclick:()=>{
+          k=0;showAll=false;chkState=null;P.dv[key]=0;delete P.dvdone[key];save();setChip();onChange&&onChange();render();}},'Walk it again step by step')));
+        setTimeout(()=>{try{typeset(body);}catch(e){}},0);
+        return;
+      }
+      // progress
+      body.append(h('div',{class:'dprog'},
+        h('div',{class:'dbar'},h('i',{style:{width:(100*k/N)+'%'}})),
+        h('small',k===0?'Not started — '+N+' steps':'Step '+k+' of '+N)));
+      if(k>0)body.append(h('ol',{class:'dsteps'},d.steps.slice(0,k).map(x=>h('li',x))));
+      if(d.fig&&k>=Math.min(5,N))body.append(h('div',{class:'dfig'},figBox(d.fig,null)));
+
+      if(k>=N){
+        body.append(h('div',{class:'dres'},h('b','Result'),d.result));
+        if(d.note)body.append(h('div',{class:'dnote'},h('b','Worth knowing'),d.note));
+        body.append(h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{
+          P.dvdone[key]=true;bumpDay();persist();render();}},'I followed that ✓')));
+        setTimeout(()=>{try{typeset(body);}catch(e){}},0);
+        return;
+      }
+      // a checkpoint is due when the NEXT step would pass it
+      const due=chk&&k===chk.at+1&&chkState!=='passed';
+      if(due){
+        const order=chkState&&chkState.order?chkState.order:shuffle([0,1,2]);
+        const picked=chkState&&chkState.picked!==undefined?chkState.picked:null;
+        const box=h('div',{class:'dcheck'});
+        box.append(h('b','Checkpoint — before you read on'),h('p',{class:'cq'},chk.q));
+        order.forEach(j=>{
+          const cls='q-opt'+(picked!==null?(j===chk.a?' right':(j===picked?' wrong':'')):'');
+          box.append(h('button',{class:cls,disabled:picked!==null,onclick:()=>{
+            chkState={order:order,picked:j};render();}},chk.o[j]));
+        });
+        if(picked!==null){
+          box.append(h('div',{class:'expl'},h('b',picked===chk.a?'Right. ':'Not that one. '),chk.e));
+          box.append(h('div',{class:'row'},h('button',{class:'btn pri',onclick:()=>{chkState='passed';render();}},'Carry on →')));
+        }
+        body.append(box);
+        setTimeout(()=>{try{typeset(body);}catch(e){}},0);
+        return;
+      }
+      // normal advance row
+      if(guessing){
+        body.append(h('div',{class:'dguess'},
+          h('b','Say it before you see it'),
+          h('p','Finish this sentence out loud, or on paper: "the next step is to…". A wrong guess helps as much as a right one; what matters is that you committed to one.'),
+          h('div',{class:'row'},
+            h('button',{class:'btn pri',onclick:()=>{guessing=false;k++;persist();render();}},'Now show me step '+(k+1)),
+            h('button',{class:'btn sm',onclick:()=>{guessing=false;render();}},'Back'))));
+      }else{
+        body.append(h('div',{class:'dnext'},
+          h('button',{class:'btn pri',onclick:()=>{k++;persist();render();}},k===0?'Show step 1':'Next step  ('+(k+1)+' of '+N+')'),
+          h('button',{class:'btn sm',onclick:()=>{guessing=true;render();}},'Let me guess first'),
+          h('button',{class:'btn sm',onclick:()=>{showAll=true;render();}},'Show all at once')));
+      }
+      setTimeout(()=>{try{typeset(body);}catch(e){}},0);
+    };
+
+    const head=h('button',{class:'dhead',onclick:()=>{open=!open;head.setAttribute('aria-expanded',open?'true':'false');mark.textContent=open?'−':'+';render();}},
+      mark,h('span',{class:'dnum'},'D'+(i+1)),h('span',{class:'dt'},d.t),chip);
+    head.setAttribute('aria-expanded','false');
+    setChip();
+    const el=h('div',{class:'deriv'},head,body);
+    el.openAt=(n)=>{open=true;head.setAttribute('aria-expanded','true');mark.textContent='−';
+      if(k<n){k=n;persist();} render();
+      setTimeout(()=>{try{el.scrollIntoView({block:'start'});}catch(e){}},10);};
+    return el;
+  }
+
   function derivBlock(c){
     const D=(window.DERIV||{})[c.id];
     if(!D||!D.length)return null;
+    const CK=(window.CHK||{})[c.id]||[];
     const wrap=h('div');
-    D.forEach((d,i)=>{
-      const body=h('div',{class:'dbody'});
-      let open=false;
-      const build=()=>{
-        body.innerHTML='';
-        if(!open)return;
-        body.append(h('div',{class:'dgoal'},h('b','Goal '),d.goal));
-        body.append(h('ol',{class:'dsteps'},d.steps.map(x=>h('li',x))));
-        if(d.fig)body.append(h('div',{class:'dfig'},figBox(d.fig,null)));
-        body.append(h('div',{class:'dres'},h('b','Result '),d.result));
-        if(d.note)body.append(h('div',{class:'dnote'},h('b','Worth knowing '),d.note));
-        setTimeout(()=>{try{typeset(body);}catch(e){}},0);
-      };
-      const tog=h('button',{class:'dhead',onclick:()=>{open=!open;tog.setAttribute('aria-expanded',open?'true':'false');
-        tog.querySelector('.dmark').textContent=open?'−':'+';build();}},
-        h('span',{class:'dmark'},'+'),h('span',{class:'dnum'},'D'+(i+1)),h('span',{class:'dt'},d.t),
-        h('span',{class:'dcount'},d.steps.length+' steps'));
-      tog.setAttribute('aria-expanded','false');
-      wrap.append(h('div',{class:'deriv'},tog,body));
-    });
-    return wrap;
+    const tally=h('div',{class:'dtally'});
+    const els=[];
+    const refresh=()=>{
+      const n=D.filter((_,i)=>(P.dvdone||{})[dkey(c,i)]).length;
+      const st=dvStats();
+      tally.innerHTML='';
+      tally.append(h('div',{class:'dbar'},h('i',{style:{width:(100*n/D.length)+'%'}})),
+        h('small',n+' of '+D.length+' walked in this chapter · '+st.done+' of '+st.total+' in the course'+(st.day?' · '+st.day+' today':'')));
+    };
+    D.forEach((d,i)=>{const el=derivOne(c,d,i,CK[i],refresh);els.push(el);wrap.append(el);});
+    const firstUndone=()=>{const i=D.findIndex((_,j)=>!(P.dvdone||{})[dkey(c,j)]);return i<0?0:i;};
+    const start=h('button',{class:'btn pri',onclick:()=>{const i=firstUndone();els[i].openAt(1);}},'Just one step · 20 seconds');
+    refresh();
+    return h('div',
+      h('div',{class:'dintro'},
+        h('b','If you want to skip this card, read this first'),
+        h('p','Wanting to run from a derivation is normal, and it is not about ability: a wall of algebra gives you nothing to DO, so your attention has nowhere to land and leaves. The fix is not willpower, it is a smaller unit.'),
+        h('p','So these open one step at a time. One step is about twenty seconds and you can stop after it. Most people do not, because a half-finished thing is harder to walk away from than an unstarted one — that is the whole trick, and knowing it does not stop it working.'),
+        h('div',{class:'row'},start)),
+      tally,wrap);
   }
 
   /* ---------- learn ---------- */
@@ -4654,6 +4955,10 @@ window.SYNC=(function(){
     else{
       const c=CH[S.ch],x=BX[c.id]||{};
       const body=S.tab==='learn'?learn(c):S.tab==='lab'?lab(c):S.tab==='cards'?cards(c):S.tab==='quiz'?quiz(c):sketch(c);
+      if(S.pendingDeriv!==undefined&&S.tab==='learn'){
+        const want=S.pendingDeriv;S.pendingDeriv=undefined;
+        setTimeout(()=>{try{const els=mainEl.querySelectorAll('.deriv');if(els[want]&&els[want].openAt)els[want].openAt(1);}catch(e){}},60);
+      }
       mainEl.append(
         h('div',{class:'chead'},h('h2','CH '+c.num+' · '+c.title),
           h('div',{class:'src'},x.mins?h('span',{class:'mins'},x.mins+' MIN READ'):null,c.src)),
@@ -4681,7 +4986,7 @@ window.SYNC=(function(){
     applyTheme();renderSide();renderMain();watchMath(mainEl);
     try{
       SYNC.onChange(()=>{try{const n=sideEl.querySelector('.syncnote');if(n)n.textContent=syncLabel();if(S.view==='home')renderMain();}catch(e){}});
-      SYNC.start({read:()=>P,apply:m=>{P.done=m.done;P.best=m.best;P.last=Math.max(P.last||0,m.last||0);P.seen=P.seen||m.seen;store.set(P);renderSide();renderMain();}});
+      SYNC.start({read:()=>P,apply:m=>{P.done=m.done;P.best=m.best;P.dv=m.dv;P.dvdone=m.dvdone;P.dvday=m.dvday;P.last=Math.max(P.last||0,m.last||0);P.seen=P.seen||m.seen;store.set(P);renderSide();renderMain();}});
     }catch(e){}
     window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').addEventListener&&window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{try{redrawAll();}catch(e){}});
   }
