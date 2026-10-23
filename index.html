@@ -176,6 +176,10 @@ ul.ideas li::marker{content:"\25A0  ";color:var(--acc)}
 .dnudge{background:var(--warn-soft);border:var(--bw) solid var(--line);padding:12px;margin:12px 0}
 .dnudge b{font-family:var(--ui);font-size:9px;display:block;margin-bottom:7px;color:var(--brick)}
 .dnudge p{margin:0 0 10px;font-size:14.5px}
+.dmapcard{margin:0 0 14px}
+.dmapcard>b{font-family:var(--ui);font-size:8.5px;display:block;margin-bottom:8px;color:var(--brick)}
+.dmapwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dmapwrap>.sketch{min-width:560px}
 .dbody:empty{display:none}
 .dbody{padding:12px}
 .dgoal{background:var(--code);border:2px solid var(--line);padding:10px;margin-bottom:12px;font-size:14px}
@@ -4174,6 +4178,244 @@ DERIV.ch18=[
   result:"ΔV = L·di/dt = 30 mV, which is enormous next to a circuit resolving a millivolt.",
   note:"Three defences, all used together: shorten and parallel the bond wires to cut L, slow the edges to cut di/dt, and put decoupling capacitance right next to the pads so the fast current comes from the capacitor rather than through the wire."}];
 
+/* ==== xmap.js ==== */
+/* "Before you start" roadmap sketch for a derivation: what we have, what we will do, what we get, and why. */
+window.derivMap=function(m,active){
+  const W=900,pad=22,size=21,lh=27;
+  const inner=W-2*pad;
+  const maxc=Math.max(24,Math.floor((inner-30)/(0.52*size)));
+  const wrap=(str,mc)=>{const w=String(str).split(/\s+/);const out=[];let cur='';
+    w.forEach(t=>{if((cur+' '+t).trim().length>mc){if(cur)out.push(cur);cur=t;}else cur=(cur?cur+' ':'')+t;});
+    if(cur)out.push(cur);return out.length?out:[''];};
+  const whyL=wrap(m.why,maxc),haveL=wrap(m.from,maxc),getL=wrap(m.to,maxc);
+  const moveL=(m.moves||[]).map(x=>wrap(x,maxc-7));
+  const band=n=>14+20+n*lh+12;
+  const whyH=band(whyL.length),haveH=band(haveL.length),getH=band(getL.length);
+  const doH=14+20+moveL.reduce((a,l)=>a+l.length*lh+12,0)+6;
+  const gap=34;
+  const H=14+whyH+gap+haveH+gap+doH+gap+getH+14;
+  const s=Sk(W,H,m.seed||23),C=s.C;
+  const tag=(x,y,t,c)=>{s.rect(x,y,t.length*10.8+20,23,{fill:c});s.text(x+7,y+17,t,{size:16,bold:true});};
+  const chev=(y)=>{s.arrow(W/2,y+4,W/2,y+26,{c:C.ink});};
+  let y=14;
+  // why
+  s.rect(pad,y,inner,whyH,{fill:C.yellow,sw:2.6});
+  tag(pad+12,y+10,'WHY BOTHER',C.white);
+  whyL.forEach((l,i)=>s.text(pad+14,y+34+20+i*lh,l,{size:size}));
+  y+=whyH+gap-30;chev(y);y+=30;
+  // have
+  s.rect(pad,y,inner,haveH,{fill:C.sky,sw:2.6});
+  tag(pad+12,y+10,'WHAT WE HAVE',C.white);
+  haveL.forEach((l,i)=>s.text(pad+14,y+34+20+i*lh,l,{size:size}));
+  y+=haveH+gap-30;chev(y);y+=30;
+  // do
+  s.rect(pad,y,inner,doH,{fill:C.peach,sw:2.6});
+  tag(pad+12,y+10,'WHAT WE DO',C.white);
+  let my=y+34+8;
+  moveL.forEach((lines,i)=>{
+    const h=lines.length*lh+6;
+    const on=(active!==undefined&&active!==null&&i===active);
+    s.rect(pad+12,my-4,inner-24,h,{fill:on?C.mint:C.white,sw:on?2.8:1.9});
+    s.rect(pad+18,my+2,22,22,{fill:on?C.yellow:C.grey});
+    s.text(pad+29,my+19,String(i+1),{size:17,anchor:'middle',bold:true});
+    lines.forEach((l,j)=>s.text(pad+50,my+19+j*lh,l,{size:size}));
+    my+=h+12;
+  });
+  y+=doH+gap-30;chev(y);y+=30;
+  // get
+  s.rect(pad,y,inner,getH,{fill:C.mint,sw:2.6});
+  tag(pad+12,y+10,'WHAT WE GET',C.white);
+  getL.forEach((l,i)=>s.text(pad+14,y+34+20+i*lh,l,{size:size,bold:true}));
+  return s.svg();
+};
+window.DMAP={};
+DMAP.ch1=[
+ {why:"So you can read any gain in decibels without having to wonder whether it is 10 or 20 in front of the log.",
+  from:"A voltage ratio V_2/V_1, and the decibel defined only on a POWER ratio.",
+  moves:["Write power in terms of voltage: P = V^2/R","Form the power ratio, which is the voltage ratio squared","Use the identity log(x^2) = 2·log(x)"],
+  to:"dB = 20·log10(V_2/V_1) for voltages, 10·log10 for powers."},
+ {why:"It tells you how many ADC bits are worth paying for, given the noise your amplifier already has.",
+  from:"An N-bit converter with step size Δ, and the largest sine wave that fits in its range.",
+  moves:["Average the rounding error over one step to get its power, Δ^2/12","Write the power of the full-scale sine","Divide the two and convert to decibels"],
+  to:"SNR = 6.02N + 1.76 dB, so ENOB = (SNR − 1.76)/6.02."}];
+DMAP.ch2=[
+ {why:"Every gain, speed and noise estimate in the rest of this course is built on this one equation.",
+  from:"A gate capacitance C_(ox), a threshold V_TH, and carriers that drift at v = µE.",
+  moves:["Write the channel charge at a point x, where the channel itself sits at V(x)","Set current equal to charge per unit length times velocity","Separate the variables and integrate along the whole channel","Find where the current peaks, and stop there"],
+  to:"I_D = ½·µ_(n)C_(ox)(W/L)·V_ov^2 in saturation."},
+ {why:"Different design problems hold different quantities fixed, and you want the form whose variables you actually control.",
+  from:"The saturation current I_D = ½k·V_ov^2, and the definition g_m = ∂I_D/∂V_GS.",
+  moves:["Differentiate with respect to V_GS","Divide I_D by g_m to trade V_ov for I_D","Substitute V_ov = √(2I_D/k) to trade again"],
+  to:"g_m written three ways: in V_ov, in I_D, or in both at once."}];
+DMAP.ch3=[
+ {why:"This is the one-line estimate you use to size almost every amplifier before you ever open a simulator.",
+  from:"A transistor in saturation with a load resistance at its drain.",
+  moves:["Short the supply, because a fixed voltage carries no signal","Note v_gs = v_in, since the source is grounded","Push g_m·v_in through R_D in parallel with r_O"],
+  to:"A_v = −g_m(R_D ∥ r_O), inverting."},
+ {why:"It shows that a follower buffers but never amplifies, so you stop expecting gain from one.",
+  from:"A transistor with its output taken at the source instead of the drain.",
+  moves:["Write v_gs as the DIFFERENCE v_in − v_out","Balance the current flowing into R_S","Collect the v_out terms and divide","Add g_mb for the body effect"],
+  to:"A_v = g_m/(g_m + g_mb + 1/R_S), always below one."},
+ {why:"That low input resistance is the reason common-gate stages are the fast ones.",
+  from:"A transistor with a fixed gate, driven at its source.",
+  moves:["Apply a test voltage v_x at the source","Note that v_gs is then −v_x","Find the current the driver must supply"],
+  to:"R_in = 1/g_m, a few hundred ohms."}];
+DMAP.ch4=[
+ {why:"It tells you how large an input the pair can take before it stops amplifying and simply switches.",
+  from:"Two matched devices sharing one fixed tail current I_SS.",
+  moves:["Write each square law and take square roots","Subtract them: the thresholds cancel and the input difference appears","Bring in I_D1 + I_D2 = I_SS as the second equation","Solve for the difference, then check the small and large limits"],
+  to:"ΔI_D as a function of ΔV_in, fully switched at √2·V_ov."},
+ {why:"It turns every differential circuit into a single-transistor problem you already know how to solve.",
+  from:"A differential pair driven with equal and opposite inputs.",
+  moves:["Split the input into common-mode and differential parts","Argue from symmetry that the tail node cannot move","Treat that node as a ground and keep only one half"],
+  to:"A_v = −g_m(R_D ∥ r_O): the same as a single stage."}];
+DMAP.ch5=[
+ {why:"It is why a bias current can be trusted at all: the answer depends on what you drew, not on what the process gave you.",
+  from:"Two matched devices sharing one gate voltage, one of them diode-connected.",
+  moves:["Write the square law for the reference branch","Note the copy sees the same V_GS, so the same V_ov","Divide one equation by the other"],
+  to:"I_OUT/I_REF = (W/L)_2/(W/L)_1, and nothing else."},
+ {why:"It shows exactly what you are buying with the voltage headroom a cascode costs you.",
+  from:"The same mirror, now with channel-length modulation included.",
+  moves:["Redo the division keeping the (1 + λV_DS) terms","Stack a cascode device to hold the output drain still","Apply a test voltage and solve for the current drawn"],
+  to:"An error of about λ·ΔV_DS, cured by R_out ≈ g_m·r_O^2."}];
+DMAP.ch6=[
+ {why:"It explains why a tiny gate-drain capacitance, not the load, usually sets an amplifier's speed.",
+  from:"A capacitor C bridging the input and output of a stage of gain A_v.",
+  moves:["Write its current from the voltage ACROSS it","Substitute v_out = A_v·v_in","Compare with the current of a plain capacitor to ground"],
+  to:"C_(eq) = C(1 + |A_v|) at the input, about C at the output."},
+ {why:"You need to know where the zero sits before you can compensate anything in Chapter 10.",
+  from:"A common-source stage with C_GS, C_GD and a load capacitance.",
+  moves:["Use the Miller result to move C_GD onto the two nodes","Write 1/(RC) at each node to get its pole","Find where the transistor current and the feedforward current cancel"],
+  to:"Two poles, plus a right-half-plane zero at g_m/C_GD."}];
+DMAP.ch7=[
+ {why:"It says the only way to sample more quietly is a bigger capacitor, which sizes every sampling circuit you will build.",
+  from:"A resistor R charging a capacitor C, with noise density 4kTR.",
+  moves:["Apply the low-pass transfer SQUARED, because noise adds as power","Integrate over all frequencies","Watch the R cancel between density and bandwidth"],
+  to:"V_n = √(kT/C): 64 µV on 1 pF."},
+ {why:"It is the fair way to compare two amplifiers, and it shows that quiet is bought with current.",
+  from:"A CS stage whose transistor and load each inject a noise current at the drain.",
+  moves:["Add the two noise POWERS at the output node","Multiply by the output resistance squared","Divide by the gain squared to refer it to the input"],
+  to:"V_(n,in)^2 = 4kTγ/g_m + 4kT/(g_m^2 R_D) + flicker."}];
+DMAP.ch8=[
+ {why:"It is the reason feedback exists: it swaps a transistor's sloppy gain for a ratio of components you can build accurately.",
+  from:"An amplifier of gain A, with a fraction β of its output subtracted from the input.",
+  moves:["Write the error as input minus fed-back output","Write the output as A times that error","Substitute, then gather the output terms and factor"],
+  to:"A_(CL) = A/(1 + βA), which tends to 1/β."},
+ {why:"It puts a number on the precision you are buying with the gain you just gave away.",
+  from:"The closed-loop result A/(1 + βA), and a raw gain A that drifts.",
+  moves:["Differentiate the closed-loop gain with respect to A","Convert that into a FRACTIONAL change on both sides"],
+  to:"A 1% change in A shows up as only 1%/(1 + βA)."},
+ {why:"It is why an op amp's gain-bandwidth product is a fixed budget you spend, not a free gift.",
+  from:"The same loop, but with a one-pole amplifier A(s) = A_0/(1 + s/ω_0).",
+  moves:["Substitute A(s) into the closed-loop formula","Multiply out to clear the nested fraction","Normalise the constant term to 1 and read off the new pole"],
+  to:"Gain ÷ (1 + βA_0), bandwidth × (1 + βA_0)."}];
+DMAP.ch9=[
+ {why:"It shows where the gain comes from, and that one weak side of the stack ruins all of it.",
+  from:"An input pair loaded by cascodes above and below.",
+  moves:["Find the resistance looking up into the PMOS cascode","Find the resistance looking down into the NMOS cascode","Put them in parallel and multiply by g_m"],
+  to:"A_v = −g_m1(R_up ∥ R_down), typically some thousands."},
+ {why:"It explains why two modest stages beat one clever one once the supply voltage gets low.",
+  from:"A differential first stage followed by a common-source second stage.",
+  moves:["Write the gain of each stage from g_m and its output resistance","Multiply them, so the two inversions cancel"],
+  to:"A_v = g_m1·g_m5·(r_O1 ∥ r_O3)(r_O5 ∥ r_O6), with only two devices limiting the swing."}];
+DMAP.ch10=[
+ {why:"It turns an abstract question about stability into one number you can read straight off a Bode plot.",
+  from:"A feedback loop whose gain magnitude passes through 1 at some frequency ω_u.",
+  moves:["Find the total phase lag at that frequency","Subtract it from 180° to get the margin","Translate the margin into overshoot and settling"],
+  to:"PM ≈ 90° − arctan(ω_u/ω_2); aim for 60 to 65°."},
+ {why:"One capacitor buys you stability, and this tells you which capacitor and how big it must be.",
+  from:"A two-stage amplifier whose two poles sit too close together.",
+  moves:["Connect C_C from the second stage's input to its output","Use Miller to watch the first pole fall by the second stage's gain","Note that at high frequency C_C makes that stage diode-connected, so its pole rises"],
+  to:"The poles split apart, and ω_u = g_m1/C_C."},
+ {why:"Without this, the right-half-plane zero quietly eats the phase margin you just paid for.",
+  from:"The same C_C, which also feeds signal straight forward past the transistor.",
+  moves:["Set the feedforward current equal to the transistor current","Put R_z in series with C_C and redo that balance","Choose R_z to send the zero to infinity, or beyond"],
+  to:"s_z = 1/[C_C(1/g_m2 − R_z)]; R_z = 1/g_m2 removes it."}];
+DMAP.ch11=[
+ {why:"It produces a voltage that RISES with temperature and does not depend on I_S, which is the half you cannot get from a single diode.",
+  from:"Two bipolar devices running at current densities in the ratio n.",
+  moves:["Invert the diode equation to get V_BE from the current","Write it for each device","Subtract, so the two logs combine into one"],
+  to:"ΔV_BE = V_T·ln(n): 53.8 mV at 300 K for n = 8."},
+ {why:"This is the whole design: you are choosing a resistor ratio that makes temperature cancel out.",
+  from:"A V_BE that falls at 1.5 mV/K and a ΔV_BE that rises at 0.18 mV/K.",
+  moves:["Differentiate the PTAT term with respect to temperature","Add the two together with an unknown multiplier K","Set the total slope to zero and solve for K"],
+  to:"K ≈ 8.4, giving V_(REF) ≈ 1.20 V."},
+ {why:"It explains why the answer always lands near 1.2 V, and why it repeats so well from wafer to wafer.",
+  from:"The full temperature expansion of V_BE, which has a constant plus a term in T.",
+  moves:["Separate the constant term from the terms proportional to T","Cancel the T terms using the PTAT addition","See what is left standing"],
+  to:"V_(REF) ≈ V_(G0), the bandgap of silicon itself."}];
+DMAP.ch12=[
+ {why:"It makes the gain a ratio of two capacitors, which is the most accurate thing anyone can build on silicon.",
+  from:"A capacitor C_1 charged to V_in, and an op amp holding its input at a virtual ground.",
+  moves:["Note that node has no DC path, so its charge is trapped","Switch phases and move all that charge onto C_2","Read the resulting voltage at the output"],
+  to:"V_out = −(C_1/C_2)·V_in, with no transistor parameter in sight."},
+ {why:"It sets the op-amp gain you must specify to reach a given converter resolution.",
+  from:"The same circuit, but with a finite op-amp gain A.",
+  moves:["Let the input node sit at −V_out/A instead of exactly zero","Redo the charge balance carrying that offset","Collect the result into a single correction factor"],
+  to:"Gain error ≈ (C_1 + C_2 + C_(in))/(A·C_2)."},
+ {why:"It converts an accuracy specification straight into a minimum clock period.",
+  from:"A single-pole circuit settling exponentially after a step.",
+  moves:["Write the remaining error as an exponential in t/τ","Demand it fall below half a least significant bit","Take natural logs of both sides"],
+  to:"t > (N+1)·ln2·τ, about 7.6τ for 10 bits."}];
+DMAP.ch13=[
+ {why:"It shows where frequencies that were never at the input come from, and how fast they grow as you drive harder.",
+  from:"A transfer curve with a slight bend: y = α_1x + α_2x^2 + α_3x^3.",
+  moves:["Feed in a single cosine of amplitude A","Expand cos^2 and cos^3 into multiple angles","Collect the result by frequency"],
+  to:"HD2 growing as A, HD3 growing as A^2, and THD their RSS."},
+ {why:"These are the two numbers every datasheet quotes for how hard you are allowed to drive a circuit.",
+  from:"The same expansion, now looking at what happens to the fundamental itself.",
+  moves:["Notice the cubic term feeds BACK into the fundamental, usually with the opposite sign","Set the real gain 1 dB below the ideal line","Separately, equate the wanted term with the third-order product"],
+  to:"A_(1dB) and A_(IIP3), always a fixed 9.6 dB apart."},
+ {why:"It decides how large your input devices must be, which often decides the area of the whole chip.",
+  from:"Dopant atoms landing randomly under the gate during implantation.",
+  moves:["Treat the count as Poisson, whose spread is √N","Form the fractional variation, √N/N","Note that N is proportional to the gate area"],
+  to:"σ(ΔV_TH) = A_(VT)/√(WL): four times the area halves the mismatch."}];
+DMAP.ch14=[
+ {why:"It is how you size a ring oscillator, and it shows why the number of stages has to be odd.",
+  from:"N inverters in a ring, each with a propagation delay t_pd.",
+  moves:["Follow one edge all the way around the loop","Count the inversions after one lap","Realise it must travel twice to return to its original state"],
+  to:"f = 1/(2·N·t_pd), and even rings cannot oscillate."},
+ {why:"It tells you whether a ring will actually start, rather than sitting quietly in a stable state.",
+  from:"Three identical single-pole inverting stages in a loop.",
+  moves:["Share the required 180° equally between the three poles","Find the frequency where each one gives 60°","Check the gain magnitude at that frequency"],
+  to:"Oscillation at √3·ω_0, needing a DC gain of at least 2 per stage."},
+ {why:"It sets the bias current of every LC oscillator, and ties it directly to the quality of your inductor.",
+  from:"A lossy LC tank, modelled as L and C with a parallel resistance R_p.",
+  moves:["Find the resonance where the L and C currents cancel","Apply a test voltage across a cross-coupled pair","Demand its negative resistance cancel the tank's loss"],
+  to:"ω_0 = 1/√(LC) and g_m ≥ 2/R_p."}];
+DMAP.ch15=[
+ {why:"These two numbers decide how fast the loop locks and how much it overshoots, which is the entire design job.",
+  from:"A phase detector, a charge pump and filter, a VCO and a divider, in a loop.",
+  moves:["Write the gain of each block in turn","Note the VCO integrates, so it enters as K_(VCO)/s","Multiply them and set 1 + G(s) = 0","Compare with the standard second-order form"],
+  to:"ω_n and ζ in terms of I_p, K_(VCO), N, R_p and C_p."},
+ {why:"It is why a cheap 10 MHz crystal can set a 2.4 GHz radio channel to the hertz.",
+  from:"A loop in lock, with a divide-by-N counter in the feedback path.",
+  moves:["Note that lock means no steady phase error at the detector","So its two inputs must share a frequency","Multiply both sides by N"],
+  to:"f_out = N·f_ref, tunable in steps of f_ref."}];
+DMAP.ch16=[
+ {why:"It explains why the square law stops working in short devices, and why more overdrive stops buying you gain.",
+  from:"The same channel integration as Chapter 2, but carriers now have a speed limit.",
+  moves:["Replace v = µE with v = µE/(1 + E/E_c)","Redo the integration along the channel with that velocity","Take the limit of large overdrive and see what survives"],
+  to:"I_D = ½µC_(ox)(W/L)V_ov^2/(1 + V_ov/(E_(c)L)); g_m stops improving."},
+ {why:"That floor is set by thermodynamics, not by manufacturing, and it is why supply voltages stopped falling.",
+  from:"A device below threshold, where current is exponential in V_GS.",
+  moves:["Set the current ratio to ten, one decade","Take natural logs of both sides","Put room-temperature numbers in"],
+  to:"S = ζ·(kT/q)·ln10, never better than about 60 mV/decade."}];
+DMAP.ch17=[
+ {why:"It is how every on-chip resistor is specified, and it shows why only the shape ratio matters, never the size.",
+  from:"A block of material with resistivity ρ, length L, width W and thickness t.",
+  moves:["Write the ordinary resistance, ρL/A","Substitute the cross-section A = W·t","Group what the process fixes apart from what you draw"],
+  to:"R = R_s·(L/W): count the squares and multiply."}];
+DMAP.ch18=[
+ {why:"It proves why matched devices are interleaved, and tells you which patterns genuinely work and which only look as if they do.",
+  from:"A linear process gradient across the die, and devices built from identical unit cells.",
+  moves:["Write the parameter as a straight line in position","Average it over each device's own cells","Subtract the two averages"],
+  to:"Mismatch = g·(X_A − X_B): exactly zero for A B B A."},
+ {why:"It shows why decoupling capacitors sit right next to the pads, and why a perfect schematic can still fail inside a package.",
+  from:"A bond wire of about 1 nH per mm, carrying a switching supply current.",
+  moves:["Use the defining equation of an inductor, V = L·di/dt","Put in the current step and the rise time"],
+  to:"ΔV = 30 mV of supply bounce for an ordinary output driver."}];
+
 /* ==== xmm.js ==== */
 /* Hand-drawn chapter mind maps: generic renderer + per-chapter data */
 window.MM=window.MM||{};
@@ -4691,8 +4933,18 @@ window.SYNC=(function(){
     return {total,done,day};
   }
 
+  function mapBox(spec,frac){
+    if(!spec||!window.derivMap)return null;
+    const n=(spec.moves||[]).length;
+    const active=(frac===null||frac===undefined)?null:Math.min(n-1,Math.floor(frac*n));
+    const box=h('div',{class:'sketch'});
+    try{box.innerHTML=derivMap(spec,active);}catch(e){box.textContent='(map error)';}
+    return h('div',{class:'dmapwrap'},box);
+  }
+
   function derivOne(c,d,i,chk,onChange){
     const key=dkey(c,i);
+    const dmap=((window.DMAP||{})[c.id]||[])[i];
     P.dv=P.dv||{};P.dvdone=P.dvdone||{};
     const N=d.steps.length;
     const done=()=>!!P.dvdone[key];
@@ -4713,6 +4965,9 @@ window.SYNC=(function(){
       body.innerHTML='';
       if(!open)return;
       body.append(h('div',{class:'dgoal'},h('b','What this answers'),d.goal));
+      const mb=mapBox(dmap,(showAll||done())?null:(k>0?k/N:null));
+      if(mb)body.append(h('div',{class:'dmapcard'},
+        h('b',k>0&&!showAll&&!done()?'The plan — you are in step '+k+' of '+N:'The plan, before any algebra'),mb));
       if(showAll||done()){
         body.append(h('ol',{class:'dsteps'},d.steps.map(x=>h('li',x))));
         if(d.fig)body.append(h('div',{class:'dfig'},figBox(d.fig,null)));
