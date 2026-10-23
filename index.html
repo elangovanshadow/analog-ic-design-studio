@@ -72,6 +72,14 @@ aside.side{position:sticky;top:53px;max-height:calc(100vh - 53px);overflow:auto;
 .bar>i{display:block;background:var(--coin);height:100%;
   background-image:linear-gradient(90deg,var(--coin) 0 50%,#e0b100 50% 100%);background-size:12px 100%}
 .prog small{display:block;margin-top:7px;font-family:var(--ui);font-size:8px;line-height:1.6;color:var(--mute)}
+.syncnote{display:block;width:100%;margin-top:8px;font-family:var(--ui);font-size:7.5px;line-height:1.6;text-align:left;
+  background:var(--panel);border:2px solid var(--line);padding:6px 7px;cursor:pointer;color:var(--mute)}
+.syncnote:hover{background:var(--coin);color:#17171f}
+.scorelist{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.pill{font-family:var(--ui);font-size:8px;background:var(--panel);border:2px solid var(--line);padding:6px 7px;cursor:pointer;color:var(--ink)}
+.pill.ok{background:var(--ok-soft);border-color:var(--ok)}
+.pill:hover{background:var(--coin);color:#17171f}
+.btn.danger{background:var(--bad);color:#fff}
 .part{font-family:var(--ui);font-size:8px;letter-spacing:.06em;color:var(--brick);margin:16px 0 7px;text-transform:uppercase}
 .chbtn{width:100%;display:flex;gap:9px;align-items:flex-start;background:transparent;border:var(--bw) solid transparent;
   border-radius:0;padding:7px 8px;margin:0 0 3px;cursor:pointer;color:var(--ink);font:inherit;font-size:13.5px;line-height:1.45;text-align:left}
@@ -3467,6 +3475,77 @@ BEGX.ch18={
     hint:"ΔV = L·di/dt. Mismatch follows 1/√(WL).",
     a:"ΔV = 2 nH × (30 mA / 2 ns) = 2e-9 × 1.5e7 = 30 mV. For a circuit resolving millivolts, that is enormous. Quadrupling the area halves the mismatch, since √4 = 2."}};
 
+/* ==== xsync.js ==== */
+/* Progress persistence: local browser store + optional sync to the viewer's Claude account */
+window.SYNC=(function(){
+  const S={state:'local',note:'Saved in this browser only',cloud:false};
+  const subs=[];
+  let docRef=null,timer=null,cfg=null,lastSent='';
+  const fire=()=>subs.forEach(f=>{try{f(S);}catch(e){}});
+  function setS(state,note,cloud){S.state=state;S.note=note;S.cloud=!!cloud;fire();}
+
+  function merge(a,b){
+    a=a||{};b=b||{};
+    const out={done:{},best:{},last:0,theme:a.theme||b.theme||'auto',seen:a.seen||b.seen||0};
+    [a,b].forEach(x=>{
+      Object.keys(x.done||{}).forEach(k=>{if(x.done[k])out.done[k]=true;});
+      Object.keys(x.best||{}).forEach(k=>{out.best[k]=Math.max(out.best[k]||0,Number(x.best[k])||0);});
+    });
+    out.last=Math.max(Number(a.last)||0,Number(b.last)||0);
+    return out;
+  }
+  function clean(p){return {done:p.done||{},best:p.best||{},last:p.last||0,theme:p.theme||'auto',seen:p.seen||0};}
+
+  async function start(c){
+    cfg=c;
+    if(!window.claude||typeof claude.use!=='function'){
+      setS('local','Saved in this browser. This copy of the site cannot sync to your account.');return;}
+    setS('checking','Looking for your Claude account…');
+    let db=null,user=null;
+    try{db=await claude.use('db');}catch(e){}
+    try{user=await claude.use('user');}catch(e){}
+    if(!db||!user){setS('local','Saved in this browser. Sign in to Claude on this page to sync across devices.');return;}
+    let uid=null;try{uid=await user.id();}catch(e){}
+    if(!uid){setS('local','Saved in this browser. Your account did not answer, so nothing was synced.');return;}
+    try{docRef=db.doc('data/users/'+uid+'/progress');}catch(e){setS('local','Saved in this browser.');return;}
+    let remote=null;
+    try{const snap=await docRef.get();if(snap&&snap.exists){const d=snap.data()||{};remote=d.p||null;}}
+    catch(e){setS('local','Saved in this browser. Your account could not be read just now.');return;}
+    const merged=merge(clean(cfg.read()),remote);
+    cfg.apply(merged);
+    try{
+      lastSent=JSON.stringify(merged);
+      await docRef.set({p:merged,at:Date.now(),v:2});
+      setS('cloud','Synced to your Claude account. It follows you to any device where you open this page signed in.',true);
+    }catch(e){
+      docRef=null;
+      setS('local','Saved in this browser. This page is open with view-only access, so it cannot write to your account.');
+    }
+  }
+  function push(p){
+    if(!docRef)return;
+    const body=JSON.stringify(clean(p));
+    if(body===lastSent)return;
+    clearTimeout(timer);
+    timer=setTimeout(async()=>{
+      if(!docRef)return;
+      const b=JSON.stringify(clean(p));
+      if(b===lastSent)return;
+      try{await docRef.set({p:JSON.parse(b),at:Date.now(),v:2});lastSent=b;
+        if(S.state!=='cloud')setS('cloud','Synced to your Claude account.',true);}
+      catch(e){setS('local','Saved in this browser. The last sync to your account failed.');}
+    },700);
+  }
+  async function wipe(){
+    if(!docRef)return;
+    try{await docRef.delete();lastSent='';}catch(e){}
+  }
+  function encode(p){try{return btoa(unescape(encodeURIComponent(JSON.stringify(clean(p)))));}catch(e){return '';}}
+  function decode(s){try{const o=JSON.parse(decodeURIComponent(escape(atob(String(s).trim()))));
+    if(!o||typeof o!=='object'||(!o.done&&!o.best))return null;return clean(o);}catch(e){return null;}}
+  return {start,push,wipe,merge,clean,encode,decode,onChange:f=>{subs.push(f);f(S);},status:()=>S};
+})();
+
 /* ==== ui.js ==== */
 /* UI shell: home, glossary, chapter tabs (Learn, Lab, Flashcards, Quiz, Sketch) */
 (function(){
@@ -3476,7 +3555,7 @@ BEGX.ch18={
     set(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
   };
   let P=store.get();P.done=P.done||{};P.best=P.best||{};P.last=P.last||0;P.theme=P.theme||'auto';
-  const save=()=>store.set(P);
+  const save=()=>{store.set(P);try{window.SYNC&&SYNC.push(P);}catch(e){}};
   const BX=window.BEGX||{};
   const S={view:P.seen?'ch':'home',ch:Math.min(P.last||0,CH.length-1),tab:'learn',fc:{i:0,flip:false,order:null},quiz:null,gq:''};
   let rootEl,sideEl,mainEl,headEl;
@@ -3512,7 +3591,8 @@ BEGX.ch18={
     sideEl.innerHTML='';
     sideEl.append(h('div',{class:'prog'},
       h('div',{class:'bar'},h('i',{style:{width:(100*doneN/CH.length)+'%'}})),
-      h('small',doneN+' / '+CH.length+' CLEARED')));
+      h('small',doneN+' / '+CH.length+' CLEARED'),
+      h('button',{class:'syncnote',onclick:()=>goView('home')},syncLabel())));
     sideEl.append(h('button',{class:'chbtn home'+(S.view==='home'?' on':''),onclick:()=>{goView('home');}},
       h('span',{class:'n'},'★'),h('span','Start here')));
     sideEl.append(h('button',{class:'chbtn home'+(S.view==='gloss'?' on':''),onclick:()=>{goView('gloss');}},
@@ -3548,6 +3628,57 @@ BEGX.ch18={
     return h('div',box,cap?h('div',{class:'cap'},cap):null);
   }
 
+  /* ---------- progress ---------- */
+  function syncLabel(){
+    const st=window.SYNC?SYNC.status():{state:'local'};
+    return st.state==='cloud'?'● SYNCED TO ACCOUNT':st.state==='checking'?'● CHECKING…':'● THIS BROWSER';
+  }
+  function progressCard(){
+    const st=window.SYNC?SYNC.status():{state:'local',note:'Saved in this browser only'};
+    const doneN=CH.filter(c=>P.done[c.id]).length;
+    const scored=CH.filter(c=>P.best[c.id]!==undefined);
+    const body=h('div');
+    body.append(h('div',{class:'out'},
+      kv('Chapters cleared',doneN+' / '+CH.length,doneN?'good':null),
+      kv('Quizzes taken',String(scored.length)),
+      kv('Where you are','Ch '+CH[Math.min(P.last||0,CH.length-1)].num),
+      kv('Saving',st.state==='cloud'?'Account':'Browser',st.state==='cloud'?'good':null)));
+    body.append(h('p',{class:'note'},st.note));
+    if(scored.length)body.append(h('div',{class:'scorelist'},scored.map(c=>
+      h('button',{class:'pill'+(P.done[c.id]?' ok':''),onclick:()=>go(CH.indexOf(c),'quiz')},
+        'CH '+c.num+' — '+P.best[c.id]+'%'))));
+    // backup code
+    const codeOut=h('div');
+    const ta=h('input',{type:'text',placeholder:'Paste a backup code here',style:{flex:'1',minWidth:'180px'}});
+    const show=h('button',{class:'btn sm',onclick:()=>{
+      const code=SYNC.encode(P);
+      codeOut.innerHTML='';
+      const box=h('input',{type:'text',value:code,readonly:true,style:{width:'100%'}});
+      codeOut.append(h('p',{class:'note'},'Copy this code and keep it somewhere safe. Pasting it back restores exactly this progress.'),box);
+      box.focus();box.select();
+    }},'Show backup code');
+    const load=h('button',{class:'btn sm',onclick:()=>{
+      const got=SYNC.decode(ta.value);
+      codeOut.innerHTML='';
+      if(!got){codeOut.append(h('div',{class:'err'},'That code could not be read. Paste the whole code, with no spaces missing.'));return;}
+      const m=SYNC.merge(SYNC.clean(P),got);
+      P.done=m.done;P.best=m.best;P.last=m.last;save();renderSide();renderMain();
+    }},'Restore from code');
+    // two-step reset
+    let armed=false;
+    const reset=h('button',{class:'btn sm',onclick:()=>{
+      if(!armed){armed=true;reset.textContent='Tap again to erase';reset.className='btn sm danger';
+        setTimeout(()=>{if(armed){armed=false;reset.textContent='Reset progress';reset.className='btn sm';}},5000);return;}
+      P.done={};P.best={};P.last=0;save();try{SYNC.wipe();}catch(e){}
+      armed=false;renderSide();renderMain();
+    }},'Reset progress');
+    body.append(h('div',{class:'row'},show,reset),
+      h('div',{class:'row'},ta,load),codeOut);
+    return h('div',{class:'card'},h('h3',h('span',{class:'step'},'★'),'Your progress'),
+      h('p',{class:'note'},'Chapters are ticked off when you score 70% or more on the quiz. Progress saves by itself; you never have to press save.'),
+      body);
+  }
+
   /* ---------- home ---------- */
   function home(){
     const out=[];
@@ -3558,6 +3689,7 @@ BEGX.ch18={
     out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'1'),'Where to start'),
       h('div',{class:'paths'},HOME.paths.map(p=>h('button',{class:'path',onclick:()=>go(p.go,'learn')},
         h('b',p.t),h('span',p.d))))));
+    out.push(progressCard());
     out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'2'),HOME.need.title),
       h('ul',{class:'goals'},HOME.need.items.map(x=>h('li',x)))));
     out.push(h('div',{class:'card'},h('h3',h('span',{class:'step'},'3'),'How each chapter works'),
@@ -3755,6 +3887,10 @@ BEGX.ch18={
     rootEl.append(headEl,h('div',{class:'shell'},sideEl,mainEl),h('div',{class:'scrim',onclick:()=>document.body.classList.remove('drawer')}));
     document.body.append(rootEl);
     applyTheme();renderSide();renderMain();watchMath(mainEl);
+    try{
+      SYNC.onChange(()=>{try{const n=sideEl.querySelector('.syncnote');if(n)n.textContent=syncLabel();if(S.view==='home')renderMain();}catch(e){}});
+      SYNC.start({read:()=>P,apply:m=>{P.done=m.done;P.best=m.best;P.last=Math.max(P.last||0,m.last||0);P.seen=P.seen||m.seen;store.set(P);renderSide();renderMain();}});
+    }catch(e){}
     window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').addEventListener&&window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{try{redrawAll();}catch(e){}});
   }
   window.APP={go,S,boot};
