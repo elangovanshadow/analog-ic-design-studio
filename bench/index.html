@@ -870,6 +870,113 @@ V.millerOut=(rz)=>`<svg viewBox="0 0 560 230" role="img" aria-label="Miller-comp
 Object.assign(PV_FIGS,{fbloop:()=>V.fbBW(1000,0.1,1e6),opspec:()=>V.fbLoop(),slew:()=>V.slewPlot(1,50,10e-9).svg,pm:()=>V.bodeGen(V.loopH(1e4,[1e4,3e7]),3,10).svg,miller2:()=>V.millerOut(true)});
 V.gxpx=()=>{const two=V.bodeGen(V.loopH(1e4,[1e3,1e6,3e6]),2,9);return two.svg};
 
+/* ---- visuals6.js ---- */
+/* ===== Chapter 11–13 figures ===== */
+V.diode=(x,y1,y2,lab)=>{const m=(y1+y2)/2;return V.w([[x,y1],[x,m-8]])+`<polygon points="${x-9},${m-8} ${x+9},${m-8} ${x},${m+6}" class="sv-fill-ink"/>`+V.w([[x-9,m+6],[x+9,m+6]],'sv-ink',2.2)+V.w([[x,m+6],[x,y2]])+(lab?V.t(x+14,m+4,lab):'')};
+V.sw=(x1,y,x2,lab,closed)=>V.w([[x1,y],[x1+10,y]])+`<circle cx="${x1+10}" cy="${y}" r="2.6" class="sv-fill-ink"/><circle cx="${x2-10}" cy="${y}" r="2.6" class="sv-fill-ink"/>`+V.w(closed?[[x1+10,y],[x2-10,y]]:[[x1+10,y],[x2-12,y-12]])+V.w([[x2-10,y],[x2,y]])+(lab?V.t((x1+x2)/2,y-14,lab,'middle','sv-txt-m'):'');
+
+V.selfBias=()=>`<svg viewBox="0 0 560 250" role="img" aria-label="Supply-independent bias circuit">
+ ${V.w([[90,20],[330,20]])}${V.t(210,14,'V_DD','middle','sv-txt-m')}
+ ${V.pmos(110,56,'M₃')}${V.pmosR(270,56,'M₄')}${V.w([[130,20],[130,20]])}${V.w([[76,56],[76,40],[304,40],[304,56]])}${V.w([[250,92],[250,100],[304,100],[304,56]])}${V.dot(250,96)}
+ ${V.w([[130,92],[130,120]])}${V.w([[250,92],[250,120]])}
+ ${V.nmos(110,156,'M₁')}${V.nmosR(270,156,'M₂ (K×)')}${V.w([[76,156],[76,128],[130,128]])}${V.dot(130,128)}${V.w([[130,120],[130,128]])}${V.w([[304,156],[304,128],[76,128]],'sv-ink')}
+ ${V.w([[130,192],[130,226]])}${V.gnd(130,226)}${V.res(250,192,232,'R_S')}${V.gnd(250,232)}
+ ${V.t(350,60,'PMOS mirror forces I_out = I_REF','start','sv-txt-m')}${V.t(350,82,'M₂ is K times wider than M₁','start','sv-txt-m')}
+ ${V.t(350,110,'V_GS1 = V_GS2 + I_out R_S','start','sv-txt','font-weight="600"')}
+ ${V.t(350,140,'→ one current fits, set by R_S,','start','sv-txt-m')}${V.t(350,158,'not by V_DD','start','sv-txt-m')}
+ ${V.t(350,190,'but I = 0 also fits:','start','sv-txt-m')}${V.t(350,208,'needs a start-up circuit','start','sv-txt-m')}</svg>`;
+
+V.bgCore=()=>`<svg viewBox="0 0 560 270" role="img" aria-label="Bandgap reference core">
+ <polygon points="200,30 240,52 200,74" class="sv-sheet sv-ink" stroke-width="1.8"/>${V.t(206,46,'−','start','sv-txt-m')}${V.t(206,66,'+','start','sv-txt-m')}${V.t(212,57,'A₁','start','sv-txt-m')}
+ ${V.w([[240,52],[270,52],[270,20],[60,20]])}${V.w([[270,20],[380,20]])}${V.dot(270,20)}${V.t(388,24,'V_out = V_REF','start','sv-txt','font-weight="600"')}
+ ${V.w([[90,20],[90,40]])}${V.res(90,40,100,'R₁')}${V.dot(90,110)}${V.w([[90,100],[90,130]])}${V.diode(90,130,200,'Q₁ (×1)')}${V.gnd(90,200)}${V.t(80,114,'X','end','sv-txt-m')}
+ ${V.w([[330,20],[330,40]])}${V.res(330,40,100,'R₂')}${V.dot(330,110)}${V.w([[330,100],[330,120]])}${V.res(330,120,170,'R₃')}${V.w([[330,170],[330,180]])}${V.diode(330,180,236,'Q₂ (×n)')}${V.gnd(330,236)}${V.t(342,114,'Y','start','sv-txt-m')}
+ ${V.w([[90,110],[170,110],[170,40],[200,40]])}${V.w([[330,110],[186,110],[186,64],[200,64]])}
+ ${V.t(400,80,'A₁ forces V_X = V_Y','start','sv-txt-m')}${V.t(400,100,'→ V_R3 = V_T ln n','start','sv-txt-m')}${V.t(400,130,'V_out = V_BE2','start','sv-txt-m')}${V.t(400,148,'+ (1 + R₂/R₃) V_T ln n','start','sv-txt-m')}
+ ${V.t(400,180,'zero TC when','start','sv-txt-m')}${V.t(400,198,'(1+R₂/R₃) ln n ≈ 17.2','start','sv-txt','font-weight="600"')}${V.t(400,222,'e.g. n = 31, R₂/R₃ = 4','start','sv-txt-m')}</svg>`;
+
+/* V_BE(T) physics (11.9–11.13), V_REF = V_BE + (1+R2/R3) V_T ln n; PTAT bias → (3+m) */
+V.bgCurves=(n=31,r=4,vbe0=0.75)=>{const k=8.617e-5,Eg=1.12,m=-1.5,T0=300;const vbe=T=>Eg-(Eg-vbe0)*T/T0-(4+m)*k*T*Math.log(T/T0);
+  const ptat=T=>(1+r)*k*T*Math.log(n),ref=T=>vbe(T)+ptat(T);const Ts=[];for(let c=-40;c<=125;c+=1)Ts.push(c);
+  const rv=Ts.map(c=>ref(c+273.15)),mx=Math.max(...rv),mn=Math.min(...rv),tc=(mx-mn)/((mx+mn)/2)/165*1e6;
+  const top=V.plot({w:520,h:230,mb:30,x:[-40,125],y:[0,1.6],xl:'',yl:'volts',xt:[-40,0,27,85,125],yt:[0,0.4,0.8,1.2,1.6],
+   series:[{f:c=>vbe(c+273.15),cls:'sv-bridge',label:'V_BE (−TC)',lx:.05},{f:c=>ptat(c+273.15),cls:'sv-muted',dash:'5 4',label:'(1+R₂/R₃)V_T ln n (+TC)',lx:.04},{f:c=>ref(c+273.15),cls:'sv-book',label:'V_REF',lx:.85}],aria:'Bandgap components versus temperature'});
+  const zoom=V.plot({w:520,h:200,mt:8,ml:74,x:[-40,125],y:[mn-0.004,mx+0.004],xl:'temperature (°C)',yl:'V_REF (V)',xt:[-40,0,27,85,125],yt:[mn,(mn+mx)/2,mx].map(v=>+v.toFixed(4)),ytf:v=>v.toFixed(3),
+   series:[{f:c=>ref(c+273.15),cls:'sv-book'}],aria:'Bandgap output zoomed'});
+  return {svg:top+zoom,v27:ref(300.15),tc,dv:mx-mn,peak:Ts[rv.indexOf(mx)]}};
+
+V.sampler=()=>`<svg viewBox="0 0 560 210" role="img" aria-label="MOS sampling circuit">
+ ${V.t(16,64,'V_in','start','sv-txt-m')}${V.w([[50,60],[96,60]])}${V.w([[96,60],[96,60]])}
+ ${V.w([[96,60],[112,60]])}${V.w([[112,48],[152,48]],'sv-ink',2.6)}${V.w([[112,40],[152,40]],'sv-ink',2.2)}${V.w([[132,40],[132,24]])}${V.t(132,18,'CK','middle','sv-txt-m')}${V.w([[112,48],[112,60]])}${V.w([[152,48],[152,60],[200,60]])}
+ ${V.dot(200,60)}${V.cap(200,60,120,'C_H')}${V.gnd(200,120)}${V.w([[200,60],[240,60]])}${V.t(246,64,'V_out','start','sv-txt-m')}
+ ${(()=>{const X=300,W=240;let s=V.w([[X,180],[X+W,180]],'sv-muted',1);s+=`<path d="M${X} 150 ${Array.from({length:49},(_,i)=>`L${X+i*5} ${150-30*Math.sin(i/7)}`).join(' ')}" class="sv-muted" stroke-width="1.4" fill="none"/>`;
+  let d=`M${X} 150`;for(let i=0;i<49;i++){const x=X+i*5;const tr=(i%16)<8;const y=tr?150-30*Math.sin(i/7):150-30*Math.sin((Math.floor(i/16)*16+7)/7);d+=` L${x} ${y}`}s+=`<path d="${d}" class="sv-book" stroke-width="2" fill="none"/>`;
+  [0,1,2].forEach(k=>{s+=`<rect x="${X+k*80}" y="190" width="40" height="8" class="sv-fill-bridge" opacity=".6"/>`});s+=V.t(X,206,'CK high: track · low: hold','start','sv-txt-m');return s})()}
+ ${V.t(300,26,'tracks while CK is high,','start','sv-txt-m')}${V.t(300,44,'freezes V_in when CK falls','start','sv-txt-m')}</svg>`;
+
+V.ronPlot=(wl=10,vdd=3,vth=0.7,kn=50e-6,kp=25e-6,wlp=10)=>{const rn=v=>{const o=vdd-v-vth;return o>0.02?1/(kn*wl*o):NaN},rp=v=>{const o=v-vth;return o>0.02?1/(kp*wlp*o):NaN},rc=v=>{const a=rn(v),b=rp(v);return isNaN(a)?b:isNaN(b)?a:a*b/(a+b)};
+  return V.plot({w:520,h:260,x:[0,vdd],y:[0,10],xl:'V_in (V)',yl:'R_on (kΩ)',xt:[0,0.5,1,1.5,2,2.5,3].filter(v=>v<=vdd),yt:[0,2,4,6,8,10],
+   series:[{f:v=>rn(v)/1e3,cls:'sv-book',label:'NMOS',lx:.7},{f:v=>rp(v)/1e3,cls:'sv-bridge',label:'PMOS',lx:.25},{f:v=>rc(v)/1e3,cls:'sv-deep',w:2.6,label:'both (complementary)',lx:.12}],aria:'Switch on-resistance versus input'})};
+
+V.chargeInj=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="Charge injection pedestal">
+ ${V.t(16,22,'When the switch turns off, its channel charge','start','sv-txt-m')}${V.t(16,40,'Q_ch = WLC_ox(V_DD − V_in − V_TH) leaves through S and D','start','sv-txt-m')}
+ ${V.w([[30,150],[250,150]],'sv-muted',1)}${V.w([[30,100],[150,100]],'sv-book',2.2)}${V.w([[150,100],[150,122],[250,122]],'sv-book',2.2)}${V.t(156,114,'ΔV','start','sv-txt-m')}${V.w([[30,170],[150,170]],'sv-bridge',2)}${V.w([[150,170],[150,186],[250,186]],'sv-bridge',2)}${V.t(30,196,'CK','start','sv-txt-m')}
+ ${V.t(280,90,'ΔV = WLC_ox(V_DD − V_in − V_TH) / C_H','start','sv-txt','font-weight="600"')}${V.t(280,114,'(worst case: all charge onto C_H)','start','sv-txt-m')}
+ ${V.t(280,142,'depends on V_in → gain error,','start','sv-txt-m')}${V.t(280,160,'offset and (via body effect)','start','sv-txt-m')}${V.t(280,178,'nonlinearity','start','sv-txt-m')}</svg>`;
+
+V.ugSampler=()=>`<svg viewBox="0 0 560 226" role="img" aria-label="Unity-gain sampler">
+ ${V.t(16,16,'(a) sampling: S₁, S₂ on','start','sv-txt','font-weight="600"')}
+ ${V.t(10,84,'V_in','start','sv-txt-m')}${V.sw(40,80,90,'S₁',true)}${V.cap(80,90,140,'C_H',true)}${V.dot(140,80)}${V.t(140,98,'X','middle','sv-txt-m')}${V.w([[140,80],[170,80]])}
+ <polygon points="170,62 214,84 170,106" class="sv-sheet sv-ink" stroke-width="1.8"/>${V.t(176,78,'−','start','sv-txt-m')}${V.t(176,100,'+','start','sv-txt-m')}${V.w([[170,98],[160,98],[160,120]])}${V.gnd(160,120)}
+ ${V.w([[214,84],[244,84]])}${V.dot(234,84)}${V.w([[234,84],[234,50],[180,50]])}${V.sw(140,50,180,'',true)}${V.t(160,66,'S₂','middle','sv-txt-m')}${V.w([[140,50],[140,80]])}${V.t(248,88,'V_out ≈ 0','start','sv-txt-m')}
+ ${V.t(296,16,'(b) amplify: S₃ on, C_H in feedback','start','sv-txt','font-weight="600"')}
+ ${V.w([[340,80],[380,80]])}${V.cap(80,380,440,'C_H',true)}${V.dot(440,80)}${V.w([[440,80],[470,80]])}
+ <polygon points="470,62 514,84 470,106" class="sv-sheet sv-ink" stroke-width="1.8"/>${V.t(476,78,'−','start','sv-txt-m')}${V.t(476,100,'+','start','sv-txt-m')}${V.w([[470,98],[460,98],[460,120]])}${V.gnd(460,120)}
+ ${V.w([[514,84],[540,84]])}${V.dot(530,84)}${V.w([[530,84],[530,50],[340,50],[340,80]])}${V.t(436,44,'S₃ (closed)','middle','sv-txt-m')}${V.t(520,112,'V_out ≈ V₀','middle','sv-txt-m')}
+ ${V.t(16,160,'S₂ turns off FIRST: X floats, its charge is fixed,','start','sv-txt-m')}
+ ${V.t(16,178,'so S₁’s injection cannot change the result.','start','sv-txt-m')}
+ ${V.t(16,196,'S₂ injects a constant charge → only an offset.','start','sv-txt-m')}
+ ${V.t(16,214,'Bottom plate of C_H on the driven side.','start','sv-txt-m')}</svg>`;
+
+V.scAmp=()=>`<svg viewBox="0 0 560 246" role="img" aria-label="Switched-capacitor noninverting amplifier"><g transform="translate(0 16)">
+ ${V.t(16,-2,'(a) sample: V_in on C₁, C₂ shorted','start','sv-txt','font-weight="600"')}
+ ${V.t(10,84,'V_in','start','sv-txt-m')}${V.w([[40,80],[70,80]])}${V.cap(80,70,130,'C₁',true)}${V.dot(130,80)}${V.w([[130,80],[160,80]])}${V.t(130,98,'X','middle','sv-txt-m')}
+ <polygon points="160,62 204,84 160,106" class="sv-sheet sv-ink" stroke-width="1.8"/>${V.t(166,78,'−','start','sv-txt-m')}${V.t(166,100,'+','start','sv-txt-m')}${V.w([[160,98],[150,98],[150,120]])}${V.gnd(150,120)}
+ ${V.w([[204,84],[234,84]])}${V.dot(224,84)}${V.w([[224,84],[224,40],[130,40],[130,80]])}${V.t(236,36,'C₂ shorted','start','sv-txt-m')}
+ ${V.t(296,-2,'(b) amplify: C₁ input to ground','start','sv-txt','font-weight="600"')}
+ ${V.w([[320,80],[320,120]])}${V.gnd(320,120)}${V.w([[320,80],[340,80]])}${V.cap(80,340,400,'C₁',true)}${V.dot(400,80)}${V.w([[400,80],[430,80]])}
+ <polygon points="430,62 474,84 430,106" class="sv-sheet sv-ink" stroke-width="1.8"/>${V.t(436,78,'−','start','sv-txt-m')}${V.t(436,100,'+','start','sv-txt-m')}${V.w([[430,98],[420,98],[420,120]])}${V.gnd(420,120)}
+ ${V.w([[474,84],[510,84]])}${V.dot(496,84)}${V.w([[496,84],[496,40],[466,40]])}${V.cap(40,400,466,'C₂',true)}${V.w([[400,40],[400,80]])}${V.t(516,88,'V_out','start','sv-txt-m')}
+ ${V.t(16,162,'C₁’s charge V_in·C₁ must move onto C₂ (X: virtual ground, charge conserved)','start','sv-txt-m')}
+ ${V.t(16,188,'V_out = (C₁/C₂)·V_in','start','sv-txt','font-weight="600"')}${V.t(16,210,'gain error ≈ (C₁ + C₂ + C_in)/(C₂A_v)','start','sv-txt-m')}</g></svg>`;
+
+V.scRes=()=>`<svg viewBox="0 0 560 176" role="img" aria-label="Switched-capacitor resistor">
+ ${V.t(16,20,'(a) resistor','start','sv-txt','font-weight="600"')}${V.t(20,74,'A','start','sv-txt-m')}${V.w([[36,70],[60,70]])}<path d="M60 70 l5 -7 l10 14 l10 -14 l10 14 l10 -14 l5 7" class="sv-ink" stroke-width="1.8" fill="none"/>${V.w([[120,70],[150,70]])}${V.t(156,74,'B','start','sv-txt-m')}${V.t(90,100,'I = (V_A − V_B)/R','middle','sv-txt-m')}
+ ${V.t(250,20,'(b) switched capacitor','start','sv-txt','font-weight="600"')}${V.t(250,74,'A','start','sv-txt-m')}${V.sw(266,70,316,'φ₁',false)}${V.dot(330,70)}${V.w([[316,70],[344,70]])}${V.sw(344,70,394,'φ₂',false)}${V.t(400,74,'B','start','sv-txt-m')}${V.cap(330,70,120,'C_S')}${V.gnd(330,120)}
+ ${V.t(16,140,'each cycle moves C_S(V_A − V_B): I_avg = C_S f_CK(V_A − V_B)','start','sv-txt-m')}${V.t(16,162,'R_eq = 1/(C_S f_CK)','start','sv-txt','font-weight="600"')}</svg>`;
+
+V.scStair=(vin=0.2,ratio=0.5,n=12)=>{const pts=[[0,0]];let v=0;for(let k=1;k<=n;k++){pts.push([k-0.0001,v]);v-=vin*ratio;pts.push([k,v])}
+  const lo=Math.min(-0.05,v*1.1);return V.plot({w:520,h:240,x:[0,n],y:[lo,0.05],xl:'clock cycle k',yl:'V_out (V)',xt:[0,n/4,n/2,3*n/4,n],yt:[lo,lo/2,0].map(x=>+x.toPrecision(2)),
+   series:[{pts,cls:'sv-book'},{f:k=>-vin*ratio*k,cls:'sv-muted',dash:'5 4',label:'continuous-time ramp',lx:.5}],aria:'SC integrator output'})};
+
+V.harm=(a1=1,a2=0.1,a3=0.05,A=1)=>{const y=t=>a1*A*Math.cos(t)+a2*A*A*Math.cos(t)**2+a3*A**3*Math.cos(t)**3;
+  const h1=a1*A+0.75*a3*A**3,h2=a2*A*A/2,h3=a3*A**3/4,dc=a2*A*A/2;const thd=Math.sqrt(h2*h2+h3*h3)/Math.abs(h1);
+  const wave=V.plot({w:520,h:200,mb:30,x:[0,4*Math.PI],y:[-Math.max(1.5,Math.abs(a1*A)*1.6),Math.max(1.5,Math.abs(a1*A)*1.6)],xl:'',yl:'y(t)',xt:[],yt:[-1,0,1],series:[{f:t=>a1*A*Math.cos(t),cls:'sv-muted',dash:'5 4',label:'ideal',lx:.05},{f:y,cls:'sv-book',n:300,label:'actual',lx:.3}],aria:'Distorted waveform'});
+  const bars=[[0,dc,'DC'],[1,h1,'ω'],[2,h2,'2ω'],[3,h3,'3ω']];const mx=Math.max(...bars.map(b=>Math.abs(b[1])),1e-9);
+  const spec=`<svg viewBox="0 0 520 170" role="img" aria-label="Spectrum">${bars.map(([i,v,l])=>{const h=Math.max(1,140*Math.abs(v)/mx);return `<rect x="${80+i*110}" y="${150-h}" width="40" height="${h}" class="${i===1?'sv-fill-book':'sv-fill-bridge'}"/>`+V.t(100+i*110,166,l,'middle','sv-txt-m')+V.t(100+i*110,146-h,Math.abs(v).toPrecision(2),'middle','sv-txt-m')}).join('')}${V.w([[60,150],[500,150]],'sv-ink',1.4)}</svg>`;
+  return {svg:wave+spec,thd,h1,h2,h3}};
+
+V.offsetStore=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="Offset storage">
+ ${V.t(16,20,'Output offset storage (Fig. 13.28)','start','sv-txt','font-weight="600"')}
+ ${V.box(40,46,90,56,'A_v','+ V_OS')}${V.w([[130,60],[170,60]])}${V.w([[130,88],[170,88]])}${V.cap(60,170,210,'',true)}${V.cap(88,170,210,'',true)}${V.t(190,44,'C₁, C₂','middle','sv-txt-m')}${V.w([[210,60],[260,60]])}${V.w([[210,88],[260,88]])}
+ ${V.w([[18,60],[40,60]])}${V.w([[18,88],[40,88]])}${V.t(16,112,'inputs shorted during CK','start','sv-txt-m')}${V.t(150,124,'store A_vV_OS, then release','start','sv-txt-m')}
+ ${V.t(300,20,'Input offset storage (Fig. 13.29)','start','sv-txt','font-weight="600"')}
+ ${V.cap(60,300,340,'',true)}${V.cap(88,300,340,'',true)}${V.w([[340,60],[370,60]])}${V.w([[340,88],[370,88]])}${V.box(370,46,90,56,'A_v','+ V_OS')}${V.w([[460,60],[500,60],[500,30],[355,30],[355,60]])}${V.w([[460,88],[510,88],[510,140],[355,140],[355,88]])}
+ ${V.t(300,170,'unity feedback stores ≈ V_OS;','start','sv-txt-m')}${V.t(300,188,'residual ≈ V_OS/A_v','start','sv-txt-m')}
+ ${V.t(16,170,'residual ≈ 0 (if switches match);','start','sv-txt-m')}${V.t(16,188,'A_v must be small so A_vV_OS fits','start','sv-txt-m')}</svg>`;
+
+Object.assign(PV_FIGS,{bandgap:()=>V.bgCurves(31,4).svg,ron:()=>V.ronPlot(),scint:()=>V.scStair(),thd:()=>V.harm().svg,offset:()=>V.offsetStore()});
+
 /* ---- content1.js ---- */
 /* ===== COURSE CONTENT =====
    label: 'book' = From the book (Razavi, 1st ed., 2001) · 'bridge' = Foundation bridge (not in the book) · 'deep' = Optional deeper dive
@@ -2323,13 +2430,13 @@ LESSONS.push(
  obj:'Explain why a second stage is added and why we stop at two.',
  blocks:[
   {t:'visual', fig:'twoStage', cap:'Fig. 9.20: stage 1 for gain, stage 2 for swing.'},
-  {t:'formal', eq:[{tex:R`A_v=g_{m1,2}(r_{o1,2}\|r_{o3,4})\cdot g_{m5,6}(r_{o5,6}\|r_{o7,8})`, note:'Fig. 9.21: simple stages; output swing V_DD − |V_OD5,6| − V_OD7,8'},{tex:R`A_v\approx\{g_{m1}[(g_{m3}r_{o3}r_{o1})\|(g_{m5}r_{o5}r_{o7})]\}\cdot g_{m9}(r_{o9}\|r_{o11})`, note:'(9.13) cascode first stage: its tiny swing (output ÷ stage-2 gain) lets you optimise M₁–M₈ for gain'}]},
+  {t:'formal', eq:[{tex:R`A_v=g_{m1,2}(r_{o1,2}\|r_{o3,4})\cdot g_{m5,6}(r_{o5,6}\|r_{o7,8})`, note:'Fig. 9.21: simple stages; output swing V_DD − |V_{OD5,6}| − V_{OD7,8}'},{tex:R`A_v\approx\{g_{m1}[(g_{m3}r_{o3}r_{o1})\|(g_{m5}r_{o5}r_{o7})]\}\cdot g_{m9}(r_{o9}\|r_{o11})`, note:'(9.13) cascode first stage: its tiny swing (output ÷ stage-2 gain) lets you optimise M₁–M₈ for gain'}]},
   {t:'idea', p:R`A hearing-aid op amp may run from 0.9 V and still need 0.5 V output swing (p.307): no cascode can do that. A two-stage design isolates the requirements. <b>Why not three stages?</b> Each stage adds at least one pole, making the feedback loop hard to stabilise (Ch 10). A single-ended version (Fig. 9.23) converts with a mirror; as a buffer its minimum output is V_GS1 + V_ISS.`},
   {t:'check', q:{type:'mcq', q:'The second stage of a two-stage op amp is usually a…', opts:['common-source stage, for maximum swing','source follower','cascode','common-gate stage'], a:0, explain:'p.308.'}},
   {t:'check', q:{type:'mcq', q:'Op amps rarely use more than two stages because…', opts:['each stage adds a pole, making stability hard','they would have too little gain','they would have too much swing','the supply is too high'], a:0, explain:'p.309.'}},
   {t:'recall', prompt:'Why does a two-stage op amp beat a cascode on swing?', model:'Only the CS output stage must swing (two overdrives from the rails); the high-gain first stage sees a small signal.'}
  ],
- cards:[['Two-stage op amp idea','stage 1 = gain, stage 2 (CS) = swing'],['Two-stage output swing','V_DD − |V_OD,P| − V_OD,N']]},
+ cards:[['Two-stage op amp idea','stage 1 = gain, stage 2 (CS) = swing'],['Two-stage output swing','V_DD − |V_{OD,P}| − V_{OD,N}']]},
 
 {id:'9f', unit:'Ch 9 · Op amps', sec:'9.4–9.5', label:'book', title:'Gain boosting, and choosing a topology', mins:5, pages:[309,314], prereq:['9e','8e'],
  obj:'Show how an auxiliary amplifier multiplies a cascode’s output resistance, and compare the four op-amp families.',
@@ -2499,6 +2606,297 @@ LESSONS.push(
  mv('b-loop','b-rms');mv('b-2port','b-loop');
 })();
 
+/* ---- content8.js ---- */
+/* ---------------- CHAPTERS 11–13 ---------------- */
+LESSONS.push(
+{id:'b-bjt', unit:'Foundations', label:'bridge', title:'Bipolar basics for references: I_C = I_S·exp(V_BE/V_T)', mins:4, prereq:['b-semi','b-log'], unlocks:['11b','11c'],
+ obj:'Use the BJT exponential law, the thermal voltage, and temperature coefficients in ppm/°C.',
+ why:'Every bandgap reference in Chapter 11 is built from two facts about a pn junction: V_BE falls with temperature, and the difference of two V_BE values rises with it.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`I_C=I_S\exp\frac{V_{BE}}{V_T},\qquad V_T=\frac{kT}{q}\approx26\text{ mV at 300 K}`, note:'exponential — a MOSFET in saturation is square-law instead'},{tex:R`V_{BE}=V_T\ln\frac{I_C}{I_S}`, note:'×10 in current adds only V_T ln10 ≈ 60 mV'},{tex:R`TC=\frac{1}{V}\frac{\partial V}{\partial T}\ \ (\text{ppm}/^\circ\text{C}=10^{-6}/^\circ\text{C})`, note:'how references are graded'}]},
+  {t:'example', src:'ours', h:'Two currents, one ratio', given:'Same transistor, I_C1 = 8·I_C2, T = 300 K.', steps:[{tex:R`V_{BE1}-V_{BE2}=V_T\ln8=26\text{ mV}\times2.08=54\text{ mV}`, say:'I_S cancels. The difference is proportional to T — that is the PTAT voltage of §11.3.2.'}]},
+  {t:'idea', p:R`In an n-well CMOS process you get a “free” vertical pnp: p⁺ diffusion (emitter) in the n-well (base) over the p-substrate (collector, tied to ground). That is the device Ch 11 uses (Fig. 11.10).`},
+  {t:'check', q:{type:'num', q:'V_T·ln(10) at 300 K, in mV?', a:59.8, tol:0.02, unit:'mV', explain:'25.85 mV × 2.303 ≈ 60 mV per decade of current.'}},
+  {t:'check', q:{type:'mcq', q:'A 1.2 V reference drifts 1.2 mV over 100 °C. Its TC is about…', opts:['10 ppm/°C','1 ppm/°C','100 ppm/°C','1000 ppm/°C'], a:0, explain:'(1.2 m/1.2)/100 = 10⁻⁵/°C = 10 ppm/°C.'}},
+  {t:'recall', prompt:'Write the BJT law and the thermal voltage.', model:'I_C = I_S exp(V_BE/V_T); V_T = kT/q ≈ 26 mV.'}
+ ],
+ cards:[['BJT law','I_C = I_S exp(V_BE/V_T)'],['Thermal voltage at 300 K','kT/q ≈ 26 mV'],['ppm/°C','10⁻⁶ relative change per °C']]},
+
+{id:'b-charge', unit:'Foundations', label:'bridge', title:'Charge conservation on a floating node', mins:4, prereq:['b-cap'], unlocks:['12a','12d'],
+ obj:'Use Q = CV with “total charge on an isolated node stays constant” to solve switched-capacitor steps.',
+ why:'Chapter 12 analyses every circuit by asking where the charge goes when switches open and close.',
+ blocks:[
+  {t:'idea', p:R`A node connected only to capacitor plates and to a MOSFET gate (or an op amp input) has <b>no DC path</b>: electrons cannot leave. So the <b>sum of the charges on all plates touching that node</b> cannot change, no matter what the other plates do.`},
+  {t:'example', src:'ours', h:'Charge sharing', given:'C₁ = 1 pF charged to 1 V; C₂ = 1 pF at 0 V. Connect their top plates (bottoms grounded).', steps:[{tex:R`Q=1\text{ pC}=(C_1+C_2)V\ \Rightarrow\ V=0.5\text{ V}`, say:'Charge is conserved; voltage is not.'}]},
+  {t:'example', src:'ours', h:'Transfer through a virtual ground', given:'C₁ holds V_in with its right plate on node X; an op amp keeps X ≈ 0 and C₂ sits from X to the output. Now switch C₁’s left plate from V_in to 0.', steps:[{tex:R`\Delta Q=C_1V_{in}\ \text{must move onto }C_2\ \Rightarrow\ V_{out}=\frac{C_1}{C_2}V_{in}`, say:'This is the switched-capacitor amplifier of Fig. 12.4 in one line.'}]},
+  {t:'idea', h:'Clock phases', p:R`SC circuits run on two <b>non-overlapping</b> clocks φ₁ and φ₂: never both high, so no switch pair shorts a capacitor by accident. Usually φ₁ = sample, φ₂ = amplify/transfer.`},
+  {t:'check', q:{type:'num', q:'C₁ = 2 pF at 1.5 V is connected to C₂ = 1 pF at 0 V. Final voltage (V)?', a:1, tol:0.01, unit:'V', explain:'3 pC/(3 pF) = 1 V.'}},
+  {t:'recall', prompt:'State the charge-conservation rule for SC circuits.', model:'The total charge on plates connected to a floating (no DC path) node stays constant.'}
+ ],
+ cards:[['Floating node rule','total plate charge on a node with no DC path is constant'],['Virtual-ground transfer','V_out = (C₁/C₂)V_in'],['Non-overlapping clocks','φ₁ and φ₂ are never high together']]},
+
+{id:'b-taylor', unit:'Foundations', label:'bridge', title:'Taylor series, harmonics and standard deviation', mins:5, prereq:['b-slope','b-rms'], unlocks:['13a','13d'],
+ obj:'Expand a curve as α₁x + α₂x² + α₃x³, see which harmonics each term makes, and add random errors by variance.',
+ why:'Chapter 13 measures nonlinearity by Taylor coefficients and harmonics, and mismatch by standard deviations.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`y=\alpha_1x+\alpha_2x^2+\alpha_3x^3+\cdots`, note:'α₁ = small-signal gain; α₂, α₃ = curvature'},{tex:R`\cos^2\omega t=\tfrac12(1+\cos2\omega t),\qquad\cos^3\omega t=\tfrac14(3\cos\omega t+\cos3\omega t)`, note:'x² makes DC + 2nd harmonic; x³ makes 3rd harmonic and changes the fundamental'}]},
+  {t:'idea', p:R`<b>Odd function</b> (f(−x) = −f(x)): only odd powers survive → only odd harmonics. A perfectly symmetric differential circuit is odd.`},
+  {t:'formal', h:'Random errors', eq:[{tex:R`\sigma^2_{total}=\sigma_1^2+\sigma_2^2+\cdots\ \ (\text{independent})`, note:'same rule as adding noise powers (lesson b-rms)'},{tex:R`\sigma_{\bar x}=\frac{\sigma}{\sqrt N}`, note:'averaging N independent pieces shrinks the spread by √N — why bigger transistors match better'}]},
+  {t:'check', q:{type:'mcq', q:'Which term of the Taylor series creates a 2nd harmonic?', opts:['α₂x²','α₁x','α₃x³ only','none'], a:0, explain:'cos² gives cos 2ωt.'}},
+  {t:'check', q:{type:'num', q:'Errors of σ = 3 mV and 4 mV, independent. Total σ (mV)?', a:5, tol:0.01, unit:'mV', explain:'√(9 + 16) = 5 mV.'}},
+  {t:'recall', prompt:'Which harmonics come from x² and x³, and how do independent σ’s add?', model:'x²: DC + 2ω; x³: ω + 3ω. Variances add.'}
+ ],
+ cards:[['x² term makes','DC + 2nd harmonic'],['x³ term makes','3rd harmonic (and changes the fundamental)'],['Averaging N pieces','σ shrinks by √N']]},
+
+/* ---- Chapter 11 ---- */
+{id:'11a', unit:'Ch 11 · References', sec:'11.1–11.2', label:'book', title:'Supply-independent biasing, and the start-up problem', mins:5, pages:[377,381], prereq:['5b','2h'],
+ obj:'Explain how a self-biased loop makes a current independent of V_DD, and why it needs a start-up circuit.',
+ blocks:[
+  {t:'why', p:R`Every mirror so far copied a “golden” I_REF. A resistor from V_DD makes \(I_{out}\approx(V_{DD}-V_{GS1})/R_1\): it follows the supply (11.1). References should depend on neither supply nor process, and on temperature only in a chosen way: PTAT, constant-g_m, or temperature-independent.`},
+  {t:'visual', fig:'selfBias', cap:'Fig. 11.3(a): the circuit biases itself — I_REF is a copy of I_out.'},
+  {t:'derive', h:'Finding the current (11.2–11.4)', steps:[
+    {tex:R`I_{out}=KI_{REF}\ \text{(Fig. 11.2): any current works!}`, say:'Without R_S, one equation, infinitely many solutions. Add a second constraint.', why:''},
+    {tex:R`\sqrt{\frac{2I_{out}}{\mu_nC_{ox}(W/L)_N}}+V_{TH1}=\sqrt{\frac{2I_{out}}{\mu_nC_{ox}K(W/L)_N}}+V_{TH2}+I_{out}R_S`, say:'With identical PMOS (I_out = I_REF): V_GS1 = V_GS2 + I_out R_S, M₂ being K times wider.', why:''},
+    {tex:R`I_{out}=\frac{2}{\mu_nC_{ox}(W/L)_N}\frac{1}{R_S^2}\Big(1-\frac1{\sqrt K}\Big)^2`, say:'(11.4) No V_DD in sight — but µn, C_ox and R_S remain.', why:'', ask:{q:'What sets I_out here?', opts:['R_S, K and µnC_ox(W/L)','V_DD','V_TH only'], a:0}}]},
+  {t:'idea', h:'Two catches', p:R`<ul><li><b>Channel-length modulation</b> leaks V_DD back in (Example 11.1: the sensitivity vanishes only if r_o4 = ∞). Use long channels, cascodes, or a regulated local supply (§11.7).</li><li><b>Degenerate point</b>: zero current in every branch also satisfies the loop. A <b>start-up</b> device (M₅ in Fig. 11.5) forces current at power-up and must then turn off. Simulate by ramping V_DD from zero, both DC and transient.</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'Why does the self-biased circuit need a start-up circuit?', opts:['Zero current in all branches is also a valid solution','It oscillates','V_DD is too low','R_S is too large'], a:0, explain:'p.380.'}},
+  {t:'check', q:{type:'mcq', q:'To reduce supply sensitivity further you would…', opts:['use long channels or cascodes (raise r_o)','shorten L','lower R_S to zero','remove the PMOS mirror'], a:0, explain:'Sensitivity comes from finite r_o.'}},
+  {t:'recall', prompt:'Write I_out of Fig. 11.3(a) and name its two practical issues.', model:'(2/µnC_ox(W/L)_N)(1/R_S²)(1 − 1/√K)²; finite r_o (supply leak) and the zero-current start-up state.'}
+ ],
+ cards:[['Self-biased current (11.4)','I = 2/[µnC_ox(W/L)_N R_S²]·(1 − 1/√K)²'],['Start-up problem','zero current is also a stable solution'],['Reference TC types','PTAT, constant-g_m, temperature-independent']]},
+
+{id:'11b', unit:'Ch 11 · References', sec:'11.3.1–11.3.2', label:'book', title:'A voltage that falls with T, and one that rises', mins:5, pages:[381,384], prereq:['11a','b-bjt'],
+ obj:'Derive the −1.5 mV/K TC of V_BE and the +V_T ln n/T TC of ΔV_BE.',
+ blocks:[
+  {t:'idea', p:R`Idea: add two voltages with opposite TCs, weighted so the slopes cancel: \(V_{REF}=\alpha_1V_1+\alpha_2V_2\) with \(\alpha_1\partial V_1/\partial T+\alpha_2\partial V_2/\partial T=0\). Bipolar characteristics are the most reproducible source of both.`},
+  {t:'derive', h:'Negative TC: V_BE (11.9–11.13)', steps:[
+    {tex:R`I_S=bT^{4+m}\exp\frac{-E_g}{kT},\qquad m\approx-\tfrac32,\ E_g\approx1.12\text{ eV}`, say:'I_S ∝ µkTn_i², with mobility ∝ T^m and n_i² ∝ T³exp(−E_g/kT).', why:''},
+    {tex:R`\frac{\partial V_{BE}}{\partial T}=\frac{V_{BE}-(4+m)V_T-E_g/q}{T}`, say:'(11.13) at constant I_C.', why:''},
+    {tex:R`V_{BE}=0.75\text{ V},\ T=300\text{ K}\ \Rightarrow\ \approx-1.5\text{ mV/K}`, say:'And the TC itself depends on T — the source of curvature later.', why:'', ask:{q:'Does V_BE rise or fall with temperature at fixed current?', opts:['falls','rises','constant'], a:0}}]},
+  {t:'formal', h:'Positive TC: ΔV_BE (11.14–11.17)', eq:[{tex:R`\Delta V_{BE}=V_T\ln\frac{nI_0}{I_S}-V_T\ln\frac{I_0}{I_S}=V_T\ln n`, note:'two identical transistors at current ratio n (or one unit vs n units at equal current)'},{tex:R`\frac{\partial\Delta V_{BE}}{\partial T}=\frac kq\ln n\approx0.087\text{ mV/K}\times\ln n`, note:'PTAT and independent of the collector currents’ own TC (recognised in 1964)'}]},
+  {t:'example', src:'book', h:'Example 11.2 (pp.383–384)', given:'Q₁: current mI₀ in one unit; Q₂: current I₀ in n units.', steps:[{tex:R`\Delta V_{BE}=V_T\ln(nm),\qquad TC=\frac kq\ln(nm)`, say:'Area ratio and current ratio multiply.'}]},
+  {t:'check', q:{type:'num', q:'TC of ΔV_BE for n = 8, in mV/K?', a:0.179, tol:0.03, unit:'mV/K', explain:'0.0862 mV/K × ln 8 (2.08) ≈ 0.18 mV/K.'}},
+  {t:'check', q:{type:'mcq', q:'Why is the TC of V_BE not a fixed number?', opts:['It depends on V_BE and T themselves (11.13)','Because I_C is zero','Because n changes','It is fixed'], a:0, explain:'p.382.'}},
+  {t:'recall', prompt:'Give the TCs of V_BE and ΔV_BE.', model:'≈ −1.5 mV/K at 300 K; (k/q) ln n ≈ +0.087 mV/K · ln n.'}
+ ],
+ cards:[['TC of V_BE (300 K)','≈ −1.5 mV/K (11.13)'],['ΔV_BE at current-density ratio n','V_T ln n, PTAT'],['TC of V_T','k/q ≈ +0.087 mV/K']]},
+
+{id:'11c', unit:'Ch 11 · References', sec:'11.3.3', label:'book', title:'The bandgap reference: V_BE + 17.2 V_T ≈ 1.25 V', mins:6, pages:[384,390], prereq:['11b','9a'],
+ obj:'Analyse the op-amp bandgap core and list its error sources.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`V_{REF}\approx V_{BE}+17.2\,V_T\approx1.25\text{ V}`, note:'(11.20) 17.2 × 0.087 mV/K ≈ 1.5 mV/K cancels V_BE’s slope'}]},
+  {t:'visual', fig:'bgCore', cap:'Fig. 11.9: the op amp forces V_X = V_Y; R₃ then carries a PTAT current, amplified by R₂.'},
+  {t:'derive', h:'Output (11.21–11.23)', steps:[
+    {tex:R`V_{BE1}=V_{BE2}+V_{R3}\ \Rightarrow\ V_{R3}=V_T\ln n`, say:'Equal currents (R₁ = R₂), Q₂ is n times bigger: lower current density.', why:''},
+    {tex:R`V_{out}=V_{BE2}+\frac{V_T\ln n}{R_3}(R_2+R_3)=V_{BE2}+V_T\ln n\Big(1+\frac{R_2}{R_3}\Big)`, say:'(11.23) Only a resistor RATIO — their TC cancels.', why:'', ask:{q:'n = 31, R₂/R₃ = 4. (1 + R₂/R₃)ln n ≈', opts:['17.2','5','31'], a:0}}]},
+  {t:'interactive', kind:'bandgap', cap:'Tune n and R₂/R₃ until V_REF is flat; notice the leftover curvature.'},
+  {t:'idea', h:'Design issues (pp.385–390)', p:R`<ul><li><b>PTAT collector currents</b>: V_BE’s TC becomes \((V_{BE}-(3+m)V_T-E_g/q)/T\) — slightly less negative (11.26). Simulate.</li><li><b>CMOS</b>: use substrate pnp’s (Fig. 11.11).</li><li><b>Op-amp offset</b> is amplified: \(V_{out}=V_{BE2}+(1+R_2/R_3)(V_T\ln n-V_{OS})\) (11.28), and V_OS drifts with T. Remedies: big devices, current ratio m (V_T ln mn), two junctions in series (2V_BE + …, but 2.5 V output).</li><li><b>Feedback polarity</b>: the op amp sees negative feedback via R₂–R₃–Q₂ and positive via R₁–Q₁; keep β₋ ≈ 2β₊.</li><li><b>Why “bandgap”</b>: as T → 0, V_REF → E_g/q (11.36).</li><li><b>Start-up</b>: V_X = V_Y = 0 can turn the op amp off. <b>Curvature</b>: zero TC at one temperature only; offsets scatter that temperature, so CMOS designs rarely correct it (Figs. 11.16–11.17).</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'By how much is the op amp’s offset amplified at the output of Fig. 11.9?', opts:['1 + R₂/R₃','1','n','ln n'], a:0, explain:'(11.28).'}},
+  {t:'check', q:{type:'mcq', q:'Why do the resistor TCs not matter in (11.23)?', opts:['Only the ratio R₂/R₃ appears','Resistors have zero TC','The op amp cancels them','They do matter'], a:0, explain:'p.385.'}},
+  {t:'recall', prompt:'Write the bandgap output and its offset-sensitive form.', model:'V_BE2 + (1 + R₂/R₃)V_T ln n; with offset: V_BE2 + (1 + R₂/R₃)(V_T ln n − V_OS).'}
+ ],
+ cards:[['Bandgap voltage','≈ V_BE + 17.2 V_T ≈ 1.25 V'],['Fig. 11.9 output','V_BE2 + (1 + R₂/R₃)V_T ln n'],['Offset in a bandgap','multiplied by (1 + R₂/R₃)'],['Why “bandgap”','V_REF → E_g/q as T → 0']]},
+
+{id:'11d', unit:'Ch 11 · References', sec:'11.4–11.5', label:'book', title:'PTAT currents and constant-g_m biasing', mins:4, pages:[390,393], prereq:['11c'],
+ obj:'Generate a PTAT current, and bias a transistor so its g_m depends only on a resistor.',
+ blocks:[
+  {t:'formal', h:'PTAT current (Fig. 11.19)', eq:[{tex:R`I_{D1}=I_{D2}=\frac{V_T\ln n}{R_1}`, note:'the self-biased loop of Fig. 11.2 with a bipolar core: the mirror forces V_X = V_Y'},{tex:R`V_{REF}=V_{BE3}+\frac{R_2}{R_1}V_T\ln n`, note:'(11.37) copy the PTAT current into R₂ on top of a third junction (Fig. 11.20)'}]},
+  {t:'formal', h:'Constant g_m (11.38–11.40)', eq:[{tex:R`g_{m1}=\sqrt{2\mu_nC_{ox}(W/L)_NI_D}=\frac{2}{R_S}\Big(1-\frac1{\sqrt K}\Big)`, note:'plug (11.4) into g_m: µ, C_ox and V_DD vanish — only R_S and K remain'}]},
+  {t:'idea', p:R`Gain (g_mR) and speed (g_m/C) then track resistors and capacitors. If R_S’s own TC is known, PTAT/bandgap tricks can cancel it; process spread of R_S remains. With a precise clock, replace R_S by a <b>switched capacitor</b> \(1/(C_Sf_{CK})\) (Fig. 11.21): capacitors are better controlled and have a smaller TC. The same trick builds an accurate V/I converter (Fig. 11.22).`},
+  {t:'check', q:{type:'mcq', q:'In constant-g_m biasing, g_m depends on…', opts:['R_S and K only','µnC_ox','V_DD','temperature through V_TH'], a:0, explain:'(11.40).'}},
+  {t:'check', q:{type:'num', q:'R_S = 2 kΩ, K = 4. g_m of M₁ (mS)?', a:0.5, tol:0.01, unit:'mS', explain:'(2/2k)(1 − 1/2) = 0.5 mS.'}},
+  {t:'recall', prompt:'Write the constant-g_m result and the switched-capacitor version of R_S.', model:'g_m = (2/R_S)(1 − 1/√K); R_S → 1/(C_S f_CK).'}
+ ],
+ cards:[['PTAT current','V_T ln n / R'],['Constant-g_m bias','g_m = (2/R_S)(1 − 1/√K)'],['SC resistor','R_eq = 1/(C_S f_CK)']]},
+
+{id:'11e', unit:'Ch 11 · References', sec:'11.6–11.7', label:'book', title:'References at speed: output impedance, noise and a real design', mins:4, pages:[393,400], prereq:['11d','7e'],
+ obj:'Explain why reference outputs need care at high frequency, and where their noise comes from.',
+ blocks:[
+  {t:'idea', p:R`References are DC circuits but drive fast blocks. A disturbance at node P (Fig. 11.23) is fought only as fast as the op amp can respond. Options: a fast op amp (power), or a big bypass capacitor C_B — but then the op amp must be one-stage (stability) and C_B must dwarf the coupling capacitance, or P recovers slowly (Fig. 11.24). Test by kicking the output and watching the recovery (Fig. 11.25).`},
+  {t:'example', src:'book', h:'Example 11.3 (pp.394–395): output impedance', given:'One-pole op amp A₀/(1 + s/ω₀) with output R_out.', steps:[{tex:R`Z_{out}\ \text{has a zero at }\omega_0\text{ and a pole at }(1+g_{mp}R_1A_0)\omega_0`, say:'Low below ω₀, then rising: near the pole |Z_out| is only ~30 % below the open-loop value.'}]},
+  {t:'formal', h:'Noise (11.49–11.51)', eq:[{tex:R`\overline{V_{n,out}^2}\approx\overline{V_{n,op}^2}`, note:'the op amp’s input noise appears directly at the output; a capacitor cannot stop its 1/f part'}]},
+  {t:'idea', h:'Case study (§11.7)', p:R`A precision bandgap [7]: two stacked V_BE per branch (less sensitive to MOS mismatch), self-biased low-voltage cascodes for supply rejection, a floating output built from resistor ratios (11.52), and a <b>regulated local supply</b> generated from a bandgap-like voltage inside the core. Result: 2.00 V from 5 V at 2.2 mW, PSRR 94 dB at low frequency, 58 dB at 100 kHz.`},
+  {t:'check', q:{type:'mcq', q:'Adding a large bypass capacitor at a reference node requires…', opts:['a one-stage (dominant-pole) op amp for stability','a two-stage op amp','no op amp','a smaller resistor'], a:0, explain:'p.393.'}},
+  {t:'recall', prompt:'Why can a reference’s output impedance be high at some frequencies?', model:'Loop gain falls above the op amp’s pole, so Z_out rises toward its open-loop value.'}
+ ],
+ cards:[['Reference output noise','≈ op amp input noise (11.51)'],['Bypass cap at a reference','needs a one-stage op amp; must be ≫ the coupling C']]},
+
+/* ---- Chapter 12 ---- */
+{id:'12a', unit:'Ch 12 · Switched capacitors', sec:'12.1', label:'book', title:'Why switched capacitors? Sampling and charge transfer', mins:5, pages:[405,409], prereq:['b-charge','9a'],
+ obj:'Explain why CMOS feedback amplifiers use switched capacitors instead of resistors.',
+ blocks:[
+  {t:'why', p:R`CMOS op amps have output resistances of hundreds of kΩ. A resistive feedback network (Fig. 12.1) loads that output and spoils the gain (12.2). Capacitors don’t load at DC — but then nothing sets the DC level at the op amp input, and a big bias resistor turns the amplifier into a high-pass filter with a drooping step response (Fig. 12.3, 12.6).`},
+  {t:'idea', h:'The SC amplifier (Fig. 12.4)', p:R`<ol><li><b>Sample</b>: S₁, S₂ on. The op amp is in unity feedback, X ≈ 0, so C₁ charges to V_in.</li><li><b>Amplify</b>: S₁, S₂ off, S₃ grounds C₁’s left plate. The charge C₁V_in₀ is pushed onto C₂: \(V_{out}=V_{in0}C_1/C_2\).</li></ol>After settling, no current flows in C₂, so it does <b>not</b> load the op amp. CMOS suits this perfectly: good switches and an input that draws no current (a bipolar base current would corrupt the stored charge).`},
+  {t:'example', src:'book', h:'Example 12.1 (p.406)', given:'Analyse Fig. 12.1 with Chapter 8 feedback methods.', steps:[{tex:R`\text{agrees with (12.2) when }R_{out}/R_2\ll A_v`, say:'Reverse transmission through R₂ must be negligible.'}]},
+  {t:'check', q:{type:'mcq', q:'Why does C₂ not reduce the op amp’s gain in the SC amplifier?', opts:['Once the output settles, no current flows through C₂','C₂ is huge','The op amp is ideal','C₂ is shorted'], a:0, explain:'p.408.'}},
+  {t:'check', q:{type:'mcq', q:'Fig. 12.2(b) (bias resistor R_F) is a poor amplifier for steps because…', opts:['C₂ discharges through R_F, so the output droops (high-pass)','R_F is too small to matter','It has no feedback','It has too much gain'], a:0, explain:'p.407.'}},
+  {t:'recall', prompt:'Describe the two phases of the SC amplifier and its gain.', model:'Sample V_in on C₁ with X a virtual ground; then ground C₁’s input plate and its charge moves to C₂: gain C₁/C₂.'}
+ ],
+ cards:[['SC amplifier gain','C₁/C₂'],['Why not resistors in CMOS','they load the high-R_out op amp'],['Two phases','sample, then amplify']]},
+
+{id:'12b', unit:'Ch 12 · Switched capacitors', sec:'12.2.1–12.2.2', label:'book', title:'MOS switches: tracking, holding and on-resistance', mins:5, pages:[410,417], prereq:['12a','2g'],
+ obj:'Compute a switch’s on-resistance vs input level and explain complementary switches.',
+ blocks:[
+  {t:'visual', fig:'sampler', cap:'Figs. 12.8, 12.10: a MOSFET and a capacitor track and hold.'},
+  {t:'idea', p:R`A MOSFET makes a good switch: it can be on while carrying zero current, and it conducts both ways (source and drain swap roles). Deep in triode it is a “zero-offset” switch: the output eventually equals the input exactly — something a bipolar switch cannot do.`},
+  {t:'formal', eq:[{tex:R`R_{on}=\frac{1}{\mu_nC_{ox}\frac WL(V_{DD}-V_{in}-V_{TH})}`, note:'(12.22) rises sharply as V_in → V_DD − V_TH; an NMOS switch can never pass more than V_DD − V_TH (12.21)'},{tex:R`V_{in,max}=\tfrac34(V_{DD}-V_{TH})`, note:'(12.24) if R_on may vary only 4:1 — around V_DD/2'}]},
+  {t:'example', src:'book', h:'Example 12.3 (pp.413–414)', given:'µnC_ox = 50 µA/V², W/L = 10/1, V_TH = 0.7 V, V_DD = 3 V, input from 0 to 0.5 V.', steps:[{tex:R`R_{on}=870\ \Omega\ \ldots\ 1.11\text{ k}\Omega`, say:'Raise the maximum input to 1.5 V and R_on reaches 2.5 kΩ.'}]},
+  {t:'interactive', kind:'ron', cap:'Find the PMOS width that makes the complementary switch flat.'},
+  {t:'formal', h:'Complementary switch (12.27)', eq:[{tex:R`R_{on,eq}\ \text{is independent of }V_{in}\text{ if }\ \mu_nC_{ox}(W/L)_N=\mu_pC_{ox}(W/L)_P`, note:'needs complementary clocks; if they don’t switch off together, the late device keeps tracking with a slow, input-dependent time constant → distortion (Fig. 12.17)'}]},
+  {t:'check', q:{type:'mcq', q:'Speed in a sampler is defined as…', opts:['time to settle within an error band after the switch turns on','the clock frequency only','R_on alone','the input frequency'], a:0, explain:'Fig. 12.14 — speed always comes with an accuracy.'}},
+  {t:'check', q:{type:'num', q:'k = 500 µA/V², V_DD = 3 V, V_TH = 0.7 V. R_on at V_in = 1.5 V (kΩ)?', a:2.5, tol:0.01, unit:'kΩ', explain:'1/(500µ·0.8) = 2.5 kΩ.'}},
+  {t:'recall', prompt:'Write the NMOS switch on-resistance and the condition for a flat complementary switch.', model:'1/[µnC_ox(W/L)(V_DD − V_in − V_TH)]; µnC_ox(W/L)_N = µpC_ox(W/L)_P.'}
+ ],
+ cards:[['NMOS switch R_on (12.22)','1/[µnC_ox(W/L)(V_DD − V_in − V_TH)]'],['Max NMOS sampled level','V_DD − V_TH'],['Flat complementary switch','µnC_ox(W/L)_N = µpC_ox(W/L)_P']]},
+
+{id:'12c', unit:'Ch 12 · Switched capacitors', sec:'12.2.3–12.2.4', label:'book', title:'Charge injection, clock feedthrough and kT/C', mins:6, pages:[417,423], prereq:['12b','7c'],
+ obj:'Estimate the three errors at switch turn-off and the classic ways to cancel them.',
+ blocks:[
+  {t:'visual', fig:'chargeInj', cap:'Figs. 12.19–12.20: the channel charge leaves through source and drain.'},
+  {t:'formal', eq:[{tex:R`V_{out}\approx V_{in}\Big(1+\frac{WLC_{ox}}{C_H}\Big)-\frac{WLC_{ox}}{C_H}(V_{DD}-V_{TH})`, note:'(12.31) worst case (all charge to C_H): gain error + offset; body effect in V_TH adds nonlinearity (12.33)'},{tex:R`\tau\cdot\Delta V\approx\frac{L^2}{\mu_n}`, note:'(12.37) the speed–precision product is independent of W and C_H to first order'},{tex:R`\Delta V=V_{CK}\frac{WC_{ov}}{WC_{ov}+C_H}`, note:'(12.38) clock feedthrough through the overlap capacitance: a constant offset'},{tex:R`v_{n,rms}=\sqrt{kT/C_H}`, note:'sampled thermal noise: low noise needs a big C_H (slow)'}]},
+  {t:'idea', p:R`Charge splitting between source and drain depends on impedances and clock edge speed; there is <b>no rule of thumb</b>, and simulators model it poorly. Assume all of it goes to C_H.`},
+  {t:'idea', h:'Cancellation (pp.421–423)', p:R`<ul><li><b>Dummy switch</b> (W/2, driven by CK̄) absorbs the charge — only if the split is exactly half; it does cancel clock feedthrough.</li><li><b>NMOS + PMOS</b>: opposite charges cancel at one input level only.</li><li><b>Differential</b>: removes the offset and leaves only odd-order distortion, but input-dependent injection still differs between sides.</li><li><b>Bottom-plate sampling</b> (next lesson) is the widely used fix.</li></ul>`},
+  {t:'check', q:{type:'num', q:'W = 10 µm, L = 0.5 µm, C_ox = 5 fF/µm², V_DD − V_in − V_TH = 1 V, C_H = 1 pF. Worst-case pedestal (mV)?', a:25, tol:0.02, unit:'mV', explain:'WLC_ox = 25 fF → 25 fC/1 pF = 25 mV.'}},
+  {t:'check', q:{type:'mcq', q:'Making the switch wider to go faster…', opts:['increases charge injection by the same factor','has no cost','reduces kT/C noise','reduces clock feedthrough'], a:0, explain:'τΔV is roughly constant (12.37).'}},
+  {t:'recall', prompt:'List the three turn-off errors of a MOS sampler.', model:'Channel charge injection, clock feedthrough, and sampled kT/C noise.'}
+ ],
+ cards:[['Charge-injection pedestal','WLC_ox(V_DD − V_in − V_TH)/C_H'],['Clock feedthrough','V_CK·WC_ov/(WC_ov + C_H)'],['Sampled noise','√(kT/C_H)'],['Speed × precision of a switch','≈ L²/µ, independent of W and C_H']]},
+
+{id:'12d', unit:'Ch 12 · Switched capacitors', sec:'12.3.1', label:'book', title:'The unity-gain sampler and bottom-plate sampling', mins:6, pages:[423,432], prereq:['12c'],
+ obj:'Explain why turning the X-side switch off first removes input-dependent charge injection, and find the sampler’s errors and time constants.',
+ blocks:[
+  {t:'idea', p:R`On-chip capacitors (Fig. 12.28) have a <b>bottom plate</b> with 10–20 % parasitic capacitance to the substrate. Keep it away from sensitive nodes.`},
+  {t:'visual', fig:'ugSampler', cap:'Fig. 12.30: sample, then flip C_H around the op amp.'},
+  {t:'derive', h:'Why S₁’s charge does not matter (Fig. 12.32)', steps:[
+    {tex:R`Q_X=\text{const after }S_2\text{ turns off}`, say:'Node X now has no DC path. Whatever S₁ injects at P, the total charge on X’s plates is fixed.', why:''},
+    {tex:R`C_XV_X-(V_{out}-V_X)C_H=0,\ \ V_X=-V_{out}/A\ \Rightarrow\ V_{out}=0`, say:'Set V_in = 0 and let S₁ inject Δq: the output still ends at zero — independent of Δq, capacitors or gain.', why:'', ask:{q:'S₂’s own charge is constant because…', opts:['X is a virtual ground, so it does not depend on V_in','S₂ is small','it is a PMOS'], a:0}}]},
+  {t:'formal', h:'Precision and speed', eq:[{tex:R`\text{gain error}\approx\frac{1+C_{in}/C_H}{A_v}`, note:'(12.44) Example 12.4: C_in = 0.5 pF, C_H = 2 pF, 0.1 % → A_v ≥ 1250 — so don’t just maximise op-amp width'},{tex:R`\tau_{sam}=(R_{on}+1/G_m)C_H`, note:'(12.47) sampling mode'},{tex:R`\tau_{amp}=\frac{C_LC_{in}+C_{in}C_H+C_HC_L}{G_mC_H}\to\frac{C_L}{G_m}`, note:'(12.52) independent of R_out; may slew first at I_SS/C_L'}]},
+  {t:'idea', p:R`<b>Bottom-plate sampling</b>: connect C_H’s top plate to X and drive the bottom plate from the input or output (Fig. 12.40) — less parasitic at X (better speed and precision) and no substrate noise injected into X. Versus a plain switch + buffer (Fig. 12.29b): slower, but charge injection is input-independent.`},
+  {t:'check', q:{type:'num', q:'C_in = 1 pF, C_H = 4 pF, gain error target 0.1 %. Minimum A_v?', a:1250, tol:0.01, explain:'(1 + 0.25)/0.001 = 1250.'}},
+  {t:'check', q:{type:'mcq', q:'In the unity-gain sampler, which switch must turn off first?', opts:['S₂ (the one at node X)','S₁ (input)','S₃','they switch together'], a:0, explain:'Fig. 12.31.'}},
+  {t:'recall', prompt:'Why is the unity-gain sampler’s charge injection input-independent?', model:'S₂ switches at a virtual ground (constant charge); after that X floats, so S₁ and S₃ cannot change the charge on C_H.'}
+ ],
+ cards:[['Unity-gain sampler gain error','≈ (1 + C_in/C_H)/A_v'],['Amplification time constant','(C_LC_in + C_inC_H + C_HC_L)/(G_mC_H)'],['Bottom-plate sampling','top plate to the virtual-ground node; bottom plate driven']]},
+
+{id:'12e', unit:'Ch 12 · Switched capacitors', sec:'12.3.2–12.3.3', label:'book', title:'SC gain stages: noninverting amplifier and multiply-by-two', mins:5, pages:[432,439], prereq:['12d'],
+ obj:'Find the gain error and time constant of the SC amplifier, and see why the ×2 circuit is better.',
+ blocks:[
+  {t:'visual', fig:'scAmp', cap:'Fig. 12.41: S₂ (at X) off first, then the input plate of C₁ switches from V_in to ground.'},
+  {t:'idea', p:R`Node P (C₁’s left plate) is <b>driven</b>: it goes from one low-impedance level to another. Whatever S₁ or S₃ inject in between, P ends at 0, so only the charge left at X matters. The sampling instant is set by S₂ turning off; the input can change afterwards without error (Fig. 12.45).`},
+  {t:'formal', eq:[{tex:R`\frac{V_{out}}{V_{in}}\approx\frac{C_1}{C_2}\Big(1-\frac{C_2+C_1+C_{in}}{C_2A_v}\Big)`, note:'(12.55) error grows with the nominal gain C₁/C₂ — smaller feedback factor C₂/(C₁+C_in+C₂)'},{tex:R`\tau_{amp}=\frac{C_LC_{eq}+C_LC_2+C_{eq}C_2}{G_mC_2},\quad C_{eq}=C_1+C_{in}`, note:'(12.60) also scales with C₁/C₂'}]},
+  {t:'example', src:'book', h:'Example 12.5 (pp.434–435)', given:'Differential version, no equalising switch: S₂ and S₂′ have ΔV_TH = 10 mV, WLC_ox = 50 fF, C₁ = 1 pF, C₂ = 0.5 pF.', steps:[{tex:R`\Delta V_{out}=\frac{WLC_{ox}\Delta V_{TH}}{C_2}=\frac{50\text{ f}\times10\text{ m}}{0.5\text{ p}}=1\text{ mV}`, say:'C₁ does not appear: X is a virtual ground, so the charge lands on C₂.'}]},
+  {t:'idea', h:'Precision multiply-by-two (Fig. 12.50)', p:R`Sample V_in on both C₁ = C₂ = C; then put C₁ around the op amp and ground C₂’s input plate. Charge 2CV_in ends on C₁: \(V_{out}=2V_{in}\). Feedback factor ≈ 1/2 instead of 1/3 for a C₁ = 2C₂ noninverting amp → faster and more accurate (but larger sampling-mode input capacitance).`},
+  {t:'check', q:{type:'mcq', q:'For gain 2, why is the multiply-by-two circuit better than C₁ = 2C₂?', opts:['Higher feedback factor → less gain error, faster','It uses fewer capacitors','No switches needed','Lower input capacitance'], a:0, explain:'p.438.'}},
+  {t:'check', q:{type:'num', q:'C₁ = 2 pF, C₂ = 1 pF, C_in = 0, A_v = 1000. Relative gain error (%)?', a:0.3, tol:0.02, unit:'%', explain:'(1 + 2)/(1·1000) = 0.3 %.'}},
+  {t:'recall', prompt:'Write the SC noninverting amplifier gain with its error term.', model:'(C₁/C₂)[1 − (C₁ + C₂ + C_in)/(C₂A_v)].'}
+ ],
+ cards:[['SC amp gain error','(C₁ + C₂ + C_in)/(C₂A_v)'],['Driven vs floating node','driven nodes end at a fixed voltage; floating nodes conserve charge'],['×2 circuit','both caps sample; one becomes feedback: V_out = 2V_in']]},
+
+{id:'12f', unit:'Ch 12 · Switched capacitors', sec:'12.4–12.5', label:'book', title:'SC integrators and switched-capacitor CMFB', mins:5, pages:[439,444], prereq:['12e','9g'],
+ obj:'Derive the SC integrator difference equation and describe the parasitic-insensitive version and SC CMFB.',
+ blocks:[
+  {t:'visual', fig:'scRes', cap:'Fig. 12.53: a capacitor switched at f_CK moves charge like a resistor (Maxwell).'},
+  {t:'formal', eq:[{tex:R`R_{eq}=\frac{1}{C_Sf_{CK}}`, note:'(12.62)'},{tex:R`V_{out}(kT_{CK})=V_{out}[(k-1)T_{CK}]-V_{in}[(k-1)T_{CK}]\frac{C_1}{C_2}`, note:'(12.64) the integrator of Fig. 12.54: a staircase approximating a ramp'}]},
+  {t:'interactive', kind:'scint', cap:'Hold V_in constant and watch the staircase.'},
+  {t:'idea', h:'Parasitic-insensitive integrator (Fig. 12.56)', p:R`The simple version suffers input-dependent injection from S₁ and nonlinear junction capacitance at node P. Fix: four switches. S₃ (at the X side) turns off first → constant offset only; C₁’s left plate is driven; S₄ switches at a virtual ground; and the junction capacitances of S₃, S₄ swing between ≈ 0 and virtual ground → negligible nonlinearity.`},
+  {t:'idea', h:'SC common-mode feedback (Figs. 12.57–12.59)', p:R`Sense the outputs with capacitors: no resistive loading and no limited linear range. In the reset phase, set the voltage across C₁, C₂ (e.g., to V_CM − V_GS); in the amplify phase the capacitors pass the average output change to the tail device. Must be refreshed. Keep part of the tail current fixed so the CMFB only trims.`},
+  {t:'check', q:{type:'num', q:'C_S = 1 pF switched at 10 MHz. Equivalent resistance (kΩ)?', a:100, tol:0.01, unit:'kΩ', explain:'1/(10⁻¹²·10⁷) = 100 kΩ.'}},
+  {t:'check', q:{type:'mcq', q:'Why are SC integrators attractive for filters?', opts:['Time constants depend on capacitor ratios and the clock, both precise','They need no op amp','They are continuous-time','They have no noise'], a:0, explain:'§12.4.'}},
+  {t:'recall', prompt:'Write the SC resistor and the integrator difference equation.', model:'R = 1/(Cf_CK); V_out(k) = V_out(k−1) − V_in(k−1)C₁/C₂.'}
+ ],
+ cards:[['SC resistor','1/(C_S f_CK)'],['SC integrator step','−V_in C₁/C₂ per cycle'],['SC CMFB','capacitive sensing, refreshed each cycle']]},
+
+/* ---- Chapter 13 ---- */
+{id:'13a', unit:'Ch 13 · Nonlinearity & mismatch', sec:'13.1.1', label:'book', title:'Measuring nonlinearity: deviation, harmonics and THD', mins:5, pages:[448,452], prereq:['b-taylor'],
+ obj:'Quantify nonlinearity by end-point deviation and by harmonic distortion.',
+ blocks:[
+  {t:'idea', p:R`Nonlinearity = the small-signal gain changing with the input level (Fig. 13.3). For mild nonlinearity, use the Taylor form \(y=\alpha_1x+\alpha_2x^2+\alpha_3x^3\) (13.1).`},
+  {t:'example', src:'book', h:'Example 13.1 (pp.451–452): end-point method', given:'y = α₁x + α₃x³ over −x_max…+x_max; draw a line through the end points.', steps:[{tex:R`\Delta y_{max}\ \text{at}\ x=\frac{x_{max}}{\sqrt3}:\quad\Delta y=\frac{2\alpha_3x_{max}^3}{3\sqrt3}`, say:'Set the derivative of the deviation to zero.'},{tex:R`\text{nonlinearity}\approx\frac{\alpha_3x_{max}^2}{3\sqrt3\,\alpha_1}`, say:'Normalised to the peak-to-peak output 2α₁x_max: grows with the SQUARE of the input range.'}]},
+  {t:'formal', h:'Harmonics (13.8–13.10)', eq:[{tex:R`x=A\cos\omega t:\ \ HD_2\approx\frac{\alpha_2A}{2\alpha_1},\quad HD_3\approx\frac{\alpha_3A^2}{4\alpha_1}`, note:'the nth harmonic grows roughly as Aⁿ'},{tex:R`THD=\frac{\sqrt{\sum_{n\ge2}P_n}}{\sqrt{P_1}}`, note:'CD audio needs ≈ 0.01 % (−80 dB), video ≈ 0.1 % (−60 dB)'}]},
+  {t:'interactive', kind:'thd', cap:'Play with α₂, α₃ and the amplitude; switch to differential.'},
+  {t:'check', q:{type:'mcq', q:'Doubling the input amplitude makes HD₃…', opts:['4× larger','2× larger','the same','8× larger'], a:0, explain:'HD₃ ∝ A².'}},
+  {t:'check', q:{type:'mcq', q:'An even-order term in the Taylor series creates…', opts:['even harmonics (and DC)','odd harmonics','no harmonics','only noise'], a:0, explain:'(13.9).'}},
+  {t:'recall', prompt:'Write HD₂ and HD₃ for y = α₁x + α₂x² + α₃x³.', model:'HD₂ ≈ α₂A/(2α₁); HD₃ ≈ α₃A²/(4α₁).'}
+ ],
+ cards:[['HD₂','≈ α₂A/(2α₁)'],['HD₃','≈ α₃A²/(4α₁)'],['End-point nonlinearity of α₃ term','α₃x_max²/(3√3 α₁)'],['Audio THD target','≈ 0.01 % (−80 dB)']]},
+
+{id:'13b', unit:'Ch 13 · Nonlinearity & mismatch', sec:'13.1.2–13.1.3', label:'book', title:'Differential circuits and feedback make things linear', mins:5, pages:[452,457], prereq:['13a','4c','8b'],
+ obj:'Compare CS and differential distortion, and show how feedback suppresses harmonics.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`\text{CS: }\ HD_2=\frac{V_m}{4(V_{GS}-V_{TH})}`, note:'(13.15) square law → strong 2nd harmonic'},{tex:R`\text{pair: }\ HD_3\approx\frac{V_m^2}{32(V_{GS}-V_{TH})^2}`, note:'(13.22) odd symmetry: no even harmonics at all'}]},
+  {t:'example', src:'book', h:'Same gain, same swing (Fig. 13.6)', given:'V_m = 0.2(V_GS − V_TH).', steps:[{tex:R`\text{CS: }5\ \%\qquad\text{pair: }0.125\ \%`, say:'The pair burns twice the power, but doubling the CS current only cuts its distortion by √2.'}]},
+  {t:'formal', h:'Feedback (13.23–13.36)', eq:[{tex:R`\frac{b}{a}=\frac{\alpha_2V_m}{2\alpha_1}\cdot\frac{1}{(1+\beta\alpha_1)^2}`, note:'for the same input V_m, the relative 2nd harmonic falls by (1 + loop gain)²'}]},
+  {t:'idea', p:R`Useful rule (Fig. 13.8): if gain falls monotonically with level, the closed-loop <b>nonlinearity is always smaller than the gain error</b>. So guaranteeing gain error < ε (easy: just enough open-loop gain) guarantees nonlinearity < ε — pessimistic but simple, and harder as short channels limit gain.`},
+  {t:'check', q:{type:'mcq', q:'Why does a differential pair produce no 2nd harmonic (ideally)?', opts:['Its transfer curve is odd-symmetric','It has more current','Its gain is lower','It uses PMOS loads'], a:0, explain:'p.452.'}},
+  {t:'check', q:{type:'num', q:'Loop gain 9. By what factor does feedback cut the relative 2nd harmonic (same input)?', a:100, tol:0.01, explain:'(1 + 9)² = 100.'}},
+  {t:'recall', prompt:'Compare CS and differential distortion at V_m = 0.2V_OD, and state the feedback factor.', model:'5 % vs 0.125 %; relative HD₂ falls by (1 + βα₁)².'}
+ ],
+ cards:[['CS HD₂','V_m/(4V_OD)'],['Diff pair HD₃','V_m²/(32V_OD²)'],['Feedback on HD₂ (same input)','÷ (1 + βα₁)²'],['Gain error vs nonlinearity','nonlinearity < gain error (monotonic gain)']]},
+
+{id:'13c', unit:'Ch 13 · Nonlinearity & mismatch', sec:'13.1.4–13.1.5', label:'book', title:'Capacitor nonlinearity and linearization techniques', mins:5, pages:[457,463], prereq:['13b','3h'],
+ obj:'Use degeneration and post-correction to linearize, and know their costs.',
+ blocks:[
+  {t:'formal', h:'Voltage-dependent capacitors (13.37–13.44)', eq:[{tex:R`Q=\int C\,dV,\quad C\approx C_0(1+\alpha V)`, note:'in an SC amplifier of gain M, the result picks up a term ∝ α(1 − M)V_in²/2 — use linear (poly–poly, metal) capacitors'}]},
+  {t:'formal', h:'Degeneration (13.45)', eq:[{tex:R`G_m=\frac{g_m}{1+g_mR_S}\to\frac{1}{R_S}`, note:'linearity depends on g_mR_S, not R_S alone'}]},
+  {t:'example', src:'book', h:'Example 13.2 (p.459)', given:'I_D swings from 0.75I₁ to 1.25I₁.', steps:[{tex:R`\text{no }R_S:\ \pm\approx25\ \%\text{ gain change}\qquad g_mR_S=2:\ \approx8.6\ \%`, say:'g_m ∝ √I_D; degeneration flattens it — at the cost of gain, noise and headroom.'}]},
+  {t:'idea', h:'Other techniques (pp.459–463)', p:R`<ul><li>Degenerated pair (Fig. 13.11): resistors in the tail path cost I_SSR_S/2 of headroom; split tails avoid that but add noise and offset.</li><li>Triode MOSFET as R_S (Fig. 13.12), or two triode devices where one may saturate (Fig. 13.13; best with (W/L)₁,₂ ≈ 7(W/L)₃,₄).</li><li>Input devices held in triode at constant V_DS by auxiliary amps (Fig. 13.14): linear but small g_m, CM-sensitive, noisy.</li><li><b>Post-correction</b> (Figs. 13.15–13.16): a V/I stage f followed by an I/V stage f⁻¹. A pair with diode loads: \(A_v=\sqrt{\mu_n(W/L)_1/[\mu_p(W/L)_3]}\) — independent of bias current.</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'Degeneration linearity improves with larger…', opts:['g_m R_S','R_S alone','I_D alone','W/L alone'], a:0, explain:'p.459.'}},
+  {t:'check', q:{type:'mcq', q:'Post-correction works because…', opts:['the second stage applies the inverse nonlinearity of the first','it adds feedback','it lowers the gain to 1','it removes noise'], a:0, explain:'Fig. 13.15.'}},
+  {t:'recall', prompt:'Write the degenerated G_m and the diode-load pair gain.', model:'g_m/(1 + g_mR_S) → 1/R_S; √(µn(W/L)₁/µp(W/L)₃).'}
+ ],
+ cards:[['Degenerated G_m','g_m/(1 + g_mR_S)'],['Diode-load pair gain','√(µn(W/L)₁/µp(W/L)₃): bias-independent'],['Capacitor nonlinearity fix','linear (poly–poly/metal) capacitors']]},
+
+{id:'13d', unit:'Ch 13 · Nonlinearity & mismatch', sec:'13.2', label:'book', title:'Mismatch and offset: bigger area, smaller error', mins:6, pages:[463,471], prereq:['b-taylor','4f'],
+ obj:'Use Pelgrom’s law and compute the offset of a differential pair and the mismatch of current sources.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`\Delta V_{TH}=\frac{A_{VTH}}{\sqrt{WL}},\qquad\Delta\frac{W}{L}\Big/\frac WL=\frac{A_K}{\sqrt{WL}}`, note:'(13.60) more area, more averaging (Figs. 13.18–13.20). A_VTH ≈ 10 mV·µm at t_ox ≈ 100 Å, scaling with t_ox'}]},
+  {t:'example', src:'book', h:'Pelgrom in numbers (p.465)', given:'Two 100 µm/0.6 µm devices (L_eff ≈ 0.5 µm).', steps:[{tex:R`\Delta V_{TH}=\frac{10\text{ mV}\cdot\mu\text{m}}{\sqrt{100\times0.5}\ \mu\text{m}}=1.4\text{ mV}`, say:'Trade-off: lower mismatch = more channel capacitance.'}]},
+  {t:'formal', h:'Pair offset (13.69–13.70)', eq:[{tex:R`V_{OS,in}^2=\Big(\frac{V_{GS}-V_{TH}}{2}\Big)^2\Big[\Big(\frac{\Delta R_D}{R_D}\Big)^2+\Big(\frac{\Delta(W/L)}{W/L}\Big)^2\Big]+\Delta V_{TH}^2`, note:'ΔV_TH goes straight to the input; the other terms shrink with low overdrive'},{tex:R`\frac{\Delta I_D}{I_D}=\frac{\Delta(W/L)}{W/L}-\frac{2\,\Delta V_{TH}}{V_{GS}-V_{TH}}`, note:'(13.77) current sources: use a LARGE overdrive — opposite to the pair'}]},
+  {t:'interactive', kind:'offset', cap:'See which mismatch dominates, and how area and overdrive change it.'},
+  {t:'example', src:'book', h:'Example 13.3 (pp.468–469): pair with PMOS current-source loads', given:'NMOS pair offset V_{OS,N}, PMOS load offset V_{OS,P}.', steps:[{tex:R`V_{OS,in}^2=V_{OS,N}^2+\Big(\frac{g_{mP}}{g_{mN}}\Big)^2V_{OS,P}^2`, say:'Exactly like noise: the load’s offset is scaled by g_mP/g_mN. Treat offset as noise at very low frequency.'}]},
+  {t:'idea', h:'Other effects of mismatch', p:R`Lower CMRR (Ch 4); <b>even-order distortion</b> returns, ∝ (α₂ − β₂) between the two halves (13.79); phase mismatch at high frequency; thermal gradients from nearby power devices.`},
+  {t:'check', q:{type:'num', q:'A_VTH = 10 mV·µm, W·L = 25 µm². σ(ΔV_TH) (mV)?', a:2, tol:0.01, unit:'mV', explain:'10/√25 = 2 mV.'}},
+  {t:'check', q:{type:'mcq', q:'To minimise CURRENT mismatch in a mirror you choose…', opts:['a large overdrive','a small overdrive','minimum area','a short L'], a:0, explain:'(13.77).'}},
+  {t:'recall', prompt:'Write Pelgrom’s law and the differential-pair offset expression.', model:'ΔV_TH = A_VTH/√(WL); V_OS² = (V_OD/2)²[(ΔR/R)² + (Δ(W/L)/(W/L))²] + ΔV_TH².'}
+ ],
+ cards:[['Pelgrom’s law','ΔV_TH = A_VTH/√(WL)'],['Pair offset (13.70)','(V_OD/2)²[(ΔR/R)² + (ΔW/L)²] + ΔV_TH²'],['Current-source mismatch','Δ(W/L)/(W/L) − 2ΔV_TH/V_OD → large V_OD'],['Offset of load devices','scaled by g_mP/g_mN, like noise']]},
+
+{id:'13e', unit:'Ch 13 · Nonlinearity & mismatch', sec:'13.2.1–13.2.3', label:'book', title:'Offset cancellation, correlated double sampling, CMRR', mins:6, pages:[471,481], prereq:['13d','12d'],
+ obj:'Describe output and input offset storage, the auxiliary-amplifier scheme, CDS, and the offset view of CMRR.',
+ blocks:[
+  {t:'why', p:R`Area fixes mismatch at the cost of capacitance: 1 mV of ΔV_TH needs ≈ 300 fF per transistor in 0.6 µm. Packaging stress can shift offsets after test. So precision systems cancel offset <b>electronically</b>.`},
+  {t:'visual', fig:'offsetStore', cap:'Figs. 13.27–13.29: measure the offset with the inputs shorted, store it on capacitors, subtract it afterwards.'},
+  {t:'idea', h:'Three schemes', p:R`<ul><li><b>Output offset storage</b>: store A_vV_OS on output capacitors → offset ≈ 0, but A_v must be small enough not to saturate.</li><li><b>Input offset storage</b>: unity feedback stores V_OS·A_v/(1+A_v) at the input → residual ≈ V_OS/A_v (13.81); switch-injection mismatch can saturate a high-gain amp.</li><li><b>Auxiliary amplifier</b> (Figs. 13.30–13.33): keep capacitors out of the signal path; a small G_m2 stage trims the output current. Residual ≈ \(\frac{V_{OS1}}{G_{m2}R}+\frac{G_{m2}}{G_{m1}}V_{OS2}\) and injection error ΔV refers as (G_m2/G_m1)ΔV, so G_m2 is kept small.</li></ul>All need refreshing (leakage) at a few kHz or faster. The unity-gain and ×2 SC circuits of Ch 12 cancel op-amp offset too.`},
+  {t:'idea', h:'Correlated double sampling (§13.2.2)', p:R`Offset is noise at zero frequency. If the signal is sampled only Δt after the offset was stored, slow noise cannot change in between: a component at f varies by at most 2πfΔt of its amplitude. With Δt = 10 ns: 1 MHz noise → 6.3 %, 10 MHz → 63 %. So CDS strongly suppresses 1/f noise below ≈ 1/Δt (it does alias wideband noise).`},
+  {t:'formal', h:'CMRR as offset change (§13.2.3)', eq:[{tex:R`CMRR=\frac{\Delta V_{in,CM}}{\Delta V_{OS,in}}`, note:'how much the input offset moves when the CM level moves — e.g., a PMOS pair with body effect (wells not tied to sources) and mismatched γ has worse CMRR (Fig. 13.37)'}]},
+  {t:'check', q:{type:'mcq', q:'Input offset storage leaves a residual offset of about…', opts:['V_OS/A_v','0','A_vV_OS','V_OS'], a:0, explain:'(13.81).'}},
+  {t:'check', q:{type:'num', q:'Δt = 20 ns. Relative change of a 1 MHz noise component during Δt (%)?', a:12.6, tol:0.02, unit:'%', explain:'2π·10⁶·20·10⁻⁹ = 0.126 → 12.6 %.'}},
+  {t:'recall', prompt:'Name three offset cancellation schemes and explain CDS in one line.', model:'Output storage, input storage, auxiliary amplifier. CDS: sample soon after storing the offset, so low-frequency noise has no time to change.'}
+ ],
+ cards:[['Input offset storage residual','≈ V_OS/A_v'],['Why refresh offset storage?','switch leakage corrupts the stored voltage'],['CDS suppresses','noise below ≈ 1/Δt (incl. 1/f)'],['CMRR (alternative definition)','ΔV_{in,CM} / ΔV_{OS,in}']]}
+);
+
+(function(){
+ const ch=n=>CHAPTERS.find(c=>c.n===n);
+ Object.assign(ch(11),{status:'taught',bridges:[],secs:[['11.1–11.2','Supply-independent biasing, start-up','11a'],['11.3.1–11.3.2','Negative- and positive-TC voltages','11b'],['11.3.3','Bandgap reference','11c'],['11.4–11.5','PTAT current; constant-g_m biasing','11d'],['11.6–11.7','Speed, noise; case study','11e'],['Problems','11.1–11.21 (pp.400–404)','']]});
+ Object.assign(ch(12),{status:'taught',bridges:[],secs:[['12.1','General considerations','12a'],['12.2.1–12.2.2','MOSFETs as switches; speed','12b'],['12.2.3–12.2.4','Precision; charge-injection cancellation','12c'],['12.3.1','Unity-gain sampler/buffer','12d'],['12.3.2–12.3.3','Noninverting amplifier; multiply-by-two','12e'],['12.4–12.5','SC integrator; SC CMFB','12f'],['Problems','12.1– (pp.444–447)','']]});
+ Object.assign(ch(13),{status:'taught',bridges:[],secs:[['13.1.1','Nonlinearity metrics','13a'],['13.1.2–13.1.3','Differential circuits; feedback','13b'],['13.1.4–13.1.5','Capacitor nonlinearity; linearization','13c'],['13.2','Mismatch and offset','13d'],['13.2.1–13.2.3','Offset cancellation; CDS; CMRR','13e'],['Problems','13.1– (pp.478–481)','']]});
+ GLOSSARY.push(['PTAT','Proportional to absolute temperature, e.g. V_T ln n.','11b'],['Bandgap reference','V_BE + K·V_T ≈ 1.25 V with nominally zero TC.','11c'],['Start-up circuit','Kicks a self-biased loop out of its zero-current state.','11a'],['Constant-g_m bias','Bias making g_m = (2/R_S)(1 − 1/√K).','11d'],['Track and hold','Switch + capacitor follows the input, then freezes it.','12b'],['Charge injection','Channel charge dumped onto the sampling capacitor at turn-off.','12c'],['Clock feedthrough','Clock edge coupled through overlap capacitance.','12c'],['Bottom-plate sampling','Timing/connection that makes charge injection input-independent.','12d'],['SC integrator','Discrete-time integrator: −V_in C₁/C₂ per cycle.','12f'],['THD','Total harmonic distortion: harmonic power relative to the fundamental.','13a'],['Pelgrom’s law','Mismatch ∝ 1/√(area).','13d'],['Input-referred offset','Input voltage that brings the output to zero.','13d'],['Correlated double sampling','Offset storage just before sampling; cancels 1/f noise.','13e']);
+ FORMULAS.push({name:'Self-biased current',tex:R`I=\dfrac{2}{\mu_nC_{ox}(W/L)_NR_S^2}\Big(1-\dfrac1{\sqrt K}\Big)^2`,eq:'11.4',lesson:'11a',vars:'',when:'Fig. 11.3(a)'},
+  {name:'V_BE temperature coefficient',tex:R`\dfrac{\partial V_{BE}}{\partial T}=\dfrac{V_{BE}-(4+m)V_T-E_g/q}{T}`,eq:'11.13',lesson:'11b',vars:'m ≈ −3/2',when:'≈ −1.5 mV/K'},
+  {name:'Bandgap output',tex:R`V_{out}=V_{BE2}+\Big(1+\dfrac{R_2}{R_3}\Big)V_T\ln n`,eq:'11.23',lesson:'11c',vars:'',when:'Fig. 11.9'},
+  {name:'Constant g_m',tex:R`g_m=\dfrac2{R_S}\Big(1-\dfrac1{\sqrt K}\Big)`,eq:'11.40',lesson:'11d',vars:'',when:'Self-biased loop'},
+  {name:'Switch on-resistance',tex:R`R_{on}=\dfrac1{\mu_nC_{ox}\frac WL(V_{DD}-V_{in}-V_{TH})}`,eq:'12.22',lesson:'12b',vars:'',when:'NMOS switch'},
+  {name:'Charge injection',tex:R`\Delta V=\dfrac{WLC_{ox}(V_{DD}-V_{in}-V_{TH})}{C_H}`,eq:'12.29–12.30',lesson:'12c',vars:'',when:'Worst case'},
+  {name:'SC amp gain error',tex:R`\dfrac{C_1+C_2+C_{in}}{C_2A_v}`,eq:'12.55',lesson:'12e',vars:'',when:'Noninverting SC amp'},
+  {name:'SC resistor',tex:R`R_{eq}=\dfrac1{C_Sf_{CK}}`,eq:'12.62',lesson:'12f',vars:'',when:'Switched capacitor'},
+  {name:'Harmonic distortion',tex:R`HD_2\approx\dfrac{\alpha_2A}{2\alpha_1},\ HD_3\approx\dfrac{\alpha_3A^2}{4\alpha_1}`,eq:'13.9',lesson:'13a',vars:'',when:'Mild nonlinearity'},
+  {name:'Pelgrom',tex:R`\Delta V_{TH}=\dfrac{A_{VTH}}{\sqrt{WL}}`,eq:'13.60',lesson:'13d',vars:'A_VTH ≈ 10 mV·µm',when:'Matching'},
+  {name:'Pair offset',tex:R`V_{OS}^2=\Big(\dfrac{V_{OD}}2\Big)^2\Big[\Big(\dfrac{\Delta R}{R}\Big)^2+\Big(\dfrac{\Delta (W/L)}{W/L}\Big)^2\Big]+\Delta V_{TH}^2`,eq:'13.70',lesson:'13d',vars:'',when:'Resistive-load pair'});
+ const mv=(id,after)=>{const i=LESSONS.findIndex(l=>l.id===id);const [b]=LESSONS.splice(i,1);LESSONS.splice(LESSONS.findIndex(l=>l.id===after)+1,0,b)};
+ mv('b-bjt','b-2port');mv('b-charge','b-bjt');mv('b-taylor','b-charge');
+})();
+
 /* ---- intros.js ---- */
 /* Narrated preview scripts: h = the question the lesson answers; l = three short spoken lines.
    Written for text-to-speech, so symbols are spelled out in words. */
@@ -2604,6 +3002,29 @@ Object.assign(INTROS,{
 '10d':{h:'How do we compensate a one-stage op amp?',l:['Lower the dominant pole by adding load capacitance.','The unity-gain bandwidth then equals the first nondominant pole.','Fully differential cascodes avoid the mirror pole, so they are very stable.']},
 '10e':{h:'How does a Miller capacitor stabilise a two-stage op amp?',l:['A capacitor across the second stage looks huge at the first-stage output.','It pushes the dominant pole down and the output pole up. That is pole splitting.','It also creates a right-half-plane zero, which a series resistor can remove.']},
 '10f':{h:'How fast can a two-stage op amp slew, and can we avoid the zero?',l:['The tail current charges the compensation capacitor, so the slew rate is I S S over C c.','The zero comes from current flowing forward through C c.','A follower or a common-gate device makes that path one-way.']}
+});
+
+/* ---- intros3.js ---- */
+Object.assign(INTROS,{
+'b-bjt':{h:'What do bipolar transistors give a reference circuit?',l:['A bipolar transistor’s current grows exponentially with its base-emitter voltage.','The thermal voltage, k T over q, is about twenty-six millivolts at room temperature.','We will grade references in parts per million per degree.']},
+'b-charge':{h:'Where does the charge go when a switch opens?',l:['A node with no D C path cannot gain or lose charge.','So the total charge on the plates touching it stays the same.','That one rule explains every switched-capacitor circuit.']},
+'b-taylor':{h:'How do we measure curvature and randomness?',l:['A Taylor series splits a curve into linear, square and cube terms.','Square terms make second harmonics. Cube terms make third harmonics.','Independent random errors add as variances, just like noise.']},
+'11a':{h:'How can a circuit set its own current, regardless of the supply?',l:['A current mirror loop can copy its own output current back to its input.','A resistor then fixes the only current that fits.','But zero current also fits, so we need a start-up circuit.']},
+'11b':{h:'Which voltages rise and fall with temperature?',l:['A base-emitter voltage falls by about one and a half millivolts per degree.','The difference of two base-emitter voltages rises in proportion to temperature.','Add them with the right weights, and the slope cancels.']},
+'11c':{h:'How does a bandgap reference reach 1.25 volts?',l:['An op amp forces two junctions at different current densities to the same voltage.','The resistor between them carries a P T A T current, scaled up by a resistor ratio.','We will also see how op-amp offset and curvature spoil it.']},
+'11d':{h:'Can we bias a transistor so its g m depends only on a resistor?',l:['A bipolar core turns the self-biased loop into a P T A T current source.','Plug the self-biased current into g m, and mobility cancels out.','A switched capacitor can even replace the resistor.']},
+'11e':{h:'What happens when a reference drives fast circuits?',l:['A disturbance at the output is fought only as fast as the op amp responds.','A bypass capacitor helps, but needs a one-stage op amp.','The op amp’s noise appears straight at the output.']},
+'12a':{h:'Why do CMOS amplifiers use switched capacitors?',l:['Resistors load the high output resistance of CMOS op amps.','Capacitors do not, but need a way to set the D C level.','Switches sample the input on one capacitor, then move its charge to another.']},
+'12b':{h:'How good is a MOS transistor as a switch?',l:['It can carry zero current, and conduct both ways.','Its on-resistance rises sharply as the input nears V D D minus V T H.','Putting an N M O S and a P M O S in parallel keeps it flat.']},
+'12c':{h:'What goes wrong when a switch turns off?',l:['The channel charge has to go somewhere, and part of it lands on the capacitor.','The clock edge also couples through the overlap capacitance.','And the capacitor keeps a sample of thermal noise, k T over C.']},
+'12d':{h:'How does the unity-gain sampler dodge charge injection?',l:['Turn off the switch at the virtual-ground node first.','After that, the node floats, so its charge cannot change.','The leftover error is a constant offset that differential circuits cancel.']},
+'12e':{h:'How do switched-capacitor circuits provide gain?',l:['Sample on C one, then push that charge onto C two.','The gain is C one over C two, with an error set by the feedback factor.','The multiply-by-two circuit gets a gain of two with less error.']},
+'12f':{h:'How does a switched capacitor integrate?',l:['A capacitor flipped at the clock rate behaves like a resistor.','Each cycle adds a step of minus V in times C one over C two.','Capacitors can also sense the output common-mode level.']},
+'13a':{h:'How do we measure nonlinearity?',l:['Compare the real curve with a straight line through its end points.','Or drive a sine wave and measure the harmonics.','Second harmonics grow with the amplitude, third harmonics with its square.']},
+'13b':{h:'Why are differential circuits and feedback so linear?',l:['A symmetric differential circuit cancels every even harmonic.','At the same gain, its distortion can be forty times lower than a common-source stage.','Feedback cuts the relative second harmonic by one plus the loop gain, squared.']},
+'13c':{h:'How else can we straighten an amplifier?',l:['Source degeneration makes the transconductance close to one over R.','Triode transistors and auxiliary amplifiers can help too.','Post-correction follows a nonlinearity with its exact inverse.']},
+'13d':{h:'Why do identical transistors never match?',l:['Random variations average out over a bigger gate area.','Threshold mismatch goes straight to the input of a differential pair.','Current sources need a large overdrive to match well.']},
+'13e':{h:'Can we cancel offset electronically?',l:['Short the inputs, measure the offset, and store it on capacitors.','Subtract it afterwards, at the input, the output, or with an auxiliary amplifier.','Sampling soon after cancelling also removes slow flicker noise.']}
 });
 
 /* ---- img.js ---- */
@@ -3031,7 +3452,7 @@ function renderBook(){const taught=CHAPTERS.filter(c=>c.status==='taught').lengt
   <div class="card stack"><h3>${MT(BOOK.title)}</h3><p>${esc(BOOK.author)} · <b>${esc(BOOK.edition)}</b></p>
    <p class="small">Your file is named <span class="mono">${esc(BOOK.file)}</span>, but the scan is the <b>first edition (2001, 18 chapters)</b>, not the 2017 second edition. Section and equation numbers here follow your scan. In the 2nd edition several chapters are renumbered and expanded.</p>
    <p class="small">Page references: book page N = PDF page N + ${BOOK.offset} in your ${BOOK.pdfPages}-page scan. The scan has no text layer; it was OCR’d to build this course, so tiny OCR slips are possible — the book is the authority.</p>
-   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–372 (Ch 8–10 text). <b>Not yet reviewed:</b> end-of-chapter problems, the chapter appendices, and Chapters 11–18 beyond their table of contents.</p>
+   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–478 (Ch 8–13 text). <b>Not yet reviewed:</b> end-of-chapter problems, the chapter appendices, and Chapters 14–18 beyond their table of contents.</p>
    <p class="small"><b>Your class decks:</b> <span class="mono">unit1.pptx</span> covers Ch 2–5 (device, CS/CG/cascode, differential pair, active loads, folded cascode). <span class="mono">Stability Issues and Frequency compensation.pptx</span> covers Ch 9–11 (op amps, compensation, folded cascode, gain boosting, slew, PSRR, references).</p></div>
   <div class="card stack"><h3>Progress against the book</h3><div class="row" style="gap:28px"><div class="stat"><b>${taught}+${partial}</b><span class="small muted">chapters taught / partly taught of 18</span></div><div class="stat"><b>${cnt('taught')}/${LESSONS.length}</b><span class="small muted">lessons done</span></div><div class="stat"><b>${cnt('practised')}</b><span class="small muted">practised (all checks right)</span></div><div class="stat"><b>${cnt('reviewed')}</b><span class="small muted">reviewed at least once</span></div></div></div>
   ${CHAPTERS.map(c=>`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>Ch ${c.n} · ${esc(c.title)}</h3><span class="row"><span class="mono small muted">pp.${c.pages[0]}–${c.pages[1]} · PDF ${c.pages[0]+BOOK.offset}–${c.pages[1]+BOOK.offset}</span><span class="tag ${c.status==='taught'?'good':c.status==='partial'?'bridge':'plain'}">${c.status==='taught'?'taught':c.status==='partial'?'partly taught':'mapped from contents only'}</span></span></div>
@@ -3384,6 +3805,47 @@ WIDGETS.miller2=function(el){el.innerHTML=`<div class="stack"><div class="row" s
   $(".out",el).innerHTML=figHTML(V.millerOut(Rz>0))+figHTML(r.svg,'Raise C_c: ω_p1 falls, ω_p2 rises (pole splitting) and PM grows — but the RHP zero g_m9/C_c also moves in. R_z = 1/g_m9 removes the zero; a larger R_z moves it into the LHP to cancel ω_p2.');mountZooms(el)};
  $$('input',el).forEach(i=>i.oninput=up);
  $$('[data-m2]',el).forEach(bt=>bt.onclick=()=>{const Cc=+$('#m2-c',el).value*1e-12||1e-12;const v=bt.dataset.m2==='0'?0:bt.dataset.m2==='1'?1/gm9:(CL+Cc)/(gm9*Cc);$('#m2-r',el).value=Math.min(1500,Math.round(v/10)*10);up()});up()};
+
+/* ---- app12.js ---- */
+/* ===== Chapter 11–13 widgets ===== */
+WIDGETS.bandgap=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('bg-n','n (area ratio of Q₂ to Q₁)',2,100,1,31,'')}${slider('bg-r','R₂/R₃',1,10,0.05,4,'')}</div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">Model: Eq. 11.9 with m = −3/2, E_g = 1.12 eV, V_BE = 0.75 V at 300 K, constant collector current (Eq. 11.13); with PTAT currents the slope is a little less negative (Eq. 11.26), so real designs are tuned in simulation. Real chips add offset and curvature (Figs. 11.16–11.17).</p></div>`;
+ const up=()=>{const n=+$('#bg-n',el).value,r=+$('#bg-r',el).value;$('#bg-n-v',el).textContent=n;$('#bg-r-v',el).textContent=r.toFixed(2);
+  const c=V.bgCurves(n,r);$('.readout',el).innerHTML=`<div><span>(1+R₂/R₃)·ln n</span><b>${((1+r)*Math.log(n)).toFixed(1)} (book: ≈ 17.2)</b></div><div><span>V_REF at 27 °C</span><b>${c.v27.toFixed(3)} V</b></div><div><span>peak at</span><b>${c.peak} °C</b></div><div><span>variation −40…125 °C</span><b>${(c.dv*1e3).toFixed(1)} mV ≈ ${c.tc.toFixed(0)} ppm/°C</b></div>`;
+  $('.out',el).innerHTML=figHTML(c.svg,'Top: the −TC and +TC pieces and their sum. Bottom: the sum zoomed in — a gentle arch (“curvature”). Tune R₂/R₃ to put the top of the arch near room temperature.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.ron=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('rn-n','NMOS W/L',2,40,1,10,'')}${slider('rn-p','PMOS W/L',2,80,1,20,'')}</div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">V_DD = 3 V, V_TH = 0.7 V (body effect ignored), µnC_ox = 50 µA/V², µpC_ox = 25 µA/V² — the numbers of Example 12.3.</p></div>`;
+ const up=()=>{const wn=+$('#rn-n',el).value,wp=+$('#rn-p',el).value;$('#rn-n-v',el).textContent=wn;$('#rn-p-v',el).textContent=wp;
+  const rn=v=>1/(50e-6*wn*(3-v-0.7));$('.readout',el).innerHTML=`<div><span>NMOS R_on at V_in = 0</span><b>${(rn(0)/1e3).toFixed(2)} kΩ</b></div><div><span>NMOS R_on at V_in = 1 V</span><b>${(rn(1)/1e3).toFixed(2)} kΩ</b></div><div><span>flat when</span><b>µnC_ox(W/L)_N = µpC_ox(W/L)_P ${50*wn===25*wp?'✓ now':''}</b></div>`;
+  $('.out',el).innerHTML=figHTML(V.ronPlot(wn,3,0.7,50e-6,25e-6,wp),'NMOS alone blows up as V_in → V_DD − V_TH; PMOS alone as V_in → |V_TH|. In parallel (Eq. 12.27) the resistance stays moderate across the whole range.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.scint=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('si-v','V_in (V, held constant)',0.05,0.5,0.05,0.2,'')}${slider('si-r','C₁/C₂',0.1,2,0.1,0.5,'')}</div>${slider('si-f','clock f_CK (MHz)',1,100,1,10,'')}
+ <div class="readout" aria-live="polite"></div><div class="out"></div></div>`;
+ const up=()=>{const v=+$('#si-v',el).value,r=+$('#si-r',el).value,f=+$('#si-f',el).value*1e6;$('#si-v-v',el).textContent=v.toFixed(2);$('#si-r-v',el).textContent=r.toFixed(1);$('#si-f-v',el).textContent=(f/1e6)+' MHz';
+  $('.readout',el).innerHTML=`<div><span>step per cycle −V_in·C₁/C₂</span><b>${(-v*r*1e3).toFixed(0)} mV</b></div><div><span>equivalent R (C₁ = 1 pF)</span><b>${(1/(1e-12*f)/1e3).toFixed(0)} kΩ</b></div><div><span>integrator “RC” = C₂/(C₁f_CK)</span><b>${fmtT(1/(r*f))}</b></div>`;
+  $('.out',el).innerHTML=figHTML(V.scStair(v,r,12),'Eq. 12.64: V_out(k) = V_out(k−1) − V_in·C₁/C₂. The time constant depends on a capacitor RATIO and the clock — both precise on chip.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.thd=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('hd-a','input amplitude A',0.1,2,0.05,1,'')}${slider('hd-2','α₂ (even)',0,0.5,0.01,0.1,'')}</div>${slider('hd-3','α₃ (odd)',-0.3,0.3,0.01,-0.05,'')}
+ <div class="seg" role="group" aria-label="Circuit type"><button data-hd="se" aria-pressed="true">single-ended</button><button data-hd="diff" aria-pressed="false">differential (α₂ → 0)</button></div><div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">y = α₁x + α₂x² + α₃x³ with α₁ = 1, x = A cos ωt (Eqs. 13.1, 13.8–13.9).</p></div>`;
+ let mode='se';const up=()=>{const A=+$('#hd-a',el).value,a2=mode==='diff'?0:+$('#hd-2',el).value,a3=+$('#hd-3',el).value;$('#hd-a-v',el).textContent=A.toFixed(2);$('#hd-2-v',el).textContent=(+$('#hd-2',el).value).toFixed(2);$('#hd-3-v',el).textContent=a3.toFixed(2);
+  const r=V.harm(1,a2,a3,A);$('.readout',el).innerHTML=`<div><span>HD₂ = α₂A/2α₁</span><b>${pct(100*Math.abs(r.h2/r.h1))}</b></div><div><span>HD₃ ≈ α₃A²/4α₁</span><b>${pct(100*Math.abs(r.h3/r.h1))}</b></div><div><span>THD</span><b>${pct(100*r.thd)} (${(20*Math.log10(Math.max(r.thd,1e-9))).toFixed(0)} dB)</b></div>`;
+  $('.out',el).innerHTML=figHTML(r.svg,'Double A: HD₂ doubles, HD₃ quadruples. A differential circuit is odd-symmetric, so every even term — and every even harmonic — vanishes.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);$$('[data-hd]',el).forEach(b=>b.onclick=()=>{mode=b.dataset.hd;$$('[data-hd]',el).forEach(x=>x.setAttribute('aria-pressed',x===b));up()});up()};
+
+WIDGETS.offset=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('of-a','gate area W·L (µm²)',1,1000,1,50,'')}${slider('of-v','overdrive V_GS − V_TH (V)',0.05,0.6,0.01,0.2,'')}</div>
+ <div class="row" style="gap:16px">${slider('of-r','σ(ΔR/R) (%)',0,2,0.05,0.5,'')}${slider('of-w','σ(Δ(W/L)/(W/L)) (%)',0,2,0.05,0.5,'')}</div><div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">σ(ΔV_TH) = A_VTH/√(WL) with A_VTH = 10 mV·µm (t_ox ≈ 100 Å, p.465).</p></div>`;
+ const up=()=>{const a=+$('#of-a',el).value,vod=+$('#of-v',el).value,dr=+$('#of-r',el).value/100,dw=+$('#of-w',el).value/100;
+  $('#of-a-v',el).textContent=a;$('#of-v-v',el).textContent=vod.toFixed(2)+' V';$('#of-r-v',el).textContent=(dr*100).toFixed(2);$('#of-w-v',el).textContent=(dw*100).toFixed(2);
+  const vt=10e-3/Math.sqrt(a),pr=vod/2*dr,pw=vod/2*dw,tot=Math.sqrt(vt*vt+pr*pr+pw*pw),di=Math.sqrt(dw*dw+(2*vt/vod)**2);
+  $('.readout',el).innerHTML=`<div><span>σ(ΔV_TH)</span><b>${(vt*1e3).toFixed(2)} mV</b></div><div><span>from R mismatch (V_OD/2)·ΔR/R</span><b>${(pr*1e3).toFixed(2)} mV</b></div><div><span>from W/L mismatch</span><b>${(pw*1e3).toFixed(2)} mV</b></div><div><span>pair offset σ(V_{OS,in})</span><b>${(tot*1e3).toFixed(2)} mV</b></div><div><span>current-source mismatch σ(ΔI/I)</span><b>${pct(di*100)}</b></div>`;
+  const bar=(y,v,l,c)=>`<rect x="190" y="${y}" width="${Math.max(1,300*v/Math.max(tot,1e-9))}" height="22" class="${c}"/>`+V.t(180,y+16,l,'end','sv-txt-m');
+  $('.out',el).innerHTML=figHTML(`<svg viewBox="0 0 520 150" role="img" aria-label="Offset contributions">${bar(14,vt,'ΔV_TH','sv-fill-book')}${bar(46,pr,'load R mismatch','sv-fill-bridge')}${bar(78,pw,'W/L mismatch','sv-fill-deep')}${bar(110,tot,'total (power sum)','sv-fill-ink')}</svg>`,
+   'Eq. 13.70: lower overdrive shrinks the R and W/L terms, but ΔV_TH goes straight to the input — only area helps it. For a current SOURCE the opposite holds: ΔI/I ∝ ΔV_TH/V_OD, so use a LARGE overdrive (Eq. 13.77).');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
 
 </script>
 </body></html>
