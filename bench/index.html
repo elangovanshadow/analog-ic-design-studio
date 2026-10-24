@@ -280,7 +280,7 @@ canvas.sketch{width:100%;height:440px;border:1px solid var(--line);border-radius
 /* ===== SVG helpers & diagrams (all colors via CSS tokens) ===== */
 const V = {};
 V.fmt = (v, d=2) => (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 10 ? v.toFixed(1) : v.toFixed(d)).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');
-V.subs = svg => svg.replace(/>([^<>]+)</g,(m,t)=>'>'+t.replace(/([A-Za-zµγλΦω0-9′])_([A-Za-z0-9]+)/g,'$1<tspan baseline-shift="sub" font-size="72%">$2</tspan>')+'<');
+V.subs = svg => svg.replace(/>([^<>]+)</g,(m,t)=>'>'+t.replace(/([A-Za-zµ\u0370-\u03FF0-9′])_([A-Za-z0-9]+?(?=[A-Za-z]_|[^A-Za-z0-9]|$))/g,'$1<tspan baseline-shift="sub" font-size="72%">$2</tspan>').replace(/([A-Za-z0-9)])\^([-−]?[0-9.½]+)/g,(m,a,b)=>a+'<tspan baseline-shift="super" font-size="70%">'+b.replace(/^-/,'−')+'</tspan>')+'<');
 V.esc = s =>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 /* Generic 2-D plot. series: {f:x=>y | pts:[[x,y]], cls, dash, w, label, lx}; marks: {x,y,label,cls}; vl: {x,label}; hl:{y,label} */
 V.plot = function(o){
@@ -2128,8 +2128,11 @@ function dayLog(){const d=today();S.days[d]=S.days[d]||{lessons:0,first:0,review
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function tex(t,display){try{if(window.katex)return katex.renderToString(t,{output:'mathml',displayMode:!!display,throwOnError:false});}catch(e){}return `<code class="mono">${esc(t)}</code>`}
-const SUBRE=/([A-Za-zµγλΦηΔω′)])_([A-Za-z0-9]+)/g;
-function subText(seg){return ('>'+seg+'<').replace(/>([^<]*)</g,(m,t)=>'>'+t.replace(SUBRE,'$1<sub>$2</sub>')+'<').slice(1,-1)}
+const SUBRE=/([A-Za-zµ\u0370-\u03FF′)\]])_(\{[^}<]*\}|[A-Za-z0-9]+?(?=[A-Za-z]_|[^A-Za-z0-9]|$))/g;
+const SUPRE=/([A-Za-z0-9µ\u0370-\u03FF\u2080-\u2089′)\]])\^(\{[^}<]*\}|[-−+]?[0-9.½⁄]+|[A-Za-z]+)/g;
+const unbrace=x=>x.replace(/^\{|\}$/g,'');
+function scriptText(t){return t.replace(SUBRE,(m,a,b)=>a+'<sub>'+unbrace(b)+'</sub>').replace(SUPRE,(m,a,b)=>a+'<sup>'+unbrace(b).replace(/^-/,'−')+'</sup>')}
+function subText(seg){return ('>'+seg+'<').replace(/>([^<]*)</g,(m,t)=>'>'+scriptText(t)+'<').slice(1,-1)}
 function M(html){const parts=String(html??'').split(/(\\\(.+?\\\))/s);return parts.map(p=>p.startsWith('\\(')&&p.endsWith('\\)')?tex(p.slice(2,-2),false):subText(p)).join('')}
 const MT=s=>M(esc(s));
 function toast(msg){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
@@ -2190,13 +2193,19 @@ V.smallsigCS=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="CS small-sig
  ${V.w([[410,30],[410,55]])}${V.res(410,55,135,'R_D')}${V.w([[410,135],[410,160]])}
  ${V.t(280,192,'KCL at v_out:  g_m v₁ + v_out/r_o + v_out/R_D = 0','middle','sv-txt-m')}</svg>`;
 
-function subify(root){if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||p.closest('svg,math,textarea,script,style,input,.mono-raw'))return NodeFilter.FILTER_REJECT;return /[A-Za-zµγλΦηΔω′)]_[A-Za-z0-9]/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});const list=[];while(w.nextNode())list.push(w.currentNode);
- list.forEach(n=>{const sp=document.createElement('span');sp.innerHTML=esc(n.nodeValue).replace(SUBRE,'$1<sub>$2</sub>');n.replaceWith(...sp.childNodes)})}
+function subify(root){if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||p.closest('svg,math,textarea,script,style,input,.mono-raw'))return NodeFilter.FILTER_REJECT;return /[A-Za-z0-9µ\u0370-\u03FF′)\]][_^][-−{A-Za-z0-9.½]/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});const list=[];while(w.nextNode())list.push(w.currentNode);
+ list.forEach(n=>{const sp=document.createElement('span');sp.innerHTML=scriptText(esc(n.nodeValue));n.replaceWith(...sp.childNodes)})}
 new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)subify(n);else if(n.nodeType===3&&n.parentElement)subify(n.parentElement)}))}).observe(document.documentElement,{childList:true,subtree:true});
 
 async function saveFile(filename,data,mime){let dl=null;try{dl=window.claude&&claude.use?await claude.use('downloads'):null}catch(e){}
  if(dl){try{await dl.save({filename,data});toast('Saved');}catch(e){toast('Not saved')}return}
  try{const blob=data instanceof Blob?data:new Blob([data],{type:mime||'application/octet-stream'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('Downloaded '+filename)}catch(e){toast('Saving files is not available here')}}
+
+/* Render AI text: normalise $…$ / \[…\] to \(…\), keep math raw for KaTeX, escape the rest, light markdown, sub/superscripts. */
+function aiFormat(txt){let t=String(txt||'');
+  t=t.replace(/\\\[([\s\S]+?)\\\]/g,(m,x)=>'\\('+x+'\\)').replace(/\$\$([\s\S]+?)\$\$/g,(m,x)=>'\\('+x+'\\)').replace(/(^|[^\\\w])\$([^$\n]+?)\$/g,(m,p,x)=>p+'\\('+x+'\\)');
+  return t.split(/(\\\([\s\S]+?\\\))/).map(p=>{if(p.startsWith('\\(')&&p.endsWith('\\)'))return tex(p.slice(2,-2),false);
+    let h=esc(p).replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>').replace(/^#{1,4}\s*(.+)$/gm,'<b>$1</b>');return subText(h)}).join('')}
 
 /* ---- app2.js ---- */
 /* ===== INTERACTIVE WIDGETS ===== */
@@ -2285,9 +2294,9 @@ async function askAI(kind,l,b,out){
     step:'The learner says a step is missing. Identify the smallest reasoning or algebra step a beginner might lack here and show it explicitly, one line at a time. Max 180 words.',
     example:'Give ONE new short numeric worked example of the same idea, with different numbers, every step shown, units included. Use only facts consistent with the textbook. Max 180 words.'}[kind];
   const prompt=`You are tutoring from Razavi, "Design of Analog CMOS Integrated Circuits" (1st ed.). Lesson: ${l.title} (§${l.sec||''}, book pp.${(l.pages||[]).join('–')}).
-Current passage:\n${blockText(b)}\n\nTask: ${ask}\nWrite plain text; write math inline like V_GS or I_D = ½·µnCox·(W/L)·V_ov². If unsure about anything, say so.`;
+Current passage:\n${blockText(b)}\n\nTask: ${ask}\nFormatting rules: plain sentences, no markdown headings. Put EVERY formula, symbol with a subscript, and number in scientific notation inside LaTeX delimiters \( and \), for example \(C_{ox}=\varepsilon_{ox}/t_{ox}\), \(\varepsilon_0=8.85\times10^{-12}\,\text{F/m}\), \(\mu_nC_{ox}\), \(\text{SiO}_2\). Never write a caret or underscore outside \( \). Use \times, not * or x, for multiplication. If unsure about anything, say so.`;
   out.innerHTML='<div class="aibox"><span class="tag ai">AI explanation · not from the book</span><span class="ai-t">Thinking…</span></div>';const t=$('.ai-t',out);
-  try{const r=await SAMPLE(prompt,{onText:({text})=>{t.textContent=text},modelTier:'default'});t.textContent=r.text;
+  try{const r=await SAMPLE(prompt,{onText:({text})=>{t.innerHTML=aiFormat(text)},modelTier:'default'});t.innerHTML=aiFormat(r.text);
     out.firstElementChild.insertAdjacentHTML('beforeend',`<span class="small muted">Check it against book p.${(l.pages||[''])[0]}. AI text can be wrong.</span>`)}
   catch(e){t.textContent=e&&e.code==='rate_limited'?'Too many requests just now — try again in a minute.':e&&e.code==='not_granted'?'AI help was not allowed for this page.':'Could not get an explanation right now.'}}
 
