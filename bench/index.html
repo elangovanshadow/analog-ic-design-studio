@@ -247,6 +247,7 @@ canvas.sketch{width:100%;height:440px;border:1px solid var(--line);border-radius
 @media (prefers-reduced-motion:no-preference){.block.enter{animation:rise .28s ease-out}@keyframes rise{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}}
 .kbd{font-family:var(--f-mono);font-size:.78rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px}
 
+.pns-cv{width:100%;display:block;border:1px solid var(--line);border-radius:10px;background:var(--sheet)}
 /* animated previews */
 .pv{display:flex;flex-direction:column;gap:8px}
 .pv-stage{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--sheet);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px}
@@ -793,6 +794,7 @@ const LESSONS = [
  blocks:[
   {t:'why', p:R`Chapter 2 says up front that it assumes doping, mobility and pn junctions (p.9). These three minutes give you exactly the pieces it uses — no more.`},
   {t:'idea', h:'Carriers', p:R`<ul><li>Pure silicon has very few free carriers.</li><li><b>n-type</b>: add donor atoms → extra free <b>electrons</b> (negative). <b>p-type</b>: add acceptors → free <b>holes</b> (positive, they behave like missing electrons).</li><li>A “+” superscript (n⁺, p⁺) means <b>heavily</b> doped → a good conductor.</li><li><b>Mobility μ</b> = how easily a carrier drifts in an electric field. Electrons are 2–4× more mobile than holes, which is why PMOS is weaker (p.20).</li></ul>`},
+  {t:'interactive', kind:'pnsim', cap:'Animated walk-through in four steps: doping → junction forms → reverse bias → drift and mobility. Use the step buttons or “Next step”.'},
   {t:'interactive', kind:'pn', cap:'Drag the reverse bias. Free carriers are pushed away from the junction, leaving fixed charged ions: the depletion region.'},
   {t:'idea', h:'What the book needs from this', p:R`<ul><li>The MOSFET source and drain (n⁺) sit in a p substrate, forming two pn junctions. They must stay <b>reverse-biased</b> (no forward conduction), so the NMOS substrate goes to the most negative supply (p.11).</li><li>A depletion region holds <b>fixed charge</b> \(Q_{dep}\) and grows with reverse voltage roughly as \(\sqrt{\Phi + V_R}\). That square root reappears in the body-effect equation (2.22).</li><li>A depletion region is two charge layers with no carriers between them — a capacitor whose value <b>drops</b> as reverse bias grows: \(C_j = C_{j0}/[1+V_R/\Phi_B]^m\) (p.30).</li></ul>`},
   {t:'check', q:{type:'mcq', q:'Why is the NMOS substrate tied to the most negative supply?', opts:['To increase mobility','So the source/drain pn junctions stay reverse-biased','To lower the threshold voltage','Because holes need a path to the drain'], a:1, hint:'What must never happen to the n⁺/p junctions?', explain:'Forward-biased S/D junctions would conduct into the substrate. Grounding the p-substrate (most negative) keeps them reverse-biased (p.11).'}},
@@ -2464,10 +2466,11 @@ function flashRun(list){let i=0;const z=$('#flashzone');const draw=()=>{if(i>=li
 
 /* ===== LAB ===== */
 let labTab='bench';
-function renderLab(){const tabs=[['bench','MOSFET bench'],['cs','CS stage'],['formulas','Formula notebook'],['sketch','Sketchpad'],['teach','Teach it back'],['glossary','Glossary']];
+function renderLab(){const tabs=[['bench','MOSFET bench'],['pn','pn junction'],['cs','CS stage'],['formulas','Formula notebook'],['sketch','Sketchpad'],['teach','Teach it back'],['glossary','Glossary']];
   $('#main').innerHTML=`<div class="wrap stack"><div><span class="eyebrow">Visual lab</span><h1>Tools</h1></div><div class="seg" role="tablist">${tabs.map(([k,t])=>`<button role="tab" data-tab="${k}" aria-pressed="${labTab===k}">${t}</button>`).join('')}</div><div id="labbody" class="stack"></div></div>`;
   $$('[data-tab]').forEach(b=>b.onclick=()=>{labTab=b.dataset.tab;renderLab()});const body=$('#labbody');
   if(labTab==='bench'){body.innerHTML='<div class="card"><div class="widget"></div></div>';WIDGETS.bench($('.widget',body),{})}
+  if(labTab==='pn'){body.innerHTML='<div class="card"><div class="widget"></div></div>';WIDGETS.pnsim($('.widget',body))}
   if(labTab==='cs'){body.innerHTML='<div class="card stack"><p class="small">Fig. 3.3(b) explorer. Change R_D and W/L to see how gain and point A move (lessons 3b–3c).</p><div class="widget"></div></div>';WIDGETS.cs($('.widget',body))}
   if(labTab==='formulas'){body.innerHTML=`<div class="stack">${FORMULAS.map(f=>`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>${esc(f.name)}</h3><span class="mono small muted">Eq. ${esc(f.eq)}</span></div><div class="eqblock">${tex(f.tex,true)}</div><div class="small">${f.vars?`<b>Symbols:</b> ${M(f.vars)} · `:''}<b>Use when:</b> ${M(f.when)} · <a href="#lesson-${f.lesson}">See it derived/explained</a></div></div>`).join('')}</div>`}
   if(labTab==='glossary'){body.innerHTML=`<input type="text" id="gq" placeholder="Search terms, symbols…" aria-label="Search glossary"><div class="card"><div class="tbl"><table><tbody id="gl"></tbody></table></div></div>`;const draw=()=>{const q=$('#gq').value.toLowerCase();$('#gl').innerHTML=GLOSSARY.filter(g=>(g[0]+g[1]).toLowerCase().includes(q)).map(g=>`<tr><td class="mono">${esc(g[0])}</td><td>${M(g[1])}</td><td><a href="#lesson-${g[2]}">lesson</a></td></tr>`).join('')||'<tr><td>No match.</td></tr>'};$('#gq').oninput=draw;draw()}
@@ -2698,6 +2701,115 @@ function mountPreview(root,l){const el=$(`.pv[data-pv="${l.id}"]`,root);if(!el)r
 }
 window.addEventListener('hashchange',()=>{if(PREVIEW.cur)PREVIEW.cur.stop()});
 function previewModal(l){modal(`<div class="row" style="justify-content:space-between"><h2>${MT(l.title)}</h2><button class="btn ghost sm" data-close>Close</button></div>${previewHTML(l,true)}<div class="row"><a class="btn primary" href="#lesson-${l.id}" data-close>Open the lesson</a></div>`,(m)=>{mountPreview(m,l);const sc=m;const obs=new MutationObserver(()=>{if(!document.body.contains(sc)){if(PREVIEW.cur)PREVIEW.cur.stop();obs.disconnect()}});obs.observe(document.body,{childList:true})})}
+
+/* ---- app10.js ---- */
+/* ===== PN JUNCTION ANIMATION (canvas) =====
+   Steps: 1 doping · 2 junction forms (diffusion → depletion + built-in field) · 3 reverse bias · 4 drift & mobility.
+   Visual model, not a device simulator: widths follow w ∝ √(V_bi + V_R) and x_n/x_p = N_A/N_D. */
+WIDGETS.pnsim=function(el){
+  const STEPS=[
+    {t:'1 · Doping', cap:'Doping adds free carriers. Donors give electrons, so the n side has n ≈ N_D. Acceptors give holes, so the p side has p ≈ N_A. Each carrier leaves behind a fixed ion of opposite charge.'},
+    {t:'2 · Junction forms', cap:'Put p and n together. Carriers diffuse across and recombine, leaving fixed ionized atoms near the junction: the depletion region. Its charge creates a built-in field (arrows) that stops further diffusion.'},
+    {t:'3 · Reverse bias', cap:'Reverse bias V_R adds to the built-in potential. The depletion region widens (w ∝ √(V_bi + V_R)) and only a tiny leakage current flows: rare minority carriers swept across by the field.'},
+    {t:'4 · Drift & mobility', cap:'Mobility µ measures how fast carriers drift in a field: v = µE. Electrons drift against E, holes along E. Holes have lower mobility, so they drift more slowly. The drift is a small bias on top of fast random thermal motion.'}];
+  el.innerHTML=`<div class="stack pns">
+   <div class="seg" role="tablist" aria-label="Animation step">${STEPS.map((s,i)=>`<button data-st="${i}" aria-pressed="${i===0}">${s.t}</button>`).join('')}</div>
+   <canvas class="pns-cv" aria-label="Animated pn junction"></canvas>
+   <div class="pns-cap fb hint" aria-live="polite"></div>
+   <div class="row pns-ctl" style="gap:16px">
+    <div class="pns-c" data-for="0 1 2">${slider('pn-ratio','Doping ratio N_A / N_D',0.25,4,0.25,1,'')}</div>
+    <div class="pns-c" data-for="2">${slider('pn-vr','Reverse bias V_R (V)',0,5,0.1,0,'')}</div>
+    <div class="pns-c" data-for="3">${slider('pn-e','Field E (relative)',0,1,0.05,0.5,'')}</div>
+    <div class="pns-c" data-for="3">${slider('pn-mu','Electron mobility µ_n (relative)',0.2,1,0.05,1,'')}</div>
+   </div>
+   <div class="row"><button class="btn sm primary" data-pn-play>Pause</button><button class="btn sm" data-pn-next>Next step →</button><button class="btn sm ghost" data-pn-restart>Restart this step</button><span class="small muted pns-read"></span></div>
+   <p class="small muted">Picture, not a device simulation: sizes and speeds are scaled for clarity. Depletion width follows w ∝ √(V_bi + V_R) with V_bi ≈ 0.7 V, and it extends further into the lighter-doped side (x_n/x_p = N_A/N_D).</p></div>`;
+  const cv=$('.pns-cv',el),ctx=cv.getContext('2d');let W=0,H=0,dpr=window.devicePixelRatio||1;
+  let step=0,playing=true,t0=performance.now(),tStep=0,raf=null,visible=true,col={};
+  const reduce=()=>S.settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim();
+  const readCol=()=>{col={ink:css('ink'),muted:css('muted'),line:css('line'),paper:css('paper'),sheet:css('sheet'),n:css('book'),nS:css('book-soft'),p:css('bridge'),pS:css('bridge-soft'),bad:css('bad'),good:css('good')}};
+  const g=id=>+$('#'+id,el).value;
+  /* particle state */
+  let ions=[],car=[],leak=[],drift=[];
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const geom=()=>{const top=34,barH=Math.min(170,H*0.5);return {x0:24,x1:W-24,top,bot:top+barH,mid:W/2,plotTop:top+barH+26,plotBot:H-28}};
+  const depl=()=>{const r=g('pn-ratio');const vr=step>=2?g('pn-vr'):0;const G=geom();const L=G.x1-G.x0;const w=L*0.085*Math.sqrt(0.7+vr)/Math.sqrt(0.7);/* x_n/x_p = NA/ND */const xn=w*r/(1+r),xp=w/(1+r);return {w,xn,xp,r,vr}};
+  const build=()=>{const G=geom();const r=g('pn-ratio');ions=[];car=[];leak=[];
+    const NA=Math.round(26*Math.sqrt(r)),ND=Math.round(26/Math.sqrt(r));/* more ions on the heavier side */
+    const rows=W<560?3:4;const place=(xa,xb,n,type)=>{const cols=Math.max(2,Math.min(Math.round(n/rows),Math.floor((xb-xa)/26)));for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){const x=xa+(i+0.5)*(xb-xa)/cols+rnd(-3,3),y=G.top+(j+0.5)*(G.bot-G.top)/rows+rnd(-4,4);ions.push({x,y,type});car.push({x:x+rnd(-8,8),y:y+rnd(-8,8),vx:0,vy:0,type:type==='A'?'h':'e',home:x,alive:1})}};
+    place(G.x0,G.mid,NA,'A');place(G.mid,G.x1,ND,'D');
+    drift=[];for(let i=0;i<70;i++)drift.push({x:rnd(G.x0,G.x1),y:rnd(G.top+6,G.bot-6),type:i%2?'e':'h'});tStep=performance.now()};
+  const size=()=>{const r=cv.getBoundingClientRect();W=r.width;H=Math.max(W<560?340:300,Math.min(440,W*0.62));cv.style.height=H+'px';cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);readCol();build()};
+  const arrow=(x1,y1,x2,y2,c,w=1.6)=>{ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();const a=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(a-0.4),y2-7*Math.sin(a-0.4));ctx.lineTo(x2-7*Math.cos(a+0.4),y2-7*Math.sin(a+0.4));ctx.fill()};
+  const txt=(s,x,y,c,al='center',f='12px')=>{const fam=' '+(css('f-mono')||'monospace');const px=parseFloat(f);ctx.fillStyle=c;ctx.textAlign='left';
+    const parts=String(s).split(/_([A-Za-z0-9]+)/);/* even = normal, odd = subscript */
+    const meas=parts.map((p,i)=>{ctx.font=(i%2?px*0.72:px)+'px'+fam;return ctx.measureText(p).width});const tot=meas.reduce((a,b)=>a+b,0);
+    let cx=al==='center'?x-tot/2:al==='right'?x-tot:x;parts.forEach((p,i)=>{ctx.font=(i%2?px*0.72:px)+'px'+fam;ctx.fillText(p,cx,i%2?y+px*0.28:y);cx+=meas[i]})};
+  const ion=(x,y,type,dim)=>{ctx.globalAlpha=dim?0.35:1;ctx.strokeStyle=type==='D'?col.n:col.p;ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(x,y,6.5,0,7);ctx.stroke();ctx.strokeStyle=type==='D'?col.n:col.p;ctx.beginPath();ctx.moveTo(x-3.5,y);ctx.lineTo(x+3.5,y);if(type==='D'){ctx.moveTo(x,y-3.5);ctx.lineTo(x,y+3.5)}ctx.stroke();ctx.globalAlpha=1};
+  const carrier=(x,y,type,a=1)=>{ctx.globalAlpha=a;if(type==='e'){ctx.fillStyle=col.n;ctx.beginPath();ctx.arc(x,y,3.2,0,7);ctx.fill()}else{ctx.strokeStyle=col.p;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(x,y,3.4,0,7);ctx.stroke()}ctx.globalAlpha=1};
+  const frame=now=>{raf=null;if(!el.isConnected)return;const G=geom();const dt=Math.min(0.05,(now-(frame.last||now))/1000);frame.last=now;const k=(now-tStep)/1000;
+    frame.n=(frame.n||0)+1;if(frame.n%30===0)readCol();ctx.clearRect(0,0,W,H);ctx.fillStyle=col.sheet;ctx.fillRect(0,0,W,H);
+    const jit=reduce()?0:1;
+    if(step<=2){
+      const D=depl();const sep=step===0?Math.max(0,40-k*0)+40:0;/* in step 1 the halves are drawn apart */
+      const grow=step===1?Math.min(1,k/3.5):1;const xn=D.xn*grow,xp=D.xp*grow;
+      const offL=step===0?-20:0,offR=step===0?20:0;
+      /* bars */
+      ctx.fillStyle=col.pS;ctx.fillRect(G.x0+offL,G.top,G.mid-G.x0,G.bot-G.top);ctx.fillStyle=col.nS;ctx.fillRect(G.mid+offR,G.top,G.x1-G.mid,G.bot-G.top);
+      if(step>0){ctx.fillStyle=col.paper;ctx.fillRect(G.mid-xp,G.top,xp+xn,G.bot-G.top);ctx.setLineDash([4,3]);ctx.strokeStyle=col.muted;ctx.strokeRect(G.mid-xp,G.top,xp+xn,G.bot-G.top);ctx.setLineDash([])}
+      ctx.strokeStyle=col.line;ctx.lineWidth=1;ctx.strokeRect(G.x0+offL,G.top,G.mid-G.x0,G.bot-G.top);ctx.strokeRect(G.mid+offR,G.top,G.x1-G.mid,G.bot-G.top);
+      const nar=W<600;txt(nar?'p: p ≈ N_A':'p-type  (acceptors, p ≈ N_A)',(G.x0+G.mid)/2+offL,G.top-12,col.p);txt(nar?'n: n ≈ N_D':'n-type  (donors, n ≈ N_D)',(G.mid+G.x1)/2+offR,G.top-12,col.n);
+      /* ions */
+      ions.forEach(I=>{const inD=step>0&&I.x>G.mid-xp&&I.x<G.mid+xn;ion(I.x+(I.type==='A'?offL:offR),I.y,I.type,!inD&&step>0)});
+      /* carriers: thermal motion, excluded from depletion region */
+      car.forEach(c=>{if(!c.alive)return;c.vx+=rnd(-1,1)*60*jit*dt*6;c.vy+=rnd(-1,1)*60*jit*dt*6;c.vx*=0.9;c.vy*=0.9;c.x+=c.vx*dt*4;c.y+=c.vy*dt*4;
+        const lo=G.top+5,hi=G.bot-5;if(c.y<lo){c.y=lo;c.vy*=-1}if(c.y>hi){c.y=hi;c.vy*=-1};
+        if(c.type==='h'){const xa=G.x0+5,xb=step>0?G.mid-xp-4:G.mid-5;if(c.x<xa)c.x=xa;if(c.x>xb){if(step===1&&grow<1&&Math.random()<0.02){c.alive=0;return}c.x=xb-rnd(0,6)}}
+        else{const xa=step>0?G.mid+xn+4:G.mid+5,xb=G.x1-5;if(c.x>xb)c.x=xb;if(c.x<xa){if(step===1&&grow<1&&Math.random()<0.02){c.alive=0;return}c.x=xa+rnd(0,6)}}
+        carrier(c.x+(c.type==='h'?offL:offR),c.y,c.type)});
+      if(step===1&&grow<1){/* diffusing carriers crossing and recombining */const n=6;for(let i=0;i<n;i++){const ph=((k*0.9+i/n)%1);const y=G.top+12+((i*37)%((G.bot-G.top)-24));carrier(G.mid+xn+6-ph*(xn+xp+12),y,'e',1-ph);carrier(G.mid-xp-6+ph*(xn+xp+12),y+8,'h',1-ph)}
+        txt('diffusion → recombination',G.mid,G.bot+30,col.muted)}
+      /* field arrows: from + (n side) to − (p side) */
+      if(step>0&&xp+xn>14){const ny=3;for(let j=0;j<ny;j++){const y=G.top+(j+0.5)*(G.bot-G.top)/ny;arrow(G.mid+xn*0.75,y,G.mid-xp*0.75,y,col.bad,1.8)}txt('E (built-in)',G.mid,G.bot+14,col.bad)}
+      /* step 3: battery and leakage */
+      if(step===2){const vr=D.vr;ctx.strokeStyle=col.ink;ctx.lineWidth=1.5;const by=G.bot+40;ctx.beginPath();ctx.moveTo(G.x0+8,G.bot);ctx.lineTo(G.x0+8,by);ctx.lineTo(G.mid-14,by);ctx.moveTo(G.mid+14,by);ctx.lineTo(G.x1-8,by);ctx.lineTo(G.x1-8,G.bot);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(G.mid-6,by-10);ctx.lineTo(G.mid-6,by+10);ctx.moveTo(G.mid+6,by-6);ctx.lineTo(G.mid+6,by+6);ctx.lineWidth=2.2;ctx.stroke();txt('−',G.mid-16,by-8,col.ink);txt('+',G.mid+18,by-8,col.ink);txt('V_R = '+vr.toFixed(1)+' V  (+ to n, − to p)',G.mid,by+24,col.ink);
+        if(Math.random()<0.012*(1+vr*0.1)*(playing?1:0))leak.push({x:G.mid-xp-2,y:rnd(G.top+10,G.bot-10),type:'e',dir:1},{x:G.mid+xn+2,y:rnd(G.top+10,G.bot-10),type:'h',dir:-1});
+        leak=leak.filter(L=>{L.x+=L.dir*90*dt;carrier(L.x,L.y,L.type);return L.dir>0?L.x<G.mid+xn+10:L.x>G.mid-xp-10})}
+      /* plots: charge density and field */
+      if(step>0){const py0=G.plotTop,py1=G.plotBot,pm=(py0+py1)/2;ctx.strokeStyle=col.line;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(G.x0,pm);ctx.lineTo(G.x1,pm);ctx.stroke();
+        const r=D.r;const hA=Math.min((pm-py0-4),(pm-py0-4)*Math.sqrt(r)/2),hD=Math.min((pm-py0-4),(pm-py0-4)/Math.sqrt(r)/2);
+        ctx.fillStyle=col.p;ctx.globalAlpha=0.5;ctx.fillRect(G.mid-xp,pm,xp,hA);ctx.fillStyle=col.n;ctx.fillRect(G.mid,pm-hD,xn,hD);ctx.globalAlpha=1;
+        txt('ρ(x): −qN_A',G.mid-xp-6,pm+hA,col.p,'right','11px');txt('+qN_D',G.mid+xn+6,pm-hD+10,col.n,'left','11px');
+        const Ep=(pm-py0-4)*Math.min(1,(xp+xn)/(D.w||1))*0.9;ctx.strokeStyle=col.bad;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(G.mid-xp-30,pm);ctx.lineTo(G.mid-xp,pm);ctx.lineTo(G.mid,pm+Ep*0.9);ctx.lineTo(G.mid+xn,pm);ctx.lineTo(G.mid+xn+30,pm);ctx.stroke();
+        txt('|E(x)| peaks at the junction',G.x1-4,py1,col.bad,'right','11px');txt('x_p',G.mid-xp,pm-6,col.muted,'center','10px');txt('x_n',G.mid+xn,pm+14,col.muted,'center','10px')}
+      const D2=depl();$('.pns-read',el).textContent=step===0?`N_A/N_D = ${D2.r}`:`depletion width w ∝ √(${(0.7+D2.vr).toFixed(1)} V) · x_n/x_p = ${D2.r} ${step===2?'· leakage ≈ tiny, nearly independent of V_R':''}`;
+    } else {
+      /* step 4: drift in a uniform bar */
+      const E=g('pn-e'),mun=g('pn-mu'),mup=mun/3;ctx.fillStyle=col.paper;ctx.fillRect(G.x0,G.top,G.x1-G.x0,G.bot-G.top);ctx.strokeStyle=col.line;ctx.strokeRect(G.x0,G.top,G.x1-G.x0,G.bot-G.top);
+      for(let j=0;j<3;j++){const y=G.top+(j+0.5)*(G.bot-G.top)/3;if(E>0.02)arrow(G.x0+40+j*30,y,G.x0+40+j*30+40+E*80,y,col.bad,1.4)}txt('E →',G.x0+30,G.top-10,col.bad,'left');
+      const sc=70;drift.forEach(d=>{const mu=d.type==='e'?mun:mup;const vd=(d.type==='e'?-1:1)*mu*E*sc;d.x+=(vd+rnd(-1,1)*180*jit)*dt;d.y+=rnd(-1,1)*120*jit*dt;
+        if(d.x<G.x0+4)d.x=G.x1-4;if(d.x>G.x1-4)d.x=G.x0+4;if(d.y<G.top+4)d.y=G.top+4;if(d.y>G.bot-4)d.y=G.bot-4;carrier(d.x,d.y,d.type)});
+      const by=G.plotTop+10;const bw=(G.x1-G.x0)/2-20;
+      txt('average drift velocity v = µE',G.x0,by,col.ink,'left');ctx.fillStyle=col.n;ctx.fillRect(G.x0,by+12,bw*mun*E,12);txt('electrons: µ_n·E ← (against E)',G.x0+bw*mun*E+6,by+22,col.n,'left','11px');
+      ctx.fillStyle=col.p;ctx.fillRect(G.x0,by+34,bw*mup*E,12);txt('holes: µ_p·E → (µ_p ≈ µ_n/3 here)',G.x0+bw*mup*E+6,by+44,col.p,'left','11px');
+      $('.pns-read',el).textContent=`v_n = µ_n E ∝ ${(mun*E).toFixed(2)} · v_p ∝ ${(mup*E).toFixed(2)}`}
+    /* legend */
+    ctx.save();const ly=H-6;ion(G.x0+8,ly-6,'D');txt('donor ion',G.x0+18,ly-2,col.muted,'left','10px');ion(G.x0+92,ly-6,'A');txt('acceptor ion',G.x0+102,ly-2,col.muted,'left','10px');carrier(G.x0+184,ly-6,'e');txt('electron',G.x0+192,ly-2,col.muted,'left','10px');carrier(G.x0+252,ly-6,'h');txt('hole',G.x0+260,ly-2,col.muted,'left','10px');ctx.restore();
+    if(playing&&visible)raf=requestAnimationFrame(frame)};
+  const setStep=i=>{step=i;$$('[data-st]',el).forEach(b=>b.setAttribute('aria-pressed',+b.dataset.st===i));$('.pns-cap',el).innerHTML=M(STEPS[i].cap);
+    $$('.pns-c',el).forEach(c=>c.hidden=!c.dataset.for.split(' ').includes(String(i)));build();kick()};
+  const kick=()=>{if(!raf){frame.last=performance.now();raf=requestAnimationFrame(frame)}};
+  $$('[data-st]',el).forEach(b=>b.onclick=()=>setStep(+b.dataset.st));
+  $('[data-pn-next]',el).onclick=()=>setStep((step+1)%4);$('[data-pn-restart]',el).onclick=()=>{build();kick()};
+  $('[data-pn-play]',el).onclick=e=>{playing=!playing;e.target.textContent=playing?'Pause':'Play';if(playing)kick()};
+  ['pn-ratio','pn-vr','pn-e','pn-mu'].forEach(id=>{const s=$('#'+id,el);const lab=$('#'+id+'-v',el);const upd=()=>{lab.textContent=(+s.value).toFixed(id==='pn-ratio'?2:id==='pn-vr'?1:2)};s.addEventListener('input',()=>{upd();if(id==='pn-ratio')build();kick()});upd()});
+  if('IntersectionObserver' in window){new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible&&playing)kick()}).observe(cv)}
+  new ResizeObserver(()=>{size();kick()}).observe(cv);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readCol);
+  size();setStep(0);
+};
 
 </script>
 </body></html>
