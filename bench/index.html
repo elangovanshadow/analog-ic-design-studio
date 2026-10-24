@@ -1052,6 +1052,85 @@ V.pllStep=(zeta,wn,T)=>{const fn=t=>{if(zeta<1){const wd=wn*Math.sqrt(1-zeta*zet
 
 Object.assign(PV_FIGS,{ring:()=>V.ring3(),tank:()=>V.tankZ().svg,pll:()=>V.pllBlock(false),vco:()=>V.vcoChar()});
 
+/* ---- visuals8.js ---- */
+/* ===== Chapter 16–18 figures ===== */
+V.vthRoll=()=>V.plot({w:520,h:240,x:[0.1,3],y:[0.3,0.8],xl:'channel length L (µm)',yl:'V_TH (V)',xt:[0.25,0.5,1,2,3],yt:[0.3,0.5,0.7],
+  series:[{f:L=>0.72-0.32*Math.exp(-L/0.28),cls:'sv-book',label:'V_TH falls for short L',lx:.5}],marks:[{x:0.35,y:0.72-0.32*Math.exp(-0.35/0.28),r:4,label:'min L: V_TH low, spread large',dx:10,dy:28}],aria:'Threshold voltage versus channel length'});
+
+V.roVds=()=>V.plot({w:520,h:240,x:[0,3],y:[0,10],xl:'V_DS (V)',yl:'r_o (relative)',xt:[0.3,1,2,3],yt:[],
+  series:[{f:v=>v<0.3?NaN:(v<1.2?1+6*(v-0.3):v<2.3?6.4+0.2*(v-1.2):6.6-4.5*Math.pow((v-2.3)/0.7,2)),cls:'sv-book',w:2.6}],
+  extra:(sx,sy)=>V.t(sx(0.45),sy(5),'CLM: r_o rises','start','sv-txt-m')+V.t(sx(1.25),sy(7.6),'DIBL cancels: flat','start','sv-txt-m')+V.t(sx(2.25),sy(3),'impact ionization','start','sv-txt-m'),aria:'Output resistance versus VDS'});
+
+V.corners=()=>`<svg viewBox="0 0 560 250" role="img" aria-label="Process corners">
+ ${V.w([[80,210],[300,210]])}${V.w([[80,210],[80,20]])}${V.arrowHead(300,210,'r')}${V.arrowHead(80,20,'u')}${V.t(190,236,'NMOS speed →','middle','sv-txt-m')}${V.t(30,110,'PMOS','middle','sv-txt-m')}${V.t(30,126,'speed ↑','middle','sv-txt-m')}
+ <rect x="110" y="50" width="160" height="130" class="sv-sheet sv-ink" stroke-width="1.6" stroke-dasharray="5 4"/>
+ ${[[110,180,'SS'],[270,180,'FS'],[110,50,'SF'],[270,50,'FF']].map(([x,y,l])=>V.dot(x,y)+V.t(x+(x>200?8:-8),y+(y>100?16:-8),l,x>200?'start':'end','sv-txt','font-weight="600"')).join('')}${V.dot(190,115)}${V.t(198,112,'TT','start','sv-txt','font-weight="600"')}
+ ${V.t(330,60,'First letter: NMOS, second: PMOS','start','sv-txt-m')}${V.t(330,82,'F = fast (thin t_ox, low V_TH)','start','sv-txt-m')}${V.t(330,104,'S = slow','start','sv-txt-m')}
+ ${V.t(330,140,'Simulate every corner','start','sv-txt','font-weight="600"')}${V.t(330,160,'× temperature extremes','start','sv-txt-m')}${V.t(330,186,'gate delay can vary ≈ 2 : 1','start','sv-txt-m')}</svg>`;
+
+V.flow=()=>{const st=[['n-well','mask 1: implant n-wells'],['active / field','mask 2: nitride, channel stop, field oxide'],['gate','oxide growth, V_TH adjust, poly (mask 3)'],['S/D','masks 4–5: n⁺ and p⁺, self-aligned to poly'],['silicide','spacers, then TiSi₂ on poly and active'],['contacts + metal','2 masks per metal layer; vias'],['passivation','glass, opened over pads']];
+  return `<svg viewBox="0 0 560 ${st.length*34+20}" role="img" aria-label="CMOS process flow">${st.map(([a,b],i)=>`<rect x="20" y="${10+i*34}" width="150" height="26" rx="5" class="sv-sheet sv-ink" stroke-width="1.4"/>`+V.t(95,28+i*34,(i+1)+'. '+a,'middle','sv-txt','font-weight="600"')+V.t(184,28+i*34,b,'start','sv-txt-m')+(i<st.length-1?V.w([[95,36+i*34],[95,44+i*34]]):'')).join('')}</svg>`};
+
+V.cmosX=()=>`<svg viewBox="0 0 560 230" role="img" aria-label="CMOS cross-section">
+ <rect x="10" y="110" width="540" height="110" class="sv-p" stroke-width="1"/>${V.t(24,210,'p-substrate','start','sv-txt-m')}
+ <path d="M300 110 h230 v60 q0 20 -20 20 h-190 q-20 0 -20 -20 z" class="sv-n" stroke-width="1"/>${V.t(510,182,'n-well','end','sv-txt-m')}
+ ${[[10,40],[270,60],[520,30]].map(([x,w])=>`<rect x="${x}" y="98" width="${w}" height="20" rx="6" class="sv-ox" stroke-width="1"/>`).join('')}${V.t(300,92,'field oxide','middle','sv-txt-m')}
+ ${[[70,'n⁺','sv-n'],[190,'n⁺','sv-n'],[350,'p⁺','sv-p'],[470,'p⁺','sv-p']].map(([x,l,c])=>`<rect x="${x-30}" y="110" width="60" height="22" rx="6" class="${c}" stroke-width="1.2"/>`+V.t(x,126,l,'middle','sv-txt-m')).join('')}
+ ${[[130],[410]].map(([x])=>`<rect x="${x-20}" y="102" width="40" height="8" class="sv-ox" stroke-width="1"/><rect x="${x-20}" y="80" width="40" height="22" class="sv-poly" stroke-width="1"/><rect x="${x-26}" y="84" width="6" height="26" class="sv-ox" stroke-width="0.8"/><rect x="${x+20}" y="84" width="6" height="26" class="sv-ox" stroke-width="0.8"/>`).join('')}
+ ${[70,190,350,470].map(x=>V.w([[x,110],[x,50]],'sv-ink',3)).join('')}${V.w([[50,50],[210,50]],'sv-ink',5)}${V.w([[330,50],[490,50]],'sv-ink',5)}${V.t(130,40,'metal 1','middle','sv-txt-m')}
+ ${V.t(130,74,'NMOS','middle','sv-txt','font-weight="600"')}${V.t(410,74,'PMOS','middle','sv-txt','font-weight="600"')}${V.t(146,150,'spacers + silicide','start','sv-txt-m')}</svg>`;
+
+V.bjt=(x,y,pnp,lab)=>V.w([[x-24,y],[x-8,y]])+V.w([[x-8,y-16],[x-8,y+16]],'sv-ink',2.4)+V.w([[x-8,y-8],[x+12,y-22]])+V.w([[x-8,y+8],[x+12,y+22]])+(pnp?V.arrowHead(x-4,y-10,'l'):V.arrowHead(x+10,y+20,'r'))+(lab?V.t(x+18,y+5,lab):'');
+V.latchup=()=>`<svg viewBox="0 0 560 250" role="img" aria-label="Latch-up parasitic SCR">
+ ${V.w([[60,20],[300,20]])}${V.t(180,14,'V_DD','middle','sv-txt-m')}
+ ${V.res(100,20,76,'R_well')}${V.w([[100,76],[100,92]])}${V.dot(100,92)}${V.t(90,96,'X','end','sv-txt-m')}
+ ${V.w([[212,20],[212,42]])}${V.bjt(200,64,true,'Q₁ (pnp)')}${V.w([[176,64],[150,64],[150,92],[100,92]])}
+ ${V.w([[212,86],[212,110],[140,110],[140,190],[176,190]])}${V.dot(212,110)}${V.t(220,106,'Y','start','sv-txt-m')}${V.w([[212,110],[270,110]])}${V.res(270,110,190,'R_sub')}${V.gnd(270,190)}
+ ${V.bjt(200,190,false,'Q₂ (npn)')}${V.w([[212,168],[212,150],[100,150],[100,92]])}${V.w([[212,212],[212,226]])}${V.gnd(212,226)}
+ ${V.t(330,60,'Each base is the other’s collector:','start','sv-txt-m')}${V.t(330,80,'a positive-feedback loop (an SCR)','start','sv-txt-m')}
+ ${V.t(330,112,'Loop gain ≥ 1 → both turn fully on,','start','sv-txt','font-weight="600"')}${V.t(330,132,'huge current from V_DD','start','sv-txt','font-weight="600"')}
+ ${V.t(330,166,'Prevent: many substrate/well ties,','start','sv-txt-m')}${V.t(330,184,'guard rings, p⁺ (heavily doped)','start','sv-txt-m')}${V.t(330,202,'substrate, retrograde wells','start','sv-txt-m')}</svg>`;
+
+V.fingers=()=>{const T=(x,n,lab)=>{let s=V.t(x+60,20,lab,'middle','sv-txt','font-weight="600"');const w=120,h=n===1?150:150/n*1.0;const H=150;s+=`<rect x="${x}" y="40" width="${w}" height="${n===1?H:H/n*2-6}" class="sv-n" stroke-width="1"/>`;
+  if(n===1){s+=`<rect x="${x}" y="105" width="${w}" height="12" class="sv-poly" stroke-width="1"/>`+V.t(x+60,136,'one gate, W = 100 µm','middle','sv-txt-m')}else{const ah=H/n*2-6;for(let i=0;i<n;i++){const y=40+(i+0.5)*ah/n;s+=`<rect x="${x-6}" y="${y-3}" width="${w+12}" height="6" class="sv-poly" stroke-width="0.8"/>`}s+=V.t(x+60,40+ah+16,n+' fingers of W/'+n,'middle','sv-txt-m')}return s};
+  return `<svg viewBox="0 0 560 220" role="img" aria-label="Multifinger transistor">${T(30,1,'single strip')}${T(220,3,'3 fingers')}${T(410,5,'5 fingers')}
+  ${V.t(20,210,'More fingers: lower gate resistance, more S/D perimeter capacitance.','start','sv-txt-m')}</svg>`};
+
+V.ccPattern=(pat)=>{const C={A:'sv-fill-book',B:'sv-fill-bridge',D:'sv-fill-ink'};const rows=pat.split('/');let s='';rows.forEach((r,j)=>[...r].forEach((c,i)=>{s+=`<rect x="${i*30}" y="${j*30}" width="28" height="28" class="${C[c]||'sv-sheet'}" opacity="${c==='D'?0.25:0.85}"/>`+V.t(i*30+14,j*30+19,c==='D'?'d':c,'middle','sv-txt','style="fill:var(--sheet)"')}));return s};
+V.ccLayouts=()=>`<svg viewBox="0 0 560 190" role="img" aria-label="Matched layouts">
+ <g transform="translate(30 50)">${V.ccPattern('AB')}</g>${V.t(60,36,'side by side','middle','sv-txt','font-weight="600"')}${V.t(70,128,'gradient → mismatch','middle','sv-txt-m')}
+ <g transform="translate(150 50)">${V.ccPattern('DABBAD')}</g>${V.t(240,36,'1-D cross-coupled (ABBA)','middle','sv-txt','font-weight="600"')}${V.t(240,128,'linear gradient cancels','middle','sv-txt-m')}${V.t(240,146,'d = dummies','middle','sv-txt-m')}
+ <g transform="translate(400 36)">${V.ccPattern('AB/BA')}</g>${V.t(430,24,'common centroid','middle','sv-txt','font-weight="600"')}${V.t(430,128,'x and y gradients cancel','middle','sv-txt-m')}
+ ${V.w([[20,170],[540,170]],'sv-muted',1.4)}${V.arrowHead(540,170,'r','sv-fill-ink')}${V.t(280,186,'process gradient (e.g., oxide thickness, V_TH)','middle','sv-txt-m')}</svg>`;
+
+V.capArray=()=>`<svg viewBox="0 0 560 210" role="img" aria-label="Capacitor array">
+ <g transform="translate(60 20)">${V.ccPattern('DDDDD/DAAAD/DABAD/DAAAD/DDDDD')}</g>
+ ${V.t(250,50,'C₁ = 8 units (A), C₂ = 1 unit (B) in the centre','start','sv-txt-m')}${V.t(250,72,'→ gradients cancel to first order','start','sv-txt-m')}
+ ${V.t(250,104,'ring of dummies (d): every unit sees','start','sv-txt-m')}${V.t(250,122,'the same neighbours and etch','start','sv-txt-m')}
+ ${V.t(250,156,'ratio by unit COUNT, not by size','start','sv-txt','font-weight="600"')}${V.t(250,176,'(Example 18.4: C₁ = 8C₂)','start','sv-txt-m')}</svg>`;
+
+V.esd=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="ESD protection">
+ <rect x="20" y="80" width="60" height="40" class="sv-sheet sv-ink" stroke-width="1.6"/>${V.t(50,105,'pad','middle','sv-txt-m')}
+ ${V.w([[80,100],[150,100]])}${V.dot(150,100)}${V.w([[150,100],[170,100]])}<path d="M170 100 l5 -7 l10 14 l10 -14 l10 14 l10 -14 l5 7" class="sv-ink" stroke-width="1.8" fill="none"/>${V.t(195,84,'R_S','middle','sv-txt-m')}${V.w([[220,100],[300,100]])}${V.t(306,104,'to gate of input device','start','sv-txt-m')}
+ ${V.w([[150,100],[150,92]])}${(()=>`<g transform="translate(150 50) rotate(180)">${V.diode(0,-10,42,'')}</g>`)()}${V.w([[150,20],[150,8]])}${V.t(160,16,'V_DD','start','sv-txt-m')}${V.t(166,56,'D₁','start','sv-txt-m')}
+ <g transform="translate(150 278) rotate(180)">${V.diode(0,108,170,'')}</g>${V.t(162,144,'D₂','start','sv-txt-m')}${V.gnd(150,170)}
+ ${V.t(300,140,'Diodes clamp the pad to V_DD or ground;','start','sv-txt-m')}${V.t(300,158,'R_S limits their current.','start','sv-txt-m')}${V.t(300,182,'Cost: pF, noise, latch-up risk.','start','sv-txt-m')}</svg>`;
+
+V.bounce=()=>`<svg viewBox="0 0 560 220" role="img" aria-label="Supply bounce">
+ ${V.w([[100,14],[100,40]])}${V.t(108,18,'V_DD (board)','start','sv-txt-m')}<path d="M100 40 q10 6 0 12 q10 6 0 12 q10 6 0 12" class="sv-ink" stroke-width="1.8" fill="none"/>${V.t(116,60,'L_D','start','sv-txt-m')}${V.w([[100,76],[100,92]])}
+ ${V.inv(80,120,'')}${V.w([[100,92],[100,104]])}${V.w([[100,136],[100,150]])}<path d="M100 150 q10 6 0 12 q10 6 0 12 q10 6 0 12" class="sv-ink" stroke-width="1.8" fill="none"/>${V.t(116,170,'L_G','start','sv-txt-m')}${V.w([[100,186],[100,196]])}${V.gnd(100,196)}
+ ${V.w([[124,120],[180,120]])}${V.cap(180,120,180,'C')}${V.gnd(180,180)}${V.w([[40,120],[80,120]])}${V.t(20,124,'CK','start','sv-txt-m')}
+ ${V.t(250,60,'ΔV ≈ L·ΔI/Δt','start','sv-txt','font-weight="600"')}${V.t(250,84,'0.5 pF switched in 0.5 ns: I = CΔV/Δt = 3 mA','start','sv-txt-m')}${V.t(250,104,'with L = 5 nH: 30 mV on each rail','start','sv-txt-m')}
+ ${V.t(250,138,'Thousands of gates → hundreds of mV:','start','sv-txt-m')}${V.t(250,156,'separate analog/digital supplies, many','start','sv-txt-m')}${V.t(250,174,'parallel pads, on-chip decoupling,','start','sv-txt-m')}${V.t(250,192,'differential circuits','start','sv-txt-m')}</svg>`;
+
+Object.assign(PV_FIGS,{scale:()=>V.corners(),vsat:()=>V.roVds(),gradient:()=>V.ccLayouts(),bounce:()=>V.bounce()});
+/* long vs short channel I_D(V_OD) with lateral-field mobility degradation (16.25–16.29); µ0 = 350 cm²/Vs, v_sat = 1e7 cm/s */
+V.vsatPlot=(L=0.25,mode='id')=>{const mu=0.035,vs=1e5,Ec=2*vs*L*1e-6/mu,Cox=5e-3,W=10e-6;const idS=v=>0.5*mu*Cox*W/(L*1e-6)*v*v/(1+v/Ec),idL=v=>0.5*mu*Cox*W/(L*1e-6)*v*v,idV=v=>vs*W*Cox*v;
+  const gS=v=>(idS(v+1e-4)-idS(v))/1e-4,gL=v=>mu*Cox*W/(L*1e-6)*v,gV=()=>vs*W*Cox;const f=mode==='id'?[idL,idS,idV]:[gL,gS,gV];const ymax=Math.max(f[1](1.5)*1.6,f[2](1.5)*1.1);
+  return {svg:V.plot({w:520,h:250,x:[0,1.5],y:[0,ymax*1e3],xl:'overdrive V_GS − V_TH (V)',yl:mode==='id'?'I_D (mA)':'g_m (mS)',xt:[0,0.25,0.5,0.75,1,1.25,1.5],yt:[0,ymax*500,ymax*1000].map(v=>+v.toPrecision(2)),
+   series:[{f:v=>f[0](v)*1e3,cls:'sv-muted',dash:'5 4',label:'square law',lx:.82},{f:v=>f[1](v)*1e3,cls:'sv-book',label:'with velocity saturation',lx:.5},{f:v=>f[2](v)*1e3,cls:'sv-bridge',dash:'2 3',label:'fully saturated v_sat',lx:.28}],aria:'Velocity saturation'}),Ec}};
+Object.assign(PV_FIGS,{vsat:()=>V.vsatPlot(0.25).svg});
+
 /* ---- content1.js ---- */
 /* ===== COURSE CONTENT =====
    label: 'book' = From the book (Razavi, 1st ed., 2001) · 'bridge' = Foundation bridge (not in the book) · 'deep' = Optional deeper dive
@@ -3197,6 +3276,226 @@ LESSONS.push(
  mv('b-lc','b-taylor');mv('b-phase','b-lc');
 })();
 
+/* ---- content10.js ---- */
+/* ---------------- CHAPTERS 16–18 ---------------- */
+LESSONS.push(
+{id:'b-sheet', unit:'Foundations', label:'bridge', title:'Sheet resistance: ohms per square', mins:3, prereq:['b-drift'], unlocks:['17c','18d'],
+ obj:'Compute a layout resistor from its sheet resistance and number of squares.',
+ why:'Chapters 17–18 quote every layer in Ω/□. It turns layout geometry straight into resistance.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`R=\frac{\rho L}{Wt}=R_\square\cdot\frac{L}{W},\qquad R_\square=\frac\rho t`, note:'(17.1) the process fixes ρ and t; you choose only L/W, the number of “squares”'}]},
+  {t:'example', src:'book', h:'Book example (p.605)', given:'R_□ = 10 Ω/□, W = 2 µm, L = 20 µm.', steps:[{tex:R`R=10\times\frac{20}{2}=100\ \Omega`, say:'Ten squares in series. A square of any size has the same resistance.'}]},
+  {t:'idea', p:R`Typical values (Ch 17–18): silicide-block poly 50–few hundred Ω/□; n-well ≈ 1 kΩ/□; silicided poly/active 3–5 Ω/□; metal 30–70 mΩ/□.`},
+  {t:'check', q:{type:'num', q:'n-well at 1 kΩ/□, W = 2 µm. Length (µm) for 50 kΩ?', a:100, tol:0.01, unit:'µm', explain:'50 squares × 2 µm = 100 µm.'}},
+  {t:'recall', prompt:'Define sheet resistance and use it.', model:'R_□ = ρ/t; R = R_□·L/W.'}
+ ],
+ cards:[['Sheet resistance','R = R_□ · L/W'],['A square','same resistance whatever its size']]},
+
+/* ---- Chapter 16 ---- */
+{id:'16a', unit:'Ch 16 · Short-channel effects', sec:'16.1', label:'book', title:'Scaling: great for digital, harder for analog', mins:5, pages:[579,583], prereq:['2p','7c'],
+ obj:'Apply constant-field scaling rules and explain why analog dynamic range suffers.',
+ blocks:[
+  {t:'idea', p:R`Dennard (1974): shrink all dimensions and voltages by α and raise doping by α — every electric field stays the same (“constant-field scaling”, Fig. 16.1). Moore (1975): dimensions halve every three years; transistor counts double every one to two years.`},
+  {t:'interactive', kind:'scale', cap:'See how each quantity changes with α.'},
+  {t:'formal', eq:[{tex:R`I_{D,scaled}=\frac12\mu(\alpha C_{ox})\frac{W/\alpha}{L/\alpha}\Big(\frac{V_{GS}-V_{TH}}{\alpha}\Big)^2=\frac{I_D}\alpha`, note:'(16.1) delay CV/I ÷ α, power fCV² ÷ α² — wonderful for logic'},{tex:R`g_m=\mu C_{ox}\frac WL(V_{GS}-V_{TH})\ \ \text{unchanged}`, note:'(16.12) but λ rises by α (depletion width shrinks less than L), so g_mr_o drops'}]},
+  {t:'idea', h:'The analog catch (pp.581–582)', p:R`Swing ÷ α while thermal noise stays → dynamic range ÷ α. To restore it, g_m must rise by α² — requiring <b>constant power</b> and <b>more</b> capacitance (W must grow by α). If kT/C limits, keeping the slew rate raises current by α². Real scaling mixed constant-field with <b>constant-voltage</b> scaling (V_DD 5 → 2.5 V, V_TH 0.8 → 0.4 V while L went 1 → 0.25 µm), which raises fields and short-channel effects.`},
+  {t:'check', q:{type:'mcq', q:'Under ideal scaling by α, the power per gate (same frequency) changes by…', opts:['÷ α²','÷ α','× α','unchanged'], a:0, explain:'f·(C/α)(V/α)².'}},
+  {t:'check', q:{type:'mcq', q:'Why does ideal scaling hurt analog dynamic range?', opts:['Swings shrink by α while thermal noise (set by g_m) stays','g_m falls','Capacitors grow','Mobility rises'], a:0, explain:'p.581.'}},
+  {t:'recall', prompt:'List what ideal scaling does to I_D, delay, power, g_m and dynamic range.', model:'I_D ÷α, delay ÷α, power ÷α², g_m unchanged, dynamic range ÷α.'}
+ ],
+ cards:[['Constant-field scaling','dimensions & voltages ÷ α, doping × α'],['Digital benefit','delay ÷ α, power ÷ α²'],['Analog cost','dynamic range ÷ α unless power stays constant']]},
+
+{id:'16b', unit:'Ch 16 · Short-channel effects', sec:'16.2.1–16.2.2', label:'book', title:'Threshold voltage limits, V_TH roll-off, DIBL and mobility degradation', mins:6, pages:[583,587], prereq:['16a','2m'],
+ obj:'Explain why V_TH cannot scale, how it depends on L and V_DS, and how the vertical field lowers mobility.',
+ blocks:[
+  {t:'formal', h:'Subthreshold slope (16.16–16.18)', eq:[{tex:R`S=\Big(\frac{d\log_{10}I_D}{dV_{GS}}\Big)^{-1}=2.3\,V_T\Big(1+\frac{C_d}{C_{ox}}\Big)`, note:'C_d = 0.67C_ox → S ≈ 100 mV/decade; S does not scale (and rises with T)'}]},
+  {t:'idea', p:R`To be 5 decades “off” with S = 80 mV/dec, V_TH ≥ 400 mV. Add ≈ −1 mV/K (50 mV over 0–50 °C) and ≈ 50 mV of process spread: V_TH stays at several hundred mV.`},
+  {t:'visual', fig:'vthRoll', cap:'Fig. 16.5: short devices share depletion charge with source and drain (Fig. 16.6), so V_TH falls.'},
+  {t:'idea', h:'What it means for analog', p:R`<ul><li>Lengthening L for more r_o can raise V_TH by 100–200 mV — and minimum-L devices have the most V_TH spread.</li><li><b>DIBL</b>: the drain field lowers the source barrier, so V_TH drops as V_DS rises → lower output impedance.</li><li><b>Mobility degradation</b> (16.19): \(\mu_{eff}=\mu_0/[1+\theta(V_{GS}-V_{TH})]\), θ ≈ 10⁻⁷/t_ox V⁻¹ (≈ 1 V⁻¹ at 100 Å). Lower current and g_m, and new <b>odd</b> harmonics: \(I_D\approx\frac12\mu_0C_{ox}\frac WL[V_{OD}^2-\theta V_{OD}^3]\) (16.21).</li></ul>`},
+  {t:'check', q:{type:'num', q:'C_d/C_ox = 0.5 at 300 K (V_T = 25.9 mV). Subthreshold slope S (mV/dec)?', a:89, tol:0.03, unit:'mV/dec', explain:'2.3 × 25.9 × 1.5 ≈ 89 mV/dec.'}},
+  {t:'check', q:{type:'mcq', q:'DIBL mainly degrades…', opts:['the output impedance','the gate capacitance','the noise corner','the supply voltage'], a:0, explain:'p.585.'}},
+  {t:'recall', prompt:'Why can’t V_TH be scaled like V_DD, and what are V_TH roll-off and DIBL?', model:'S stays ≈ 80–100 mV/dec, so off-current sets a floor (plus TC and spread). Roll-off: V_TH falls at short L. DIBL: V_TH falls as V_DS rises.'}
+ ],
+ cards:[['Subthreshold slope','S = 2.3V_T(1 + C_d/C_ox) ≈ 80–100 mV/dec'],['V_TH temperature coefficient','≈ −1 mV/K'],['DIBL','V_DS lowers V_TH → lower r_o'],['Mobility degradation','µ₀/[1 + θV_OD], adds odd harmonics']]},
+
+{id:'16c', unit:'Ch 16 · Short-channel effects', sec:'16.2.3–16.2.5', label:'book', title:'Velocity saturation, hot carriers and a wandering r_o', mins:5, pages:[587,591], prereq:['16b','b-drift'],
+ obj:'Describe velocity saturation’s effect on I_D and g_m, and how r_o varies with V_DS.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`I_D=v_{sat}WC_{ox}(V_{GS}-V_{TH}),\qquad g_m=v_{sat}WC_{ox}`, note:'(16.23) full velocity saturation: linear in V_OD, independent of L — and g_m stops growing with current'},{tex:R`I_D=\frac12\mu C_{ox}\frac WL\frac{(V_{GS}-V_{TH})^2}{1+\frac{\mu_0}{2v_{sat}L}(V_{GS}-V_{TH})}`, note:'(16.25–16.29) between the two; lateral and vertical effects just add: θ → θ + µ₀/(2v_satL)'}]},
+  {t:'interactive', kind:'vsat', cap:'Shorten L and watch I_D and g_m bend away from the square law.'},
+  {t:'idea', p:R`Book check: v_sat ≈ 10⁷ cm/s, L = 0.25 µm, µ₀ ≈ 350 cm²/V·s → 2v_satL/µ₀ ≈ 1.43 V, so a few hundred mV of overdrive is still roughly square-law. Under velocity saturation the drain current saturates <b>before pinch-off</b>, at V_DS < V_OD (Fig. 16.9).`},
+  {t:'idea', h:'Hot carriers and r_o (pp.589–591)', p:R`High lateral fields give carriers enough energy for <b>impact ionization</b> near the drain (a drain-to-substrate current) and even gate current; this forces V_DD to scale. r_o rises with V_DS (CLM slows), DIBL flattens it, then impact ionization pulls it down (Fig. 16.11). So cascode gain changes with output level (nonlinearity) and is capped by a drain-to-substrate resistance.`},
+  {t:'visual', fig:'roVds', cap:'Fig. 16.11: overall variation of r_o with V_DS.'},
+  {t:'check', q:{type:'mcq', q:'In full velocity saturation, g_m depends on…', opts:['W and C_ox only (v_satWC_ox)','I_D and L','V_DS','temperature only'], a:0, explain:'(16.24).'}},
+  {t:'check', q:{type:'num', q:'L = 0.5 µm, µ₀ = 350 cm²/V·s, v_sat = 10⁷ cm/s. 2v_satL/µ₀ (V)?', a:2.86, tol:0.02, unit:'V', explain:'2·10⁵·0.5·10⁻⁶/0.035 ≈ 2.86 V.'}},
+  {t:'recall', prompt:'Write the velocity-saturated I_D and g_m and describe r_o vs V_DS.', model:'I_D = v_satWC_oxV_OD, g_m = v_satWC_ox; r_o rises (CLM), flattens (DIBL), falls (impact ionization).'}
+ ],
+ cards:[['Velocity-saturated I_D','v_sat W C_ox V_OD'],['Velocity-saturated g_m','v_sat W C_ox'],['Square law still OK when','V_OD ≪ 2v_satL/µ₀'],['Impact ionization','drain–substrate current; lowers r_o at high V_DS']]},
+
+{id:'16d', unit:'Ch 16 · Short-channel effects', sec:'16.3', label:'book', title:'SPICE models from Level 1 to BSIM3', mins:5, pages:[591,599], prereq:['16c'],
+ obj:'Know what each MOS model adds and its main weakness.',
+ blocks:[
+  {t:'idea', p:R`<div class="tbl"><table><tr><th>Model</th><th>Adds</th><th>Weakness</th></tr><tr><td>Level 1 (Shichman–Hodges)</td><td>square law + λ, body effect</td><td>OK only for L ≳ 4 µm; poor r_o</td></tr><tr><td>Level 2</td><td>V_TH varying along the channel, λ from depletion width, mobility vs field, subthreshold</td><td>slope discontinuity at weak/strong inversion</td></tr><tr><td>Level 3</td><td>semi-empirical, faster</td><td>“kink” in r_o at the triode edge</td></tr><tr><td>BSIM (~50 params)</td><td>empirical geometry fits, continuous I and dI</td><td>negative r_o at large V_DS</td></tr><tr><td>BSIM2 (~70)</td><td>CLM + DIBL in r_o</td><td>kinks for short, narrow devices</td></tr><tr><td>BSIM3 (~180)</td><td>back to physics</td><td>good to 0.25 µm, still r_o errors</td></tr><tr><td>Level 28, MOS9, EKV</td><td>EKV: bulk-referenced, one equation for all regions</td><td>—</td></tr></table></div>`},
+  {t:'idea', h:'Charge and temperature (pp.598–599)', p:R`The <b>Meyer</b> capacitance model (Ch 2’s C_GS = ⅔WLC_ox …) does not conserve charge in transient simulation: a node can slowly “lose” charge (Fig. 16.15). Better models compute charges first, then partition them (BSIM offers 40/60, 50/50, 0/100 source/drain splits). Temperature enters through V_TH, junction potentials, n_i, E_g and mobility.`},
+  {t:'check', q:{type:'mcq', q:'Which model problem makes simulated r_o unreliable near the triode edge?', opts:['A derivative discontinuity (“kink”), e.g., Level 3','Charge conservation','Temperature','Too few parameters in BSIM3'], a:0, explain:'Fig. 16.14.'}},
+  {t:'check', q:{type:'mcq', q:'The Meyer capacitance model’s main flaw in transient analysis is…', opts:['it does not conserve charge','it is too slow','it ignores C_GS','it has no overlap capacitance'], a:0, explain:'p.598.'}},
+  {t:'recall', prompt:'What does EKV do differently, and what is still poorly modelled by BSIM3?', model:'EKV uses the bulk as reference and one equation for all regions. BSIM3 still mispredicts output impedance.'}
+ ],
+ cards:[['Level 1 valid for','L ≳ 4 µm'],['BSIM3','~180 parameters, physics-based, r_o still inaccurate'],['EKV','bulk-referenced, single equation for weak and strong inversion'],['Meyer caps','not charge-conserving']]},
+
+{id:'16e', unit:'Ch 16 · Short-channel effects', sec:'16.4–16.5', label:'book', title:'Process corners, and analog design in a digital world', mins:3, pages:[599,601], prereq:['16d'],
+ obj:'Use process corners correctly and know why measured data still matter.',
+ blocks:[
+  {t:'visual', fig:'corners', cap:'Fig. 16.17: four corners bound the NMOS/PMOS speed envelope.'},
+  {t:'idea', p:R`Fabs discard wafers outside a guaranteed envelope; designers want it tight, process engineers want it wide (yield). Corners are digital-oriented (speed); simulate all of them across temperature. Analog adds what corners don’t capture: models that fail benchmark tests, AC vs transient disagreements, flicker noise and mismatch needing measurement, r_o nonlinearity. Hence: experience, intuition, and <b>test chips</b> for complex designs.`},
+  {t:'check', q:{type:'mcq', q:'“SF” corner means…', opts:['slow NMOS, fast PMOS','slow both','fast NMOS, slow PMOS','slow frequency'], a:0, explain:'First letter NMOS.'}},
+  {t:'recall', prompt:'Name the four process corners and one thing they do not capture.', model:'FF, SS, FS, SF (plus TT); e.g., mismatch, flicker noise, r_o nonlinearity.'}
+ ],
+ cards:[['Process corners','FF, SS, FS, SF around TT'],['Corner naming','first letter NMOS, second PMOS']]},
+
+/* ---- Chapter 17 ---- */
+{id:'17a', unit:'Ch 17 · CMOS processing', sec:'17.1–17.6', label:'book', title:'The basic steps: wafers, lithography, oxidation, implantation, etching', mins:5, pages:[604,611], prereq:['2b'],
+ obj:'Describe each unit process and why it matters for analog circuits.',
+ blocks:[
+  {t:'idea', p:R`<ul><li><b>Wafer</b>: Czochralski single-crystal ingot (>20 cm diameter then), 0.05–0.1 Ω·cm, polished and etched.</li><li><b>Photolithography</b>: one mask + three steps per layer — coat photoresist, expose through the mask (UV), etch away the soft resist. Negative resist hardens where exposed; positive resist where not. Slow and expensive.</li><li><b>Oxidation</b>: thick field oxide between devices; the gate oxide must be uniform to a few Å across the wafer (slow growth, clean surface).</li><li><b>Ion implantation</b>: dose and energy set concentration and depth; retrograde n-wells (low resistance deep down against latch-up); channel-stop implant raises the field threshold; anneal once at the end (it also diffuses dopants sideways); tilt 7–9° to avoid channelling — which then shadows one side of a gate (Ch 18 symmetry).</li><li><b>Deposition</b> (CVD) and <b>etching</b>: wet (imprecise), plasma, reactive-ion.</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'Why are implants tilted by 7–9°?', opts:['To avoid channelling deep along crystal axes','To speed up implantation','To dope the gate','To make positive resist'], a:0, explain:'p.610.'}},
+  {t:'check', q:{type:'mcq', q:'Each lithography sequence uses…', opts:['one mask and three steps (coat, expose, etch)','two masks','no mask','one step'], a:0, explain:'p.607.'}},
+  {t:'recall', prompt:'Name the unit processes in order of how a layer is built.', model:'Wafer → oxide/resist coat → lithography (mask, expose, etch) → implant or deposit → etch → anneal.'}
+ ],
+ cards:[['Lithography sequence','coat resist, expose through mask, etch'],['Channel-stop implant','raises the field-oxide threshold'],['Implant tilt (7–9°)','avoids channelling; causes shadowing']]},
+
+{id:'17b', unit:'Ch 17 · CMOS processing', sec:'17.7.1', label:'book', title:'Building a CMOS transistor, front end to back end', mins:5, pages:[611,616], prereq:['17a'],
+ obj:'Walk through the n-well CMOS flow and explain self-alignment and silicidation.',
+ blocks:[
+  {t:'visual', fig:'flow', cap:'Fig. 17.8 as a flow.'},
+  {t:'visual', fig:'cmosX', cap:'Fig. 17.1-style cross-section after the back end.'},
+  {t:'idea', h:'Key ideas', p:R`<ul><li><b>Threshold-adjust implant</b>: native thresholds are too negative (V_THN ≈ 0, V_THP ≈ −1 V); a shallow implant after gate oxide shifts both.</li><li><b>Self-aligned source/drain</b>: implanting S/D <i>after</i> the poly gate puts the junctions exactly at the gate edges; misalignment just makes one junction slightly bigger (Fig. 17.9).</li><li><b>Silicide</b> (TiSi₂, after oxide spacers) cuts poly and active sheet resistance by ~10×.</li><li><b>Back end</b>: contacts, metal 1, then 2 masks per extra metal (contact/via + metal): 5 metals → 10 masks. Use many small fixed-size contacts, not one large one (contact spiking). Finish with passivation glass, opened over pads.</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'Why are S/D regions implanted after the poly gate?', opts:['Self-alignment: junctions land exactly at the gate edges','To dope the gate oxide','To avoid annealing','It is cheaper only'], a:0, explain:'p.613.'}},
+  {t:'check', q:{type:'mcq', q:'Large areas are contacted with many small contacts because…', opts:['contact size is fixed by reliability and large contacts can spike through the junction','they look nicer','it lowers capacitance','it saves masks'], a:0, explain:'Fig. 17.12.'}},
+  {t:'recall', prompt:'Explain self-alignment and silicidation in one sentence each.', model:'S/D implanted after the gate so it masks the channel exactly; a metal silicide on poly and active lowers their resistance ~10×.'}
+ ],
+ cards:[['Self-aligned gate','S/D implanted after poly: no gate–S/D misalignment'],['Silicide','~10× lower poly/active sheet resistance'],['Masks per extra metal layer','2 (via + metal)']]},
+
+{id:'17c', unit:'Ch 17 · CMOS processing', sec:'17.7.2', label:'book', title:'On-chip resistors and capacitors', mins:6, pages:[616,624], prereq:['17b','b-sheet','13c'],
+ obj:'Choose resistor and capacitor structures by value, accuracy, linearity and parasitics.',
+ blocks:[
+  {t:'idea', h:'Resistors', p:R`<div class="tbl"><table><tr><th>Type</th><th>R_□</th><th>Notes</th></tr><tr><td>Silicide-block poly</td><td>50–few hundred Ω</td><td>±20 % lot to lot, linear, low substrate C (≈ 90 aF/µm², 100 aF/µm fringe); extra mask</td></tr><tr><td>n-well</td><td>≈ 1 kΩ</td><td>tens of % spread, voltage-dependent, large distributed C (Fig. 17.16) — fine where the value isn’t critical (bias isolation, Fig. 17.15)</td></tr><tr><td>Silicided poly/active</td><td>a few Ω</td><td>±50 %: rarely for analog</td></tr><tr><td>Metal</td><td>30–70 mΩ</td><td>too small for most uses</td></tr></table></div>`},
+  {t:'idea', h:'Capacitors', p:R`<ul><li><b>Poly–diffusion</b> (needs a capacitor mask: self-alignment would otherwise make a MOSFET): α₁ ≈ 5×10⁻⁴ V⁻¹, α₂ ≈ 5×10⁻⁵ V⁻², bottom plate ≈ 20 %.</li><li><b>Poly–poly</b> (double-poly processes): similar.</li><li><b>Metal–poly</b>: most linear (ppm), most expensive.</li><li><b>MOS capacitor</b>: densest, but C varies with voltage (Fig. 17.21) and has channel series resistance R_tot/4 (distributed: /3 more) → use wide, short fingers.</li><li><b>Metal sandwich</b>: linear but big, with 50–60 % bottom-plate parasitic.</li></ul>`},
+  {t:'example', src:'book', h:'Example 17.1 (pp.621–622): ×2 circuit with a MOS capacitor', given:'C₁ is an NMOS capacitor in inversion during sampling.', steps:[{tex:R`Q=\int_0^{V_{in}}C_1(V)\,dV`, say:'The transferred charge is the area under the C–V curve, not C·V: the gain is wrong and input-dependent.'}]},
+  {t:'check', q:{type:'mcq', q:'Which capacitor is most linear?', opts:['metal–poly','MOS capacitor','poly–diffusion','n-well junction'], a:0, explain:'p.620.'}},
+  {t:'check', q:{type:'mcq', q:'Why are MOS capacitors made of wide, short fingers?', opts:['To cut channel series resistance (∝ L/W)','To raise capacitance per area','To lower nonlinearity','To save masks'], a:0, explain:'Fig. 17.24.'}},
+  {t:'recall', prompt:'Pick a resistor and a capacitor for a precise SC filter, and say why.', model:'Silicide-block poly (linear, low parasitic) and metal–poly or poly–poly capacitors (linear, moderate bottom plate).'}
+ ],
+ cards:[['Best analog resistor','silicide-block poly, 50–few hundred Ω/□, ±20 %'],['n-well resistor','≈ 1 kΩ/□, voltage-dependent, big parasitic C'],['Most linear capacitor','metal–poly'],['Sandwich capacitor bottom plate','50–60 %']]},
+
+{id:'17d', unit:'Ch 17 · CMOS processing', sec:'17.7.3–17.8', label:'book', title:'Interconnect and latch-up', mins:5, pages:[624,630], prereq:['17c','b-bjt'],
+ obj:'Estimate wire effects and explain latch-up and its prevention.',
+ blocks:[
+  {t:'example', src:'book', h:'Example 17.3 (pp.625–626): a DAC’s ground bus', given:'N equal NMOS current sources; resistance r between neighbours on the ground line.', steps:[{tex:R`\frac{I_1-I_N}{I}\approx g_m\frac{N^2}{2}r`, say:'Ground drops add up along the bus: the error grows as N². Make the bus wide.'}]},
+  {t:'idea', h:'Wires', p:R`Electromigration: keep ≈ 1 mA per µm of width (depends on thickness). Capacitance = parallel-plate + fringe (comparable for narrow lines, 17.11); upper metals have less per area but wider minimum widths. Coupling between wires needs field solvers.`},
+  {t:'visual', fig:'latchup', cap:'Fig. 17.30: the parasitic pnp (PMOS/well/substrate) and npn (NMOS/substrate/well) form an SCR.'},
+  {t:'idea', p:R`Triggers: displacement current from big drain swings, especially large output buffers dumping current into the substrate. Prevention: frequent substrate and well ties, guard rings, heavily doped substrates and retrograde wells, and the foundry’s latch-up layout rules.`},
+  {t:'check', q:{type:'mcq', q:'Latch-up is a…', opts:['positive-feedback loop of parasitic bipolar transistors','gate-oxide breakdown','metal migration','charge-injection error'], a:0, explain:'§17.8.'}},
+  {t:'check', q:{type:'mcq', q:'In Example 17.3 the current-source error grows as…', opts:['N²','N','√N','constant'], a:0, explain:'p.626.'}},
+  {t:'recall', prompt:'Explain latch-up and two ways to prevent it.', model:'Parasitic pnp–npn SCR with loop gain ≥ 1 latches on; prevent with many substrate/well ties, guard rings, heavily doped substrate.'}
+ ],
+ cards:[['Electromigration rule of thumb','≈ 1 mA per µm of width'],['DAC ground-bus error','∝ N²'],['Latch-up structure','pnp + npn parasitic SCR']]},
+
+/* ---- Chapter 18 ---- */
+{id:'18a', unit:'Ch 18 · Layout & packaging', sec:'18.1', label:'book', title:'Design rules and the antenna effect', mins:4, pages:[631,635], prereq:['17b'],
+ obj:'Classify design rules and explain the antenna effect and its fixes.',
+ blocks:[
+  {t:'idea', p:R`Four kinds of rules (Figs. 18.2–18.6): <b>minimum width</b> (thicker layers need wider lines), <b>minimum spacing</b>, <b>minimum enclosure</b> (e.g., a contact inside poly, a device inside the n-well), <b>minimum extension</b> (gate poly past the active edge). Plus special rules: wide long metal (lift-off), and antenna rules. Modern processes have hundreds.`},
+  {t:'idea', h:'Antenna effect (Fig. 18.8)', p:R`During plasma etching a large metal area tied to a gate collects charge; with nothing else connected yet, the gate oxide can break down or be damaged. Fixes: break the long metal and jump to a higher layer near the gate (the gate then connects only when the top layer is etched), or add a small reverse diode at the gate.`},
+  {t:'check', q:{type:'mcq', q:'A layout jumps from metal 1 to metal 2 near a gate. Why?', opts:['To limit the antenna area connected to the gate during metal-1 etch','To lower resistance','To meet spacing rules','To reduce capacitance'], a:0, explain:'Fig. 18.8(b).'}},
+  {t:'recall', prompt:'Name the four kinds of design rules.', model:'Minimum width, spacing, enclosure, extension.'}
+ ],
+ cards:[['Design-rule types','width, spacing, enclosure, extension'],['Antenna fix','break metal & jump layers near the gate, or add a diode']]},
+
+{id:'18b', unit:'Ch 18 · Layout & packaging', sec:'18.2.1', label:'book', title:'Multifinger transistors', mins:4, pages:[635,637], prereq:['18a','7c'],
+ obj:'Choose the number of fingers to balance gate resistance against junction capacitance.',
+ blocks:[
+  {t:'visual', fig:'fingers', cap:'Figs. 18.9–18.10: fold a wide device into fingers.'},
+  {t:'formal', eq:[{tex:R`\frac13R_{finger}<\frac1{g_{m,finger}}\ \ (\text{or }\tfrac15\ldots\tfrac1{10}\text{ of it for low noise})`, note:'rule of thumb (p.635); the 1/3 accounts for the distributed gate resistance (18.2)'}]},
+  {t:'example', src:'book', h:'Example 18.1 (p.636)', given:'W/L = 100/0.6 at 1 mA, g_m = 1/(200 Ω), poly R_□ = 5 Ω/□. Gate-resistance noise VOLTAGE must be one-fifth of the channel noise voltage (so 1/25 in power). N fingers.', steps:[{tex:R`4kT\cdot\tfrac23(200)=25\times4kT\cdot\frac13\cdot\frac{5\times(100/0.6)}{N^2}\ \Rightarrow\ N\approx7.2`, say:'(18.1)–(18.4) Each finger has R/N and the N fingers are in parallel, so the gate resistance falls as 1/N². At least 8 fingers.'}]},
+  {t:'idea', p:R`More fingers add S/D perimeter. With an odd number of fingers and the drains inside, three fingers give perimeter 4E + 4W/3 vs 2E + 2W for one strip; in general keep N·E ≪ W. Gate-resistance noise and junction capacitance pull in opposite directions — compromise.`},
+  {t:'check', q:{type:'mcq', q:'Splitting a transistor into N fingers changes the gate-resistance condition by roughly…', opts:['N² (better)','N (better)','no change','worse'], a:0, explain:'R ∝ 1/N and 1/g_m ∝ N.'}},
+  {t:'recall', prompt:'State the finger rule of thumb.', model:'Each finger’s gate resistance (÷3 for distribution) below 1/g_m of the finger; 1/5–1/10 for low noise.'}
+ ],
+ cards:[['Finger width rule','R_finger/3 < 1/g_m,finger (low noise: ≪)'],['More fingers cost','S/D perimeter capacitance']]},
+
+{id:'18c', unit:'Ch 18 · Layout & packaging', sec:'18.2.2', label:'book', title:'Symmetry: dummies, cross-coupling and common centroid', mins:6, pages:[637,642], prereq:['18b','13d'],
+ obj:'Lay out matched pairs that cancel systematic gradients.',
+ blocks:[
+  {t:'idea', p:R`Symmetry lowers offset, rejects common-mode noise and keeps even-order distortion small (Ch 13) — and it must include the <b>surroundings</b>, not just the devices.`},
+  {t:'idea', h:'Systematic asymmetries', p:R`<ul><li>Tilted implants shadow one side of each gate: orient the pair so both see the same shadow (Figs. 18.13–18.14).</li><li>Edge devices see different neighbours (etch, implant): add <b>dummy</b> transistors at both ends (Fig. 18.16).</li><li>A metal line over only one device: replicate it over the other (Fig. 18.17).</li><li>Gradients (oxide thickness, doping, temperature) across a large pair (Fig. 18.18).</li></ul>`},
+  {t:'visual', fig:'ccLayouts', cap:'Figs. 18.19–18.20: interleave halves so linear gradients cancel.'},
+  {t:'interactive', kind:'gradient', cap:'Add x and y gradients, then curvature, and compare the three layouts.'},
+  {t:'check', q:{type:'mcq', q:'A 1-D ABBA arrangement cancels…', opts:['a linear gradient along the row','all random mismatch','quadratic gradients','gradients perpendicular to the row'], a:0, explain:'Fig. 18.20.'}},
+  {t:'check', q:{type:'mcq', q:'Why add dummy devices at the ends of a matched array?', opts:['So every active unit has the same surroundings','To raise g_m','To reduce gate resistance','For ESD'], a:0, explain:'Fig. 18.16.'}},
+  {t:'recall', prompt:'List four layout precautions for a matched pair.', model:'Same orientation (implant shadow), dummies at ends, replicate overhead lines, common-centroid/cross-coupled placement.'}
+ ],
+ cards:[['Common centroid','both devices share a centre: x and y linear gradients cancel'],['Dummies','give edge units the same neighbours'],['Implant shadowing','orient matched devices identically']]},
+
+{id:'18d', unit:'Ch 18 · Layout & packaging', sec:'18.2.3–18.2.4', label:'book', title:'Reference distribution and passive-device layout', mins:5, pages:[642,653], prereq:['18c','b-sheet','11e'],
+ obj:'Distribute bias as currents and lay out resistor and capacitor arrays for matching.',
+ blocks:[
+  {t:'idea', h:'Reference distribution (Figs. 18.21–18.22)', p:R`Sending one bias <b>voltage</b> across a big chip makes each mirror see a different V_GS (ground drops, gradients) → current errors. Send <b>currents</b> instead and make local mirrors; use integer multiples of a unit device; surround arrays with dummies.`},
+  {t:'idea', h:'Resistors', p:R`Poly resistors (silicide block): linear, low C; a 5 µm × 3 µm unit matches to ≈ 0.2 %. Ratios from identical units in series/parallel, interdigitated with the odd one in the middle (Fig. 18.26); long ones as parallel strips joined by metal (not serpentine corners, Fig. 18.28). n-well resistors: ±40 %, TC ≈ +0.2–0.3 %/°C, voltage-dependent — Example 18.3: a 128-unit n-well ladder bows because each unit’s well bias differs.`},
+  {t:'visual', fig:'capArray', cap:'Example 18.4 / Fig. 18.35: a common-centroid capacitor array with dummies.'},
+  {t:'idea', h:'Capacitors and diodes', p:R`Sandwich capacitors: parasitic-to-total ratio C_P/C ≈ 0.2–0.25 at best, ≈ 0.5 for full stacks; ±20 % process spread; include fringe capacitance. Routing to inner units of an array is the hard part. A p⁺/n-well “diode” forward-biased is really a pnp to the substrate — not a floating diode.`},
+  {t:'check', q:{type:'mcq', q:'Why distribute references as currents?', opts:['A voltage sees different ground drops and gradients at each mirror','Currents need no wires','It saves power only','Voltages are noisier'], a:0, explain:'p.643.'}},
+  {t:'check', q:{type:'mcq', q:'Ratio C₁ = 8C₂ is best built as…', opts:['8 identical unit capacitors around 1 unit, with dummies','one large plate 8× bigger','two different-size squares','a sandwich only'], a:0, explain:'Example 18.4.'}},
+  {t:'recall', prompt:'How do you lay out an accurate resistor or capacitor ratio?', model:'Integer numbers of identical units, interleaved/common-centroid, surrounded by dummies.'}
+ ],
+ cards:[['Bias distribution','send currents, mirror locally'],['Poly resistor matching (5×3 µm)','≈ 0.2 %'],['Ratioed passives','identical units + common centroid + dummies']]},
+
+{id:'18e', unit:'Ch 18 · Layout & packaging', sec:'18.2.5–18.2.6', label:'book', title:'Interconnects, pads and ESD protection', mins:5, pages:[653,660], prereq:['18d','7c'],
+ obj:'Reduce crosstalk and wire noise, and understand pad and ESD structures.',
+ blocks:[
+  {t:'idea', h:'Crosstalk', p:R`Use differential signals and clocks (coupling becomes common mode; add dummy wires to equalise overlaps, Fig. 18.39) and <b>shield</b> sensitive lines with grounded neighbours or above/below layers (Figs. 18.40–18.41) — more effective than spacing, at the cost of capacitance and routing.`},
+  {t:'example', src:'book', h:'Example 18.5 (p.656): wire and contact noise', given:'100 µm of metal 4 (40 mΩ/□), vias of 5 Ω, a 10 Ω contact.', steps:[{tex:R`R_{tot}=14.5\ \Omega\ \Rightarrow\ \sqrt{4kTR}=0.49\text{ nV}/\sqrt{\text{Hz}}`, say:'Comparable to a low-noise input device: contacts and vias matter.'}]},
+  {t:'idea', h:'Delay and buses', p:R`Long RC lines delay and <b>disperse</b> edges (Fig. 18.43): unequal delays between a clock and a signal skew an array of samplers (Fig. 18.44). Power buses: IR drop and electromigration; parallel several metals (top metal ≈ 2× thicker); taper bus width along known loads (Fig. 18.45).`},
+  {t:'idea', h:'Pads and ESD', p:R`Pads ≈ 70–100 µm square, ≥ 25 µm apart, two top metals joined by vias (lift-off) — capacitance matters (Example 18.6). ESD: a human body ≈ hundreds of pF + kΩ at hundreds to thousands of volts; oxide breaks at ≈ 10⁷ V/cm (10 V for 100 Å); junctions melt. Protection: diodes to V_DD and ground plus a series R_S (Fig. 18.49) — costing pF of capacitance, R_S noise, supply-noise coupling and possible latch-up; use only foundry-qualified structures.`},
+  {t:'visual', fig:'esd', cap:'Fig. 18.49: diode ESD protection.'},
+  {t:'check', q:{type:'mcq', q:'Shielding a sensitive line with grounded neighbours is better than just spacing because…', opts:['field lines from noisy wires end on the grounds','it lowers resistance','it removes fringe capacitance','it is free'], a:0, explain:'Fig. 18.40.'}},
+  {t:'check', q:{type:'num', q:'Gate oxide 50 Å, breakdown 10⁷ V/cm. Breakdown voltage (V)?', a:5, tol:0.01, unit:'V', explain:'10⁷ V/cm × 5×10⁻⁷ cm = 5 V.'}},
+  {t:'recall', prompt:'Name two crosstalk remedies and the costs of ESD protection.', model:'Differential signalling and shielding. ESD diodes add capacitance, R_S noise, supply coupling and latch-up risk.'}
+ ],
+ cards:[['Crosstalk remedies','differential signals/clocks, shielding'],['Oxide breakdown field','≈ 10⁷ V/cm'],['ESD protection','diodes to rails + series R; costs C, noise, latch-up risk']]},
+
+{id:'18f', unit:'Ch 18 · Layout & packaging', sec:'18.3–18.4', label:'book', title:'Substrate coupling, ground bounce and packaging', mins:6, pages:[660,676], prereq:['18e','2k'],
+ obj:'Explain substrate noise and package inductance, and the standard remedies.',
+ blocks:[
+  {t:'idea', h:'Substrate coupling (§18.3)', p:R`Heavily doped p⁺ substrates (against latch-up) are low-resistance planes: digital edges couple through drain junctions into the substrate and bounce it through the substrate bond-wire inductance. Analog devices feel it through the <b>body effect</b> — indistinguishable from input signal (Fig. 18.50). Distance barely helps. Remedies: differential analog circuits; complementary digital signals and clocks; sample well after clock edges; low-inductance substrate connection; PMOS input pairs (well tied to source); guard rings on lightly doped substrates; tie the substrate to the <b>analog</b> ground so they bounce together (Figs. 18.53–18.56).`},
+  {t:'visual', fig:'bounce', cap:'Fig. 18.60: a clock buffer’s current spike across package inductance.'},
+  {t:'formal', eq:[{tex:R`\Delta V=L\frac{\Delta I}{\Delta t}`, note:'bond wire ≈ 1 nH/mm; wire + trace ≈ 2–20 nH'}]},
+  {t:'interactive', kind:'bounce', cap:'Scale up the number of switching gates, then add parallel pins.'},
+  {t:'example', src:'book', h:'Example 18.7 (p.669): a microprocessor', given:'600 MHz, 2 V; supply current changes 25 A in 5 ns; 200 V_DD + 200 ground wires, 5 nH each.', steps:[{tex:R`\Delta V=\frac{5\text{ nH}}{200}\cdot\frac{25\text{ A}}{5\text{ ns}}=125\text{ mV per rail}\ \Rightarrow\ \approx250\text{ mV total}`, say:'More than 10 % of the supply: an external 1 µF capacitor and 160 more wire pairs were added.'}]},
+  {t:'idea', h:'More package lessons', p:R`Separate analog/digital supplies (a sampling clock buffer may need a third, quiet supply, Fig. 18.61); on-chip decoupling makes V_DD and ground bounce together — but can resonate with the package L (add damping R), and huge MOS caps hurt yield. Ground-plane packages and down-bonds cut substrate inductance (Fig. 18.65). Input L with pad C forms a low-pass/ringing network; externally supplied references need on-chip settling care (Example 18.8: a current-switch tail node dips during switching). Mutual inductance and capacitance couple neighbouring pins.`},
+  {t:'check', q:{type:'num', q:'ΔI = 50 mA in 1 ns through 4 nH. Bounce (mV)?', a:200, tol:0.01, unit:'mV', explain:'4n × 0.05/1n = 0.2 V.'}},
+  {t:'check', q:{type:'mcq', q:'How does substrate noise mainly reach an analog NMOS?', opts:['Through body effect (V_TH modulation)','Through the gate oxide','Through the metal wires only','It cannot'], a:0, explain:'p.661.'}},
+  {t:'recall', prompt:'Give the bounce formula and four remedies for substrate/supply noise.', model:'ΔV = L·ΔI/Δt; differential circuits, complementary clocks, many parallel pads/low-L packages, on-chip decoupling, guard rings, substrate tied to analog ground.'}
+ ],
+ cards:[['Bond-wire inductance','≈ 1 nH/mm (2–20 nH per pin with trace)'],['Ground bounce','L·ΔI/Δt'],['Substrate noise path','junction capacitance → substrate → body effect'],['On-chip decoupling risk','resonance with package L']]}
+);
+
+(function(){
+ const ch=n=>CHAPTERS.find(c=>c.n===n);
+ Object.assign(ch(16),{status:'taught',bridges:[],secs:[['16.1','Scaling theory','16a'],['16.2.1–16.2.2','V_TH variation; mobility degradation','16b'],['16.2.3–16.2.5','Velocity saturation; hot carriers; r_o vs V_DS','16c'],['16.3','MOS device models (Level 1–3, BSIM, EKV)','16d'],['16.4–16.5','Process corners; analog in a digital world','16e'],['Problems','16.1– (pp.601–603)','']]});
+ Object.assign(ch(17),{status:'taught',bridges:[],secs:[['17.1–17.6','Wafer, lithography, oxidation, implantation, deposition, etching','17a'],['17.7.1','Active devices: front and back end','17b'],['17.7.2','Passive devices','17c'],['17.7.3–17.8','Interconnects; latch-up','17d'],['Problems','17.1– (pp.629–630)','']]});
+ Object.assign(ch(18),{status:'taught',bridges:[],secs:[['18.1','Design rules; antenna effect','18a'],['18.2.1','Multifinger transistors','18b'],['18.2.2','Symmetry','18c'],['18.2.3–18.2.4','Reference distribution; passive devices','18d'],['18.2.5–18.2.6','Interconnects; pads and ESD','18e'],['18.3–18.4','Substrate coupling; packaging','18f'],['Problems','18.1– (pp.674–676)','']]});
+ GLOSSARY.push(['Constant-field scaling','Shrink dimensions and voltages by α, raise doping by α.','16a'],['Subthreshold slope','mV of V_GS per decade of I_D below threshold (≈ 80–100).','16b'],['DIBL','Drain-induced barrier lowering: V_DS lowers V_TH.','16b'],['Velocity saturation','Carrier velocity caps at ≈ 10⁷ cm/s; I_D becomes linear in V_OD.','16c'],['BSIM3','Physics-based SPICE MOS model (~180 parameters).','16d'],['Process corners','FF, SS, FS, SF bounds of device speed.','16e'],['Self-aligned gate','S/D implanted after poly so junctions meet the gate edges.','17b'],['Silicide','Metal–silicon compound that lowers poly/active resistance.','17b'],['Sheet resistance','Resistance per square, R_□ = ρ/t.','b-sheet'],['Latch-up','Parasitic SCR turning on between V_DD and ground.','17d'],['Electromigration','Metal atoms move at high current density, opening wires.','17d'],['Antenna effect','Plasma-etch charge on large metal damages a connected gate.','18a'],['Common centroid','Matched devices sharing a centre so gradients cancel.','18c'],['Dummy device','Inactive copy that gives edge devices identical surroundings.','18c'],['ESD','Electrostatic discharge; clamped by protection diodes.','18e'],['Substrate coupling','Noise injected into the shared substrate reaching other devices.','18f'],['Ground bounce','L·di/dt across package inductance.','18f']);
+ FORMULAS.push({name:'Subthreshold slope',tex:R`S=2.3V_T\Big(1+\dfrac{C_d}{C_{ox}}\Big)`,eq:'16.18',lesson:'16b',vars:'',when:'Weak inversion'},
+  {name:'Mobility degradation',tex:R`\mu_{eff}=\dfrac{\mu_0}{1+\theta(V_{GS}-V_{TH})}`,eq:'16.19',lesson:'16b',vars:'θ ≈ 10⁻⁷/t_ox',when:'Vertical field'},
+  {name:'Velocity saturation',tex:R`I_D=v_{sat}WC_{ox}(V_{GS}-V_{TH}),\ g_m=v_{sat}WC_{ox}`,eq:'16.23–16.24',lesson:'16c',vars:'v_sat ≈ 10⁷ cm/s',when:'Very short L'},
+  {name:'Sheet resistance',tex:R`R=R_\square\dfrac LW`,eq:'17.1',lesson:'b-sheet',vars:'',when:'Layout resistors'},
+  {name:'Finger rule',tex:R`\tfrac13R_{finger}<1/g_{m,finger}`,eq:'18.2',lesson:'18b',vars:'',when:'Multifinger layout'},
+  {name:'Ground bounce',tex:R`\Delta V=L\dfrac{\Delta I}{\Delta t}`,eq:'§18.4',lesson:'18f',vars:'L ≈ 1 nH/mm',when:'Package inductance'});
+ const mv=(id,after)=>{const i=LESSONS.findIndex(l=>l.id===id);const [b]=LESSONS.splice(i,1);LESSONS.splice(LESSONS.findIndex(l=>l.id===after)+1,0,b)};
+ mv('b-sheet','b-phase');
+})();
+
 /* ---- intros.js ---- */
 /* Narrated preview scripts: h = the question the lesson answers; l = three short spoken lines.
    Written for text-to-speech, so symbols are spelled out in words. */
@@ -3344,6 +3643,26 @@ Object.assign(INTROS,{
 '15d':{h:'How do we stabilise a charge-pump P L L?',l:['Two integrators in a loop oscillate.','A resistor in series with the loop capacitor adds a stabilising zero.','Unlike the simple P L L, more charge-pump current makes it more stable.']},
 '15e':{h:'What goes wrong in real P L Ls?',l:['Tiny phase errors can fall into a dead zone.','Current mismatch and charge sharing disturb the control voltage.','The loop filters input jitter low-pass, and V C O jitter high-pass.']},
 '15f':{h:'What are P L Ls and D L Ls actually used for?',l:['A delay-locked loop locks a delay line instead of an oscillator.','A divider in a P L L multiplies frequency exactly, which builds synthesizers.','P L Ls also remove clock skew and clean up jitter.']}
+});
+
+/* ---- intros5.js ---- */
+Object.assign(INTROS,{
+'b-sheet':{h:'How does layout geometry become resistance?',l:['Every layer has a sheet resistance, in ohms per square.','A resistor’s value is that number times its length over its width.','So a square of any size has the same resistance.']},
+'16a':{h:'What does shrinking transistors do to circuits?',l:['Ideal scaling shrinks dimensions and voltages together.','Digital circuits get faster and use far less power.','Analog circuits lose signal swing, so keeping the dynamic range costs power.']},
+'16b':{h:'Why won’t the threshold voltage scale down?',l:['Below threshold, current falls only about ten times per eighty to one hundred millivolts.','So V T H must stay a few hundred millivolts to turn devices off.','Short channels also lower V T H, through roll-off and drain-induced barrier lowering.']},
+'16c':{h:'What happens when carriers can’t go any faster?',l:['In a strong field, carrier velocity saturates near ten to the seven centimetres per second.','Then drain current grows linearly with overdrive, and g m stops growing.','Output resistance also wanders with the drain voltage.']},
+'16d':{h:'How good are our transistor models?',l:['Level one is the square law with a few corrections.','B S I M models add many parameters to fit short-channel devices.','Even the best models still struggle with output resistance.']},
+'16e':{h:'How do we design for process variation?',l:['Foundries promise devices inside four speed corners.','Simulate every corner across temperature.','For analog, measured data and test chips still matter.']},
+'17a':{h:'How is a chip actually made?',l:['It starts from a single-crystal silicon wafer.','Each layer is patterned by lithography, then oxidised, implanted, deposited or etched.','Every step affects matching and device behaviour.']},
+'17b':{h:'How is a CMOS transistor built?',l:['Wells, field oxide, gate oxide and poly come first.','Source and drain are implanted after the gate, so they line up with it automatically.','Silicide, contacts and metal layers finish the job.']},
+'17c':{h:'What resistors and capacitors can we put on a chip?',l:['Silicide-block poly gives the best analog resistors.','Metal and poly capacitors are linear; M O S capacitors are dense but nonlinear.','Each choice trades accuracy, linearity and parasitics.']},
+'17d':{h:'What can wires and parasitic transistors do to a chip?',l:['Ground drops along a bus can grow with the square of the number of devices.','Too much current density slowly breaks wires.','Hidden bipolar transistors can latch up and short the supply.']},
+'18a':{h:'What rules does a layout have to obey?',l:['Every layer has minimum widths, spacings, enclosures and extensions.','Large metal tied to a gate can collect charge during etching and damage it.','Breaking the metal near the gate avoids this antenna effect.']},
+'18b':{h:'Why split a big transistor into fingers?',l:['A long poly gate has resistance, which adds noise and slows the device.','Splitting it into fingers cuts that resistance by about N squared.','But more fingers add junction capacitance.']},
+'18c':{h:'How do we make two transistors truly match?',l:['Process gradients make side-by-side devices differ.','Interleaving them, A B B A, or in a common centroid, cancels linear gradients.','Dummies and identical surroundings remove edge effects.']},
+'18d':{h:'How do we lay out references and passive devices?',l:['Send bias as currents, not voltages, across a big chip.','Build ratios from identical unit resistors and capacitors.','Arrange them in common-centroid arrays with dummies.']},
+'18e':{h:'How do wires, pads and E S D affect a circuit?',l:['Neighbouring wires couple noise; differential signals and shields help.','Even contacts and vias add thermal noise.','E S D diodes protect the pads but add capacitance and noise.']},
+'18f':{h:'How does noise travel through the substrate and the package?',l:['Digital switching shakes the shared substrate, which reaches analog devices through body effect.','Package inductance turns current spikes into supply and ground bounce.','Differential circuits, many pins and careful grounding keep it under control.']}
 });
 
 /* ---- img.js ---- */
@@ -3771,7 +4090,7 @@ function renderBook(){const taught=CHAPTERS.filter(c=>c.status==='taught').lengt
   <div class="card stack"><h3>${MT(BOOK.title)}</h3><p>${esc(BOOK.author)} · <b>${esc(BOOK.edition)}</b></p>
    <p class="small">Your file is named <span class="mono">${esc(BOOK.file)}</span>, but the scan is the <b>first edition (2001, 18 chapters)</b>, not the 2017 second edition. Section and equation numbers here follow your scan. In the 2nd edition several chapters are renumbered and expanded.</p>
    <p class="small">Page references: book page N = PDF page N + ${BOOK.offset} in your ${BOOK.pdfPages}-page scan. The scan has no text layer; it was OCR’d to build this course, so tiny OCR slips are possible — the book is the authority.</p>
-   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–576 (Ch 8–15 text). <b>Not yet reviewed:</b> end-of-chapter problems, the chapter appendices, and Chapters 16–18 beyond their table of contents.</p>
+   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–676 (Ch 8–18 text). <b>Not yet reviewed:</b> the end-of-chapter problems (only a few are worked inside lessons) and the chapter appendices.</p>
    <p class="small"><b>Your class decks:</b> <span class="mono">unit1.pptx</span> covers Ch 2–5 (device, CS/CG/cascode, differential pair, active loads, folded cascode). <span class="mono">Stability Issues and Frequency compensation.pptx</span> covers Ch 9–11 (op amps, compensation, folded cascode, gain boosting, slew, PSRR, references).</p></div>
   <div class="card stack"><h3>Progress against the book</h3><div class="row" style="gap:28px"><div class="stat"><b>${taught}+${partial}</b><span class="small muted">chapters taught / partly taught of 18</span></div><div class="stat"><b>${cnt('taught')}/${LESSONS.length}</b><span class="small muted">lessons done</span></div><div class="stat"><b>${cnt('practised')}</b><span class="small muted">practised (all checks right)</span></div><div class="stat"><b>${cnt('reviewed')}</b><span class="small muted">reviewed at least once</span></div></div></div>
   ${CHAPTERS.map(c=>`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>Ch ${c.n} · ${esc(c.title)}</h3><span class="row"><span class="mono small muted">pp.${c.pages[0]}–${c.pages[1]} · PDF ${c.pages[0]+BOOK.offset}–${c.pages[1]+BOOK.offset}</span><span class="tag ${c.status==='taught'?'good':c.status==='partial'?'bridge':'plain'}">${c.status==='taught'?'taught':c.status==='partial'?'partly taught':'mapped from contents only'}</span></span></div>
@@ -4207,6 +4526,38 @@ WIDGETS.vco=function(el){el.innerHTML=`<div class="stack"><div class="row" style
   const b=V.plot({w:520,h:150,mt:6,mb:24,x:[0,8],y:[0,Math.ceil(ppts[ppts.length-1][1]/10)*10],xl:'',yl:'phase (cycles)',xt:[],yt:[0,Math.ceil(ppts[ppts.length-1][1]/10)*10],series:[{pts:ppts,cls:'sv-deep'}],aria:'phase'});
   const c=V.plot({w:520,h:150,mt:6,x:[0,8],y:[-1.3,1.3],xl:'time',yl:'V_out',xt:[0,2,4,6,8],yt:[-1,0,1],series:[{pts,cls:'sv-book',w:1.6}],aria:'output'});
   $('.out',el).innerHTML=figHTML(a+b+c,'Frequency follows V_cont instantly; phase is its integral (14.74–14.76). That integral is why a VCO in a PLL is modelled as K_VCO/s. This is FSK modulation (Example 14.15).');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+/* ---- app14.js ---- */
+/* ===== Chapter 16–18 widgets ===== */
+WIDGETS.scale=function(el){el.innerHTML=`<div class="stack">${slider('sc-a','scaling factor α',1,4,0.1,2,'')}<div class="out"></div><p class="small muted">Ideal constant-field scaling: dimensions and voltages ÷ α, doping × α (Fig. 16.1).</p></div>`;
+ const up=()=>{const a=+$('#sc-a',el).value;$('#sc-a-v',el).textContent=a.toFixed(1);const f=v=>v>=1?'×'+V.fmt(v):'÷'+V.fmt(1/v);
+  const rows=[['Drain current I_D',1/a,'(16.1)'],['Capacitances',1/a,'(16.3–16.8)'],['Gate delay',1/a,'(16.10)'],['Power per gate',1/(a*a),'(16.11)'],['Density',a*a,''],['g_m (analog)',1,'(16.12)'],['λ (so r_o falls)',a,'p.581'],['Max signal swing',1/a,'p.581'],['Dynamic range (thermal-noise-limited)',1/a,'p.581'],['Power to KEEP dynamic range',1,'p.582'],['Device capacitance to keep it',a,'p.582']];
+  $('.out',el).innerHTML=`<div class="tbl"><table><tr><th>Quantity</th><th>After scaling</th><th></th></tr>${rows.map(r=>`<tr><td>${MT(r[0])}</td><td class="mono">${f(r[1])}</td><td class="small muted">${r[2]}</td></tr>`).join('')}</table></div>`};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.vsat=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('vs-l','channel length L (µm)',0.1,4,0.05,0.25,'')}</div><div class="seg" role="group" aria-label="Quantity"><button data-vm="id" aria-pressed="true">I_D</button><button data-vm="gm" aria-pressed="false">g_m</button></div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">µ₀ = 350 cm²/V·s, v_sat = 10⁷ cm/s, W = 10 µm, C_ox = 5 fF/µm². Model: I_D = ½µC_ox(W/L)V_OD²/(1 + V_OD/(2v_satL/µ₀)).</p></div>`;
+ let m='id';const up=()=>{const L=+$('#vs-l',el).value;$('#vs-l-v',el).textContent=L.toFixed(2);const r=V.vsatPlot(L,m);
+  $('.readout',el).innerHTML=`<div><span>2v_satL/µ₀</span><b>${r.Ec.toFixed(2)} V</b></div><div><span>square law still OK if</span><b>V_OD ≪ ${r.Ec.toFixed(2)} V</b></div><div><span>fully saturated g_m</span><b>v_satWC_ox = ${(1e5*10e-6*5e-3*1e3).toFixed(1)} mS — no L, no I_D</b></div>`;
+  $('.out',el).innerHTML=figHTML(r.svg,'Short channels: I_D grows more slowly than V_OD² and g_m flattens out (Figs. 16.8–16.9). Book example: L = 0.25 µm gives 2v_satL/µ₀ ≈ 1.43 V, so a few hundred mV of overdrive is still nearly square-law.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);$$('[data-vm]',el).forEach(b=>b.onclick=()=>{m=b.dataset.vm;$$('[data-vm]',el).forEach(x=>x.setAttribute('aria-pressed',x===b));up()});up()};
+
+WIDGETS.gradient=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('gr-x','x-gradient (mV per cell)',0,2,0.05,1,'')}${slider('gr-y','y-gradient (mV per cell)',0,2,0.05,0.5,'')}</div>${slider('gr-q','curvature (quadratic, mV per cell²)',0,0.5,0.01,0,'')}
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">Each cell is half of a transistor; V_TH(x, y) = g_x·x + g_y·y + q·x². Mismatch = mean(A) − mean(B).</p></div>`;
+ const pats={'side by side (AB / AB)':'AB/AB','1-D cross (ABBA / ABBA)':'ABBA/ABBA','common centroid (AB / BA)':'AB/BA'};
+ const up=()=>{const gx=+$('#gr-x',el).value,gy=+$('#gr-y',el).value,q=+$('#gr-q',el).value;$('#gr-x-v',el).textContent=gx.toFixed(2);$('#gr-y-v',el).textContent=gy.toFixed(2);$('#gr-q-v',el).textContent=q.toFixed(2);
+  const res=Object.entries(pats).map(([n,p])=>{const rows=p.split('/');const W=rows[0].length;let a=[],b=[];rows.forEach((r,j)=>[...r].forEach((c,i)=>{const x=i-(W-1)/2,y=j-(rows.length-1)/2;const v=gx*x+gy*y+q*x*x;(c==='A'?a:b).push(v)}));const m=s=>s.reduce((u,v)=>u+v,0)/s.length;return [n,p,m(a)-m(b)]});
+  $('.readout',el).innerHTML=res.map(r=>`<div><span>${r[0]}</span><b>${Math.abs(r[2]).toFixed(2)} mV</b></div>`).join('');
+  $('.out',el).innerHTML=figHTML(`<svg viewBox="0 0 520 120" role="img" aria-label="Layouts">${res.map((r,k)=>`<g transform="translate(${20+k*175} 20)">${V.ccPattern(r[1])}</g>`).join('')}</svg>`,'Linear gradients cancel in cross-coupled and common-centroid layouts; a quadratic (curved) gradient still leaves a residue — keep the pair compact and add dummies.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.bounce=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('bn-n','gates switching at once',1,2000,1,100,'')}${slider('bn-c','load per gate (fF)',10,500,10,100,'')}</div>
+ <div class="row" style="gap:16px">${slider('bn-t','edge time (ps)',50,2000,50,500,'')}${slider('bn-l','inductance per pin (nH)',0.5,20,0.5,5,'')}</div>${slider('bn-p','parallel supply pins',1,200,1,1,'')}
+ <div class="readout" aria-live="polite"></div><p class="small muted">V_DD = 3 V swing; ΔI = N·C·V_DD/Δt; bounce = (L/pins)·ΔI/Δt on EACH rail (Fig. 18.60, Example 18.7).</p></div>`;
+ const up=()=>{const N=+$('#bn-n',el).value,C=+$('#bn-c',el).value*1e-15,t=+$('#bn-t',el).value*1e-12,L=+$('#bn-l',el).value*1e-9,P=+$('#bn-p',el).value;
+  ['n','c','t','l','p'].forEach(k=>$('#bn-'+k+'-v',el).textContent=$('#bn-'+k,el).value);const I=N*C*3/t,dv=L/P*I/t;
+  $('.readout',el).innerHTML=`<div><span>peak current ΔI</span><b>${I>=1?I.toFixed(2)+' A':(I*1e3).toFixed(1)+' mA'}</b></div><div><span>bounce per rail</span><b>${dv>=1?dv.toFixed(2)+' V':(dv*1e3).toFixed(0)+' mV'}</b></div><div><span>supply + ground, worst case</span><b>${(2*dv*1e3).toFixed(0)} mV ${2*dv>0.3?'— too much for analog':''}</b></div>`};
  $$('input',el).forEach(i=>i.oninput=up);up()};
 
 </script>
