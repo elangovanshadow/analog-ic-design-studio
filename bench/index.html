@@ -977,6 +977,81 @@ V.offsetStore=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="Offset stor
 
 Object.assign(PV_FIGS,{bandgap:()=>V.bgCurves(31,4).svg,ron:()=>V.ronPlot(),scint:()=>V.scStair(),thd:()=>V.harm().svg,offset:()=>V.offsetStore()});
 
+/* ---- visuals7.js ---- */
+/* ===== Chapter 14–15 figures ===== */
+V.inv=(x,y,lab)=>`<polygon points="${x},${y-20} ${x+36},${y} ${x},${y+20}" class="sv-sheet sv-ink" stroke-width="1.8"/><circle cx="${x+40}" cy="${y}" r="4" class="sv-sheet sv-ink" stroke-width="1.6"/>`+(lab?V.t(x+14,y+5,lab,'start','sv-txt-m'):'');
+
+V.ring3=()=>`<svg viewBox="0 0 560 190" role="img" aria-label="Three-stage ring oscillator">
+ ${[60,210,360].map((x,i)=>V.inv(x,70,'')+V.w([[x+44,70],[x+150,70]])+V.dot(x+110,70)+V.t(x+110,58,['E','F','G'][i],'middle','sv-txt-m')+V.cap(x+110,70,116,'')+V.gnd(x+110,116)).join('')}
+ ${V.w([[510,70],[530,70],[530,26],[30,26],[30,70],[60,70]])}
+ ${V.t(20,150,'Each stage −A₀/(1 + s/ω₀); odd inversions → no latch-up.','start','sv-txt-m')}
+ ${V.t(20,172,'60° per stage: ω_osc = √3·ω₀, A₀ ≥ 2, nodes 120° apart','start','sv-txt','font-weight="600"')}</svg>`;
+
+V.ringWaves=(N=3,T=2)=>{const cls=['sv-book','sv-bridge','sv-deep','sv-muted','sv-book','sv-bridge','sv-deep'];const ser=[];
+  for(let k=0;k<N;k++){const ph=k*(Math.PI+Math.PI/N);ser.push({f:t=>Math.cos(2*Math.PI*t-ph*(N%2?1:1)),cls:cls[k%cls.length],w:2,dash:k>3?'5 4':''})}
+  return V.plot({w:520,h:200,x:[0,T],y:[-1.3,1.3],xl:'time (periods)',yl:'node voltage',xt:[0,0.5,1,1.5,2].filter(v=>v<=T),yt:[-1,0,1],series:ser,aria:'Ring oscillator node waveforms'})};
+
+V.tankZ=(L=2e-9,C=2e-12,Q=8)=>{const w0=1/Math.sqrt(L*C),f0=w0/(2*Math.PI),Rs=L*w0/Q;const Z=f=>{const w=2*Math.PI*f;const zl=[Rs,w*L];const zc=[0,-1/(w*C)];const num=CX.mul(zl,zc);const den=[zl[0]+zc[0],zl[1]+zc[1]];return CX.div(num,den)};
+  const lo=Math.log10(f0)-0.5,hi=Math.log10(f0)+0.5,Rp=Q*Q*Rs*(1+1/(Q*Q));
+  const mag=V.plot({w:520,h:200,mb:26,x:[lo,hi],y:[0,Math.ceil(Rp*1.15/50)*50],xl:'',yl:'|Z| (Ω)',xt:[Math.log10(f0)],xtf:()=>fmtHz(f0),yt:[0,Rp/2,Rp].map(v=>Math.round(v)),
+    series:[{f:x=>CX.abs(Z(Math.pow(10,x))),cls:'sv-book',n:300}],vl:[{x:Math.log10(f0),label:'f_res'}],hl:[{y:Rp,label:'R_p = Q²R_s'}],aria:'Tank impedance magnitude'});
+  const ph=V.plot({w:520,h:170,mt:8,x:[lo,hi],y:[-90,90],xl:'frequency (log scale)',yl:'phase (°)',xt:[Math.log10(f0)],xtf:()=>fmtHz(f0),yt:[-90,0,90],
+    series:[{f:x=>CX.arg(Z(Math.pow(10,x))),cls:'sv-bridge',n:300}],vl:[{x:Math.log10(f0)}],extra:(sx,sy)=>V.t(sx(lo+0.08),sy(30),'inductive','start','sv-txt-m')+V.t(sx(hi-0.08),sy(-30),'capacitive','end','sv-txt-m'),aria:'Tank impedance phase'});
+  return {svg:mag+ph,f0,Rs,Rp}};
+
+V.xcoupled=()=>`<svg viewBox="0 0 560 250" role="img" aria-label="Cross-coupled LC oscillator">
+ ${V.w([[70,18],[330,18]])}${V.t(200,12,'V_DD','middle','sv-txt-m')}
+ ${[100,300].map(x=>V.w([[x,18],[x,30]])+V.t(x+14,58,'L_p','start','sv-txt-m')+`<path d="M${x} 30 q10 6 0 12 q10 6 0 12 q10 6 0 12 q10 6 0 12" class="sv-ink" stroke-width="1.8" fill="none"/>`+V.w([[x,78],[x,98]])+V.w([[x,30],[x-40,30]])+V.w([[x,90],[x-40,90]])+V.cap(x-40,30,90,'')).join('')}
+ ${V.dot(100,98)}${V.dot(300,98)}${V.t(88,104,'X','end','sv-txt-m')}${V.t(312,104,'Y','start','sv-txt-m')}
+ ${V.w([[100,98],[100,124]])}${V.w([[300,98],[300,124]])}${V.nmosR(120,160,'M₁')}${V.nmos(280,160,'M₂')}
+ ${V.w([[154,160],[180,160],[300,110]])}${V.w([[246,160],[220,160],[100,110]])}
+ ${V.w([[100,196],[100,206],[300,206],[300,196]])}${V.dot(200,206)}${V.isrc(200,206,240,'I_SS')}
+ ${V.t(370,60,'two tuned CS stages','start','sv-txt-m')}${V.t(370,80,'in a loop (Fig. 14.27c)','start','sv-txt-m')}
+ ${V.t(370,112,'start-up: (g_m R_p)² ≥ 1','start','sv-txt','font-weight="600"')}${V.t(370,132,'≡ negative R = −2/g_m','start','sv-txt-m')}${V.t(370,150,'across the tank','start','sv-txt-m')}
+ ${V.t(370,180,'f = 1/(2π√(L_pC_p))','start','sv-txt','font-weight="600"')}${V.t(370,200,'swing ∝ I_SS·R_p','start','sv-txt-m')}</svg>`;
+
+V.negR=()=>`<svg viewBox="0 0 560 190" role="img" aria-label="One-port oscillator">
+ ${V.t(16,20,'Lossy tank alone: rings and dies','start','sv-txt','font-weight="600"')}
+ ${V.w([[40,40],[200,40]])}${V.w([[40,140],[200,140]])}${`<path d="M60 64 q10 6 0 12 q10 6 0 12 q10 6 0 12" class="sv-ink" stroke-width="1.8" fill="none"/>`}${V.w([[60,40],[60,64]])}${V.w([[60,100],[60,140]])}${V.cap(110,40,140,'C')}${V.res(160,40,140,'R_p')}${V.t(48,92,'L','end','sv-txt-m')}
+ ${V.w([[200,40],[260,40]])}${V.w([[200,140],[260,140]])}${V.box(260,60,110,60,'−R','active circuit')}${V.w([[315,40],[315,60]])}${V.w([[315,120],[315,140]])}${V.w([[260,40],[315,40]])}${V.w([[260,140],[315,140]])}
+ ${V.t(400,70,'R_p ‖ (−R_p) = ∞','start','sv-txt','font-weight="600"')}${V.t(400,92,'→ no loss, sustained','start','sv-txt-m')}${V.t(400,110,'oscillation','start','sv-txt-m')}
+ ${V.t(16,176,'−R: current FALLS when voltage rises (positive feedback).','start','sv-txt-m')}</svg>`;
+
+V.vcoChar=()=>V.plot({w:520,h:250,x:[0,3],y:[0,10],xl:'V_cont (V)',yl:'ω_out',xt:[0,0.5,1.5,2.5,3],xtf:v=>({0:'0',0.5:'V₁',1.5:'',2.5:'V₂',3:'V_DD'})[v]||'',yt:[2,8],ytf:v=>v===2?'ω₁':'ω₂',
+  series:[{f:v=>0.8+2.4*v,cls:'sv-muted',dash:'5 4',label:'ideal: ω₀ + K_VCO·V_cont',lx:.62},{f:v=>2+6/(1+Math.exp(-(v-1.5)*3.2)),cls:'sv-book',label:'real (Fig. 14.41)',lx:.2}],
+  marks:[{x:1.5,y:5,r:4,label:'steepest: K_VCO,max',dx:10,dy:22}],aria:'VCO characteristic'});
+
+V.pllBlock=(div)=>`<svg viewBox="0 0 560 170" role="img" aria-label="PLL block diagram">
+ ${V.t(10,54,'φ_in','start','sv-txt-m')}${V.arr([[40,50],[70,50]])}${V.box(70,28,80,44,div?'PFD/CP':'PD','')}${V.arr([[150,50],[190,50]])}${V.box(190,28,90,44,'LPF','')}${V.arr([[280,50],[320,50]])}${V.t(300,42,'V_cont','middle','sv-txt-m')}
+ ${V.box(320,28,90,44,'VCO','K_VCO/s')}${V.w([[410,50],[470,50]])}${V.dot(450,50)}${V.arr([[470,50],[500,50]])}${V.t(504,54,'φ_out','start','sv-txt-m')}
+ ${div?V.w([[450,50],[450,130],[340,130]])+V.box(250,110,90,40,'÷ N','')+V.arr([[250,130],[110,130],[110,72]]):V.arr([[450,50],[450,130],[110,130],[110,72]])}
+ ${V.t(10,160,div?'Locked: f_out = N·f_in exactly; the divider makes the loop see K_VCO/N.':'Locked: φ_out − φ_in is constant, so ω_out = ω_in EXACTLY.','start','sv-txt-m')}</svg>`;
+
+V.pfd=()=>`<svg viewBox="0 0 560 190" role="img" aria-label="PFD states">
+ ${[[90,'Q_A = 0','Q_B = 1'],[280,'Q_A = 0','Q_B = 0'],[470,'Q_A = 1','Q_B = 0']].map(([x,a,b])=>`<ellipse cx="${x}" cy="80" rx="70" ry="38" class="sv-sheet sv-ink" stroke-width="1.6"/>`+V.t(x,76,a,'middle','sv-txt-m')+V.t(x,94,b,'middle','sv-txt-m')).join('')}
+ ${V.arr([[350,66],[400,66]])}${V.t(375,56,'A↑','middle','sv-txt-m')}${V.arr([[400,96],[350,96]])}${V.t(375,114,'B↑','middle','sv-txt-m')}
+ ${V.arr([[210,66],[160,66]])}${V.t(185,56,'B↑','middle','sv-txt-m')}${V.arr([[160,96],[210,96]])}${V.t(185,114,'A↑','middle','sv-txt-m')}
+ ${V.t(470,140,'UP: charge pump sources I_P','middle','sv-txt-m')}${V.t(90,140,'DOWN: sinks I_P','middle','sv-txt-m')}${V.t(280,140,'idle','middle','sv-txt-m')}
+ ${V.t(16,176,'Average output ∝ phase error; a frequency error pushes one way only.','start','sv-txt-m')}</svg>`;
+
+V.cp=()=>`<svg viewBox="0 0 560 230" role="img" aria-label="Charge pump with loop filter">
+ ${V.w([[100,16],[220,16]])}${V.t(160,10,'V_DD','middle','sv-txt-m')}${V.isrc(160,16,60,'I₁')}
+ ${V.w([[160,60],[160,72]])}${V.w([[160,72],[176,90]])}${V.dot(160,72)}${V.dot(160,96)}${V.t(184,84,'S₁ (UP)','start','sv-txt-m')}${V.w([[160,96],[160,112]])}${V.dot(160,112)}
+ ${V.w([[160,112],[160,128]])}${V.w([[160,128],[176,146]])}${V.dot(160,128)}${V.dot(160,152)}${V.t(184,140,'S₂ (DOWN)','start','sv-txt-m')}${V.w([[160,152],[160,170]])}${V.isrc(160,170,214,'I₂')}${V.gnd(160,214)}
+ ${V.w([[160,112],[320,112]])}${V.dot(320,112)}${V.t(326,104,'V_cont','start','sv-txt-m')}${V.res(320,112,160,'R_P')}${V.cap(320,160,206,'C_P')}${V.gnd(320,206)}
+ ${V.w([[320,112],[420,112]])}${V.cap(420,112,180,'C₂')}${V.gnd(420,180)}
+ ${V.t(380,40,'K_PFD = I_P/(2πC_P)','start','sv-txt','font-weight="600"')}${V.t(380,60,'pole at the origin','start','sv-txt-m')}${V.t(466,140,'C₂ ≈ C_P/5…/10','start','sv-txt-m')}${V.t(466,158,'smooths jumps','start','sv-txt-m')}</svg>`;
+
+V.dll=()=>`<svg viewBox="0 0 560 170" role="img" aria-label="Delay-locked loop">
+ ${V.t(10,54,'CK_in','start','sv-txt-m')}${V.w([[52,50],[70,50]])}${V.dot(62,50)}${[70,160,250,340].map((x,i)=>V.box(x,32,70,36,'τ','')+V.w([[x+70,50],[x+90,50]])+V.t(x+80,24,'CK'+(i+1),'middle','sv-txt-m')).join('')}
+ ${V.w([[430,50],[470,50],[470,130],[300,130]])}${V.box(170,112,130,40,'PD/CP/LPF','')}${V.w([[62,50],[62,132],[170,132]])}${V.arr([[235,112],[235,80]])}${V.t(244,98,'V_cont sets τ','start','sv-txt-m')}
+ ${V.t(10,166,'4τ = one input period: precise edges, no VCO integrator.','start','sv-txt-m')}</svg>`;
+
+V.pllStep=(zeta,wn,T)=>{const fn=t=>{if(zeta<1){const wd=wn*Math.sqrt(1-zeta*zeta),th=Math.acos(zeta);return 1-Math.exp(-zeta*wn*t)*Math.sin(wd*t+th)/Math.sqrt(1-zeta*zeta)}if(Math.abs(zeta-1)<1e-6)return 1-Math.exp(-wn*t)*(1+wn*t);const r=Math.sqrt(zeta*zeta-1),s1=-wn*(zeta-r),s2=-wn*(zeta+r);return 1+(s2*Math.exp(s1*t)-s1*Math.exp(s2*t))/(s1-s2)};
+  return V.plot({w:520,h:230,x:[0,T*1e6],y:[0,1.8],xl:'time (µs)',yl:'Δω_out / Δω_in',xt:[0,T*1e6/2,T*1e6].map(v=>+v.toPrecision(2)),yt:[0,0.5,1,1.5],series:[{f:t=>fn(t*1e-6),cls:'sv-book',n:300}],hl:[{y:1,label:'final value'}],aria:'PLL step response'})};
+
+Object.assign(PV_FIGS,{ring:()=>V.ring3(),tank:()=>V.tankZ().svg,pll:()=>V.pllBlock(false),vco:()=>V.vcoChar()});
+
 /* ---- content1.js ---- */
 /* ===== COURSE CONTENT =====
    label: 'book' = From the book (Razavi, 1st ed., 2001) · 'bridge' = Foundation bridge (not in the book) · 'deep' = Optional deeper dive
@@ -2897,6 +2972,231 @@ LESSONS.push(
  mv('b-bjt','b-2port');mv('b-charge','b-bjt');mv('b-taylor','b-charge');
 })();
 
+/* ---- content9.js ---- */
+/* ---------------- CHAPTERS 14–15 ---------------- */
+LESSONS.push(
+{id:'b-lc', unit:'Foundations', label:'bridge', title:'LC resonance and quality factor Q', mins:4, prereq:['b-cplx'], unlocks:['14c'],
+ obj:'Find the resonance frequency of an LC tank and convert a lossy inductor into a parallel resistance.',
+ why:'LC oscillators (§14.3) are tanks whose losses are cancelled by transistors. You need ω = 1/√(LC) and R_p = Q²R_s.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`\omega_{res}=\frac1{\sqrt{LC}}`, note:'where jωL and 1/(jωC) cancel: an ideal parallel tank has infinite impedance'},{tex:R`Q=\frac{L\omega}{R_s}`, note:'quality factor of an inductor with series resistance R_s (monolithic: Q ≈ 3–10)'},{tex:R`R_p\approx Q^2R_s`, note:'(14.31–14.35) near resonance a series R_s is equivalent to a parallel R_p — the tank becomes just R_p at ω_res'}]},
+  {t:'interactive', kind:'tank', cap:'Change L, C and Q: watch the resonance move and the peak sharpen.'},
+  {t:'example', src:'ours', h:'A 5 GHz tank', given:'L = 2 nH, C = 0.5 pF, Q = 8.', steps:[{tex:R`f=\frac{1}{2\pi\sqrt{2\text{n}\cdot0.5\text{p}}}=5.03\text{ GHz},\quad R_s=\frac{L\omega}{Q}=7.9\ \Omega,\quad R_p\approx505\ \Omega`, say:'A small series loss looks like a large parallel resistor.'}]},
+  {t:'check', q:{type:'num', q:'R_s = 5 Ω, Q = 10. Equivalent parallel R_p (Ω)?', a:500, tol:0.02, unit:'Ω', explain:'Q²R_s = 100 × 5 = 500 Ω.'}},
+  {t:'check', q:{type:'mcq', q:'Below resonance, a parallel LC tank looks…', opts:['inductive','capacitive','purely resistive','open'], a:0, explain:'The inductor has the lower impedance at low frequency (Fig. 14.22).'}},
+  {t:'recall', prompt:'Write ω_res, Q and the series-to-parallel conversion.', model:'1/√(LC); Lω/R_s; R_p ≈ Q²R_s.'}
+ ],
+ cards:[['LC resonance','ω = 1/√(LC)'],['Inductor Q','Lω/R_s'],['Series → parallel loss','R_p ≈ Q²R_s']]},
+
+{id:'b-phase', unit:'Foundations', label:'bridge', title:'Phase and frequency: ω = dφ/dt', mins:3, prereq:['b-int','b-slope'], unlocks:['14g','15a'],
+ obj:'Treat frequency as the slope of phase, and phase as the integral of frequency.',
+ why:'A PLL compares phases, but a VCO controls frequency. The link between them is an integral — the key to Chapters 14.5 and 15.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`V(t)=V_m\cos\phi(t),\qquad\omega=\frac{d\phi}{dt},\qquad\phi(t)=\int\omega\,dt`, note:'(14.73–14.74)'},{tex:R`\phi(t)=\omega_0t+\phi_{ex}(t)`, note:'total phase = steady ramp + “excess phase”, the part a PLL cares about'}]},
+  {t:'interactive', kind:'vco', cap:'Toggle the control voltage: frequency steps, phase bends — never jumps.'},
+  {t:'example', src:'ours', h:'Two clocks, slightly different', given:'1.000 GHz and 1.001 GHz, aligned at t = 0.', steps:[{tex:R`\Delta\phi(t)=2\pi(1\text{ MHz})t\ \Rightarrow\ \text{one full cycle apart after }1\ \mu\text{s}`, say:'A tiny frequency error makes the phase error grow without limit. Only a phase-locked loop can hold it constant.'}]},
+  {t:'check', q:{type:'mcq', q:'If the phase of a signal grows as a parabola in time, its frequency…', opts:['rises linearly','is constant','falls','is zero'], a:0, explain:'Frequency is the slope of phase.'}},
+  {t:'recall', prompt:'How are phase and frequency related?', model:'ω = dφ/dt; φ = ∫ω dt.'}
+ ],
+ cards:[['Frequency from phase','ω = dφ/dt'],['Excess phase','total phase minus ω₀t']]},
+
+/* ---- Chapter 14 ---- */
+{id:'14a', unit:'Ch 14 · Oscillators', sec:'14.1', label:'book', title:'An oscillator is a badly designed feedback amplifier', mins:4, pages:[482,484], prereq:['10a'],
+ obj:'Apply Barkhausen’s criteria to decide whether a loop can oscillate.',
+ blocks:[
+  {t:'why', p:R`“In the high-frequency world, amplifiers oscillate and oscillators don’t” (footnote, p.482). Chapter 10 tried to <b>avoid</b> \(H(j\omega_0)=-1\); now we want it.`},
+  {t:'formal', eq:[{tex:R`|H(j\omega_0)|\ge1,\qquad\angle H(j\omega_0)=180^\circ`, note:'(14.4–14.5) the frequency-dependent 180° plus the loop’s DC inversion = 360°: the returning signal ADDS to the original'},{tex:R`V_X=V_0\big(1+|H|+|H|^2+\cdots\big)`, note:'(14.2) a loop gain ≥ 1 makes this grow; below 1 it converges'}]},
+  {t:'idea', p:R`Barkhausen’s criteria are <b>necessary but not sufficient</b>. Design the loop gain to 2–3× the minimum so oscillation survives process and temperature corners. Fig. 14.3: the same criterion can be met as (DC 180° + frequency 180°), as an amplifier with 360° at ω₀, or as 0° at ω₀ with positive feedback.`},
+  {t:'check', q:{type:'mcq', q:'Why design the small-signal loop gain to be 2–3 times larger than 1?', opts:['To guarantee start-up across process and temperature','To lower power','To lower the frequency','It is not needed'], a:0, explain:'p.483.'}},
+  {t:'recall', prompt:'State Barkhausen’s criteria for an oscillator.', model:'Loop gain magnitude ≥ 1 and total phase shift 360° (180° frequency-dependent in a negative-feedback loop) at ω₀.'}
+ ],
+ cards:[['Barkhausen (oscillator)','|H(jω₀)| ≥ 1, ∠H = 180° (+ DC inversion = 360°)'],['Design margin','loop gain 2–3× the minimum']]},
+
+{id:'14b', unit:'Ch 14 · Oscillators', sec:'14.2', label:'book', title:'Ring oscillators: three stages, A₀ ≥ 2, ω = √3·ω₀', mins:6, pages:[484,495], prereq:['14a','b-pole'],
+ obj:'Derive the minimum gain and frequency of an N-stage ring and describe its large-signal behaviour.',
+ blocks:[
+  {t:'idea', h:'Why three? (Examples 14.1, Figs. 14.4–14.7)', p:R`One CS stage in a loop: one pole, at most 90° + 180° = 270° — no oscillation. Two CS stages: the loop is <b>positive</b> at DC and simply <b>latches</b>. Two poles plus an extra inversion: 180° only at infinite frequency, where the gain is gone. Three identical inverting stages: each adds 60° at a finite frequency where the gain can still be ≥ 1.`},
+  {t:'visual', fig:'ring3', cap:'Fig. 14.8: three-stage ring oscillator.'},
+  {t:'derive', h:'Minimum gain (14.6–14.10)', steps:[
+    {tex:R`H(s)=\frac{-A_0^3}{(1+s/\omega_0)^3}`, say:'Three identical stages.', why:''},
+    {tex:R`\tan^{-1}\frac{\omega_{osc}}{\omega_0}=60^\circ\ \Rightarrow\ \omega_{osc}=\sqrt3\,\omega_0`, say:'Each stage contributes a third of 180°.', why:''},
+    {tex:R`\frac{A_0^3}{\big[\sqrt{1+(\omega_{osc}/\omega_0)^2}\big]^3}=1\ \Rightarrow\ A_0=2`, say:'(14.10) Loop gain of exactly 1 at ω_osc.', why:'', ask:{q:'With 4 differential stages, each stage must add…', opts:['45°','60°','90°'], a:0}}]},
+  {t:'interactive', kind:'ring', cap:'Try N = 3, 4, 5 and lower A₀ until oscillation stops.'},
+  {t:'idea', h:'Large-signal behaviour (pp.488–495)', p:R`<ul><li>With A₀ > 2 the complex poles sit in the right half plane → a growing sinusoid (14.12–14.16). The stages then saturate until the <i>average</i> loop gain is 1.</li><li>Differential ring with resistive loads: full switching, swing = I_SSR_D per node (Example 14.2); to keep devices saturated, I_SSR_D ≤ V_TH and V_DD must cover current source + V_TH + overdrive + half swing (Example 14.4).</li><li>Inverter ring: f = 1/(2N·T_D) = 1/(6T_D) for N = 3 — lower than the small-signal √3ω₀/2π.</li><li>The loop needs an odd number of inversions; differential rings can use even N by crossing one stage (Example 14.3: 4 stages, A₀ ≥ √2, four phases + complements). 3–5 stages are typical.</li></ul>`},
+  {t:'check', q:{type:'num', q:'Five-stage inverter ring with T_D = 50 ps. Oscillation frequency (GHz)?', a:2, tol:0.01, unit:'GHz', explain:'1/(2·5·50 ps) = 2 GHz.'}},
+  {t:'check', q:{type:'mcq', q:'Why does a loop of two CS stages not oscillate?', opts:['It has positive feedback at DC and latches up','It has too much gain','It has no poles','It oscillates at DC'], a:0, explain:'Fig. 14.5.'}},
+  {t:'recall', prompt:'Give ω_osc and the minimum gain for a three-stage ring, and the inverter-ring frequency.', model:'√3ω₀, A₀ = 2; f = 1/(2N·T_D).'}
+ ],
+ cards:[['Three-stage ring','ω_osc = √3ω₀, A₀,min = 2'],['Four-stage differential ring','ω_osc = ω₀, A₀,min = √2'],['Inverter ring frequency','1/(2N·T_D)'],['Ring needs','an odd number of inversions']]},
+
+{id:'14c', unit:'Ch 14 · Oscillators', sec:'14.3', label:'book', title:'LC tanks and tuned amplifiers', mins:4, pages:[495,499], prereq:['14b','b-lc'],
+ obj:'Use the parallel-tank model of a lossy inductor, and explain why one tuned stage cannot oscillate on its own.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`R_p=R_s(Q^2+1)\approx Q^2R_s,\qquad L_p\approx L_1`, note:'(14.33–14.35) valid in a narrow band around ω_res'}]},
+  {t:'interactive', kind:'tank', cap:'At resonance the phase passes through zero: the tank is just R_p.'},
+  {t:'idea', p:R`Tuned stage (Fig. 14.23): gain −g_mR_p at resonance, almost none near DC. Feed its drain back to its gate: 180° at resonance (not 360°), and the tank’s phase never reaches 180°: <b>no oscillation</b>. A useful property: the inductor cannot hold a DC drop, so the output swings <b>above</b> V_DD — peak-to-peak swing can exceed the supply (Fig. 14.24).`},
+  {t:'check', q:{type:'mcq', q:'Why can a tuned stage’s output rise above V_DD?', opts:['The inductor keeps the average drain voltage at ≈ V_DD, so the swing is centred on V_DD','The transistor boosts the supply','Capacitors store extra charge','It cannot'], a:0, explain:'p.498.'}},
+  {t:'recall', prompt:'What does a lossy tank look like at resonance?', model:'A resistor R_p ≈ Q²R_s (phase zero).'}
+ ],
+ cards:[['Tank at resonance','pure resistance R_p ≈ Q²R_s'],['Tuned-stage swing','centred on V_DD; can exceed V_DD']]},
+
+{id:'14d', unit:'Ch 14 · Oscillators', sec:'14.3.1', label:'book', title:'The cross-coupled LC oscillator', mins:5, pages:[499,502], prereq:['14c','4b'],
+ obj:'Explain why two tuned stages in a loop oscillate and why a tail current is added.',
+ blocks:[
+  {t:'idea', p:R`Two tuned CS stages in a loop (Fig. 14.25): no latch-up (tiny DC gain), and at resonance each stage adds 0° frequency-dependent phase plus an inversion → 360°. It oscillates if \((g_{m1}R_p)(g_{m2}R_p)\ge1\). X and Y are differential.`},
+  {t:'visual', fig:'xcoupled', cap:'Fig. 14.27(c): redrawn as a cross-coupled pair with a tail current.'},
+  {t:'example', src:'book', h:'Example 14.6 (pp.500–501): start-up', given:'Begin with V_X = V_Y ≈ V_DD, (g_mR_p)² > 1.', steps:[{tex:R`\text{noise at }\omega_{res}\text{ grows}\to\text{the pair steers all of }I_{SS}\text{ each half cycle}`, say:'In steady state each drain current is a square-ish wave between 0 and I_SS; the tank filters it to a sine of amplitude ∝ I_SSR_p.'}]},
+  {t:'idea', p:R`The tail current makes the swing depend on I_SS rather than the supply. Supply sensitivity is still nonzero: the drain junction capacitances change with V_DD and retune the tank (Example 14.9). The cross-coupled “negative-G_m” oscillator needs a loop gain of only 1 — far easier than Colpitts (next lesson), which matters with low-Q CMOS inductors.`},
+  {t:'check', q:{type:'num', q:'R_p = 400 Ω. Minimum g_m of each device (mS)?', a:2.5, tol:0.01, unit:'mS', explain:'g_mR_p ≥ 1 → g_m ≥ 2.5 mS.'}},
+  {t:'check', q:{type:'mcq', q:'What limits the amplitude of the cross-coupled oscillator with a tail current?', opts:['Full switching of I_SS, so swing ∝ I_SSR_p','The supply only','The inductor’s size','Nothing'], a:0, explain:'Fig. 14.28.'}},
+  {t:'recall', prompt:'State the start-up condition of the cross-coupled oscillator.', model:'(g_mR_p)² ≥ 1, i.e., g_m ≥ 1/R_p for identical devices.'}
+ ],
+ cards:[['Cross-coupled start-up','(g_mR_p)² ≥ 1'],['Tail current purpose','swing set by I_SS·R_p, not V_DD'],['Supply sensitivity source','voltage-dependent drain junction caps']]},
+
+{id:'14e', unit:'Ch 14 · Oscillators', sec:'14.3.2–14.3.3', label:'book', title:'Colpitts and one-port (negative-resistance) oscillators', mins:5, pages:[502,510], prereq:['14d','6d'],
+ obj:'Derive the Colpitts start-up gain and view any LC oscillator as a negative resistance cancelling tank loss.',
+ blocks:[
+  {t:'idea', p:R`One transistor: feed the drain back to the <b>source</b> (common gate has 0° phase). With just a coupling capacitor it fails: the closed-loop gain can never be infinite (14.37). Add C₁ from source to ground — the <b>Colpitts</b> oscillator (Fig. 14.31).`},
+  {t:'formal', eq:[{tex:R`\omega_R^2=\frac{1}{L_p\frac{C_1C_2}{C_1+C_2}}`, note:'(14.43) the inductor resonates with C₁ and C₂ in series (plus any C_p in parallel)'},{tex:R`g_mR_p\ge\frac{(C_1+C_2)^2}{C_1C_2}\ \ge4`, note:'(14.45–14.46) minimum at C₁ = C₂: a gain of 4, versus 1 for the cross-coupled oscillator'}]},
+  {t:'visual', fig:'negR', cap:'Fig. 14.32: a negative resistance cancels the tank’s loss.'},
+  {t:'formal', h:'Making negative resistance', eq:[{tex:R`R_{in}=-\frac{2}{g_m}`, note:'(14.49) follower with positive feedback through a CG stage: oscillates if R_p > 2/g_m (Fig. 14.34). The cross-coupled pair also gives −2/g_m between X and Y, where the merged tank is 2R_p → g_mR_p > 1, the same as the loop view (Fig. 14.36)'},{tex:R`Z_{in}=-\frac{g_m}{C_1C_2\omega^2}+\frac{1}{C_1s}+\frac1{C_2s}`, note:'(14.51) floating three-terminal circuit; grounding different nodes gives the Colpitts and source-follower oscillators (Fig. 14.38)'}]},
+  {t:'check', q:{type:'mcq', q:'Why is the cross-coupled oscillator more popular than Colpitts in CMOS?', opts:['It needs a loop gain of 1 instead of 4, important with low-Q inductors','It uses no inductor','It has no tail current','It is single-ended'], a:0, explain:'p.505.'}},
+  {t:'check', q:{type:'num', q:'Colpitts with C₁ = C₂ and R_p = 500 Ω. Minimum g_m (mS)?', a:8, tol:0.01, unit:'mS', explain:'g_mR_p ≥ 4 → 8 mS.'}},
+  {t:'recall', prompt:'Write the Colpitts frequency and minimum gain, and the cross-coupled pair’s negative resistance.', model:'ω² = 1/[L·C₁C₂/(C₁+C₂)], g_mR_p ≥ 4 (C₁ = C₂); −2/g_m.'}
+ ],
+ cards:[['Colpitts minimum gain','g_mR_p ≥ 4 (C₁ = C₂)'],['Cross-coupled pair resistance','−2/g_m'],['One-port oscillator','negative R cancels the tank’s R_p']]},
+
+{id:'14f', unit:'Ch 14 · Oscillators', sec:'14.4', label:'book', title:'VCOs: specs, ring tuning and varactor tuning', mins:6, pages:[510,525], prereq:['14e'],
+ obj:'List VCO specifications and explain how ring and LC oscillators are tuned.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`\omega_{out}=\omega_0+K_{VCO}V_{cont}`, note:'(14.55) K_VCO in rad/s/V'},{tex:R`K_{VCO}\ge\frac{\omega_2-\omega_1}{V_2-V_1}`, note:'(14.61) wide range needs high gain — but noise on V_cont is multiplied by K_VCO'}]},
+  {t:'visual', fig:'vcoChar', cap:'Fig. 14.41: real VCOs are steep in the middle and flat at the ends.'},
+  {t:'idea', h:'Specifications (pp.511–512)', p:R`Centre frequency (up to ~10 GHz then); tuning range (often > 2× just to cover process and temperature); low and <b>constant</b> K_VCO (nonlinearity hurts PLL settling); amplitude; power (1–10 mW); supply/CM rejection (differential signal <b>and</b> control paths); spectral purity (jitter, phase noise).`},
+  {t:'idea', h:'Tuning a ring (§14.4.1)', p:R`f_osc = 1/(2NT_D), so change the delay. Triode PMOS loads (Fig. 14.42): \(f_{osc}\propto V_{DD}-V_{cont}-|V_{THP}|\) — linear, but the swing 2I_SSR_on changes across the range; also adjust I_SS. Example 14.10: keep the loads in deep triode.`},
+  {t:'example', src:'book', h:'Example 14.14 (p.522): varactor range', given:'C_j = C₀/(1 + V_R/φ_B)^m with φ_B = 0.7 V, m = 0.35, V_R from 0 to 2 V.', steps:[{tex:R`C_j(2\text{ V})\approx0.62C_0\ \Rightarrow\ f_{max}/f_{min}=1/\sqrt{0.62}\approx1.27`, say:'Only ≈ 27 % — and fixed parasitics (transistors, inductor, n-well) shrink it further.'}]},
+  {t:'idea', h:'LC tuning issues', p:R`Only C can be tuned (inductors are fixed). Varactor anodes must not forward-bias: \(0<V_{cont}<V_{DD}-A+0.3\) V — a swing vs tuning-range trade-off. Floating n-well diodes add series resistance (lower Q) and well-to-substrate capacitance; PMOS cross-coupled pairs let the diodes sit around ground (Fig. 14.58).`},
+  {t:'check', q:{type:'num', q:'A VCO must span 1.0–2.0 GHz with V_cont from 0 to 1 V. Minimum K_VCO (GHz/V)?', a:1, tol:0.01, unit:'GHz/V', explain:'(2 − 1) GHz/1 V = 1 GHz/V (×2π for rad/s/V).'}},
+  {t:'check', q:{type:'mcq', q:'Why keep K_VCO small?', opts:['Noise on the control line is multiplied by K_VCO','It saves area','It raises Q','It increases range'], a:0, explain:'p.511.'}},
+  {t:'recall', prompt:'Give the VCO equation, the minimum K_VCO, and one tuning method for rings and for LC oscillators.', model:'ω = ω₀ + K_VCOV_cont; K_VCO ≥ Δω/ΔV. Rings: change stage delay (triode loads, tail current). LC: varactors.'}
+ ],
+ cards:[['VCO definition','ω_out = ω₀ + K_VCO·V_cont'],['K_VCO trade-off','range vs control-line noise'],['Varactor tuning range (Ex. 14.14)','≈ 27 % for 0–2 V'],['Ring frequency','1/(2N·T_D)']]},
+
+{id:'14g', unit:'Ch 14 · Oscillators', sec:'14.5', label:'book', title:'The VCO as an integrator: K_VCO/s', mins:4, pages:[525,530], prereq:['14f','b-phase'],
+ obj:'Model a VCO’s excess phase as the integral of its control voltage.',
+ blocks:[
+  {t:'formal', eq:[{tex:R`V_{out}(t)=V_m\cos\Big(\omega_0t+K_{VCO}\int V_{cont}\,dt\Big)`, note:'(14.76) ϕ₀ dropped'},{tex:R`\frac{\phi_{ex}}{V_{cont}}(s)=\frac{K_{VCO}}{s}`, note:'(14.78) an ideal integrator — the pole at the origin every PLL inherits'}]},
+  {t:'interactive', kind:'vco', cap:'Example 14.16: a square control voltage gives FSK.'},
+  {t:'example', src:'book', h:'Example 14.17 (pp.528–529): small sinusoidal control', given:'V_cont = V_m cos ω_m t with K_VCOV_m/ω_m ≪ 1 rad.', steps:[{tex:R`V_{out}\approx V_0\cos\omega_0t-V_0\frac{K_{VCO}V_m}{2\omega_m}\big[\cos(\omega_0-\omega_m)t-\cos(\omega_0+\omega_m)t\big]`, say:'Two sidebands at ω₀ ± ω_m: noise or ripple on the control line shows up as spurs around the carrier.'}]},
+  {t:'check', q:{type:'mcq', q:'Why can’t K_VCO be pulled out of the integral in general?', opts:['It varies with V_cont when the characteristic is nonlinear','It is complex','It is zero','It is always a constant'], a:0, explain:'p.527.'}},
+  {t:'recall', prompt:'Write the VCO’s phase transfer function and what control-line ripple does to the spectrum.', model:'φ_ex/V_cont = K_VCO/s; sidebands at ω₀ ± ω_m.'}
+ ],
+ cards:[['VCO phase model','φ_ex/V_cont = K_VCO/s'],['Control ripple at ω_m','sidebands at ω₀ ± ω_m']]},
+
+/* ---- Chapter 15 ---- */
+{id:'15a', unit:'Ch 15 · PLLs', sec:'15.1.1–15.1.2', label:'book', title:'Phase detectors and the simple PLL', mins:5, pages:[532,542], prereq:['14g','b-loop'],
+ obj:'Describe the basic PLL, the lock condition, and the static phase error.',
+ blocks:[
+  {t:'idea', p:R`A <b>phase detector</b> outputs an average voltage proportional to the phase difference: \(\overline{V}_{PD}=K_{PD}\Delta\phi\). An XOR gate is the simplest (Fig. 15.3). Put PD → low-pass filter → VCO in a loop (Fig. 15.5b): the LPF removes the PD’s high-frequency pulses so the VCO control stays quiet.`},
+  {t:'visual', fig:'pllBlock', cap:'Fig. 15.5(b): the simple PLL compares phases, not voltages or currents.'},
+  {t:'formal', eq:[{tex:R`\text{locked}\iff\phi_{out}-\phi_{in}=\text{const}\ \Rightarrow\ \omega_{out}=\omega_{in}`, note:'(15.1–15.2) EXACTLY equal frequencies — a loop comparing frequencies would always leave an error (Fig. 15.10)'},{tex:R`\phi_0=\frac{\omega_1-\omega_0}{K_{PD}K_{VCO}}`, note:'(15.5) the phase error needed to make the right V_cont; changes with input frequency; shrink it with large K_PD K_VCO'}]},
+  {t:'example', src:'book', h:'Example 15.3 (p.537): limits of lock', given:'PD characteristic peaks at Δφ = ±π/2.', steps:[{tex:R`\text{if }\omega_{in}\text{ needs }V_{cont}>V_{PD,max}\text{, the PD gain is 0 and the loop fails}`, say:'Lock range is limited by the PD and the VCO range.'}]},
+  {t:'idea', h:'Transient picture (pp.537–541)', p:R`If ω_in steps, the phase difference grows, V_PD rises, V_cont rises, the VCO speeds up until ω_out = ω_in again, settling at a new phase error. Why use a PLL instead of a wire? See §15.5: multiplication, synthesis, skew and jitter reduction.`},
+  {t:'check', q:{type:'mcq', q:'In lock, how do ω_out and ω_in compare?', opts:['Exactly equal','Equal within the gain error','ω_out is always higher','They differ by K_VCO'], a:0, explain:'(15.2).'}},
+  {t:'check', q:{type:'mcq', q:'To reduce the static phase error of a simple PLL…', opts:['increase K_PD·K_VCO','decrease K_PD','remove the LPF','lower the input frequency'], a:0, explain:'(15.5).'}},
+  {t:'recall', prompt:'Define lock and write the static phase error of the simple PLL.', model:'φ_out − φ_in constant (so ω_out = ω_in); φ₀ = (ω₁ − ω₀)/(K_PD K_VCO).'}
+ ],
+ cards:[['PLL lock','φ_out − φ_in constant ⇒ ω_out = ω_in exactly'],['Phase detector gain','V_PD = K_PD·Δφ'],['Simple PLL phase error','(ω₁ − ω₀)/(K_PD K_VCO)']]},
+
+{id:'15b', unit:'Ch 15 · PLLs', sec:'15.1.3', label:'book', title:'PLL dynamics: natural frequency and damping', mins:6, pages:[542,549], prereq:['15a','10c'],
+ obj:'Derive ω_n and ζ of the type-I PLL and the settling–ripple trade-off.',
+ blocks:[
+  {t:'derive', h:'Closed loop (15.11–15.18)', steps:[
+    {tex:R`H_{open}(s)=K_{PD}\cdot\frac{1}{1+s/\omega_{LPF}}\cdot\frac{K_{VCO}}{s}`, say:'PD gain × RC filter × VCO integrator.', why:''},
+    {tex:R`H(s)=\frac{\phi_{out}}{\phi_{in}}=\frac{K_{PD}K_{VCO}}{\frac{s^2}{\omega_{LPF}}+s+K_{PD}K_{VCO}}`, say:'(15.13) Also applies to frequency: ω_out/ω_in = H(s) (15.14).', why:''},
+    {tex:R`\omega_n=\sqrt{\omega_{LPF}K_{PD}K_{VCO}},\qquad\zeta=\frac12\sqrt{\frac{\omega_{LPF}}{K_{PD}K_{VCO}}}`, say:'(15.17–15.18) Match to s² + 2ζω_ns + ω_n².', why:'', ask:{q:'Raising K_PD K_VCO to cut the phase error makes ζ…', opts:['smaller (more ringing)','larger','unchanged'], a:0}},
+    {tex:R`\zeta\omega_n=\frac{\omega_{LPF}}2`, say:'(15.23) The decay rate is set by the filter alone: a cleaner control line (low ω_LPF) means slower settling.', why:''}]},
+  {t:'interactive', kind:'pll', cap:'Type I: watch ζ and the step response as you trade filter bandwidth against loop gain.'},
+  {t:'example', src:'book', h:'Example 15.5 (p.546): cellphone synthesizer', given:'900 MHz PLL, ω_LPF = 2π × 20 kHz; step from 901 to 901.2 MHz; settle within 100 Hz.', steps:[{tex:R`e^{-\zeta\omega_nt_s}=\frac{100}{200\text{k}}=0.0005\ \Rightarrow\ t_s=\frac{7.6}{\zeta\omega_n}=0.12\text{ ms}`, say:'(15.24–15.29) With ζω_n = ω_LPF/2 = 2π × 10 kHz.'}]},
+  {t:'idea', p:R`Choose ζ ≥ √2/2 or even 1 to avoid ringing under PVT spread (Fig. 15.18). Bode view (Fig. 15.19): a larger K_PD K_VCO moves the gain crossover toward the LPF pole and erodes phase margin. Phase error transfer: \(H_e(s)=1-H(s)\); a frequency step Δω leaves a steady phase error Δω/(K_PD K_VCO) — consistent with (15.5).`},
+  {t:'check', q:{type:'num', q:'ω_LPF = 2π × 50 kHz. Decay rate ζω_n in krad/s?', a:157, tol:0.02, unit:'krad/s', explain:'ω_LPF/2 = π × 50 k ≈ 157 krad/s.'}},
+  {t:'check', q:{type:'mcq', q:'In a type-I PLL, lowering ω_LPF to suppress ripple…', opts:['slows settling and lowers ζ','speeds settling','raises ζ','removes the phase error'], a:0, explain:'(15.18), (15.23).'}},
+  {t:'recall', prompt:'Write ω_n, ζ and ζω_n for the type-I PLL.', model:'√(ω_LPF K_PD K_VCO); ½√(ω_LPF/(K_PD K_VCO)); ω_LPF/2.'}
+ ],
+ cards:[['Type-I PLL ω_n','√(ω_LPF K_PD K_VCO)'],['Type-I PLL ζ','½√(ω_LPF/(K_PD K_VCO))'],['Type-I decay rate','ζω_n = ω_LPF/2'],['Typical ζ','≥ 0.707']]},
+
+{id:'15c', unit:'Ch 15 · PLLs', sec:'15.2.1–15.2.2', label:'book', title:'Lock acquisition, the PFD and the charge pump', mins:5, pages:[549,556], prereq:['15b'],
+ obj:'Explain why a PFD and charge pump are used, and derive the PFD/CP gain.',
+ blocks:[
+  {t:'idea', p:R`A simple PLL locks only if the initial frequency error is small (comparable to the loop bandwidth): the phase detector’s output averages to ≈ 0 for a large frequency difference. Wide lock range and small ripple fight each other — so add <b>frequency</b> detection (§15.2.1).`},
+  {t:'visual', fig:'pfd', cap:'Fig. 15.24: a three-state phase/frequency detector built from two flip-flops and a reset AND gate.'},
+  {t:'idea', p:R`The PFD’s UP/DOWN pulses drive a <b>charge pump</b>: switches that source or sink I_P into a capacitor C_P (Fig. 15.28). For a phase error Δφ, each period delivers I_P·Δφ/(2π)·T_in of charge: the output ramps for as long as an error exists.`},
+  {t:'formal', eq:[{tex:R`\frac{V_{out}}{\Delta\phi}(s)=\frac{I_P}{2\pi C_P}\cdot\frac1s`, note:'(15.39) a pole at the origin: K_PFD = I_P/(2πC_P). Infinite DC gain → zero static phase error'}]},
+  {t:'example', src:'book', h:'Example 15.10 (p.558)', given:'Output taken as the current into C_P.', steps:[{tex:R`\frac{I_{out}}{\Delta\phi}=\frac{I_P}{2\pi}`, say:'A constant gain; the capacitor turns it into the integrator.'}]},
+  {t:'check', q:{type:'mcq', q:'Why does a charge-pump PLL have zero static phase error?', opts:['The PFD/CP has a pole at the origin (infinite DC gain)','The VCO is ideal','The input is clean','R_P is large'], a:0, explain:'(15.39).'}},
+  {t:'check', q:{type:'num', q:'I_P = 100 µA, C_P = 50 pF. K_PFD in V/(rad·s)… give I_P/(2πC_P) in units of 10⁵.', a:3.18, tol:0.02, explain:'100µ/(2π·50p) ≈ 3.18 × 10⁵ V/(rad·s).'}},
+  {t:'recall', prompt:'Write the PFD/CP/C_P transfer function.', model:'V_out/Δφ = I_P/(2πC_P s).'}
+ ],
+ cards:[['PFD advantage','detects frequency as well as phase: no false lock'],['PFD/CP gain','I_P/(2πC_P s): pole at origin'],['Type II PLL','two poles at the origin in the loop gain']]},
+
+{id:'15d', unit:'Ch 15 · PLLs', sec:'15.2.3', label:'book', title:'The charge-pump PLL: stabilising two integrators', mins:6, pages:[556,562], prereq:['15c'],
+ obj:'Add the loop-filter zero and compute ω_n and ζ of a type-II PLL.',
+ blocks:[
+  {t:'derive', h:'From unstable to stable (15.40–15.47)', steps:[
+    {tex:R`H_{open}=\frac{I_P}{2\pi C_Ps}\cdot\frac{K_{VCO}}{s}\ \Rightarrow\ s_{1,2}=\pm j\sqrt{\frac{I_PK_{VCO}}{2\pi C_P}}`, say:'Two ideal integrators give 180° everywhere: the loop oscillates.', why:''},
+    {tex:R`Z_F=R_P+\frac1{C_Ps}`, say:'Add a resistor in series with C_P: a zero at −1/(R_PC_P) that lifts the phase near crossover.', why:''},
+    {tex:R`\omega_n=\sqrt{\frac{I_PK_{VCO}}{2\pi C_P}},\qquad\zeta=\frac{R_P}{2}\sqrt{\frac{I_PC_PK_{VCO}}{2\pi}}`, say:'(15.46–15.47)', why:'', ask:{q:'With R_P = 0, ζ equals…', opts:['0','1','∞'], a:0}}]},
+  {t:'visual', fig:'cp', cap:'Fig. 15.35 + 15.38: charge pump into R_P, C_P and the ripple capacitor C₂.'},
+  {t:'interactive', kind:'pll', mode:2, cap:'Type II: set R_P = 0, then raise it. Then raise N and watch ζ fall.'},
+  {t:'idea', p:R`Opposite to type I: here a <b>larger</b> I_PK_VCO <b>improves</b> stability (Fig. 15.36; root locus on a circle of radius 1/(R_PC_P), Fig. 15.37). But every UP/DOWN pulse makes V_cont jump by I_PR_P: add C₂ ≈ C_P/5–C_P/10 in parallel (third-order loop, still fine). Very large R_P degrades stability again — a discrete-time effect the continuous model misses; simulate.`},
+  {t:'check', q:{type:'mcq', q:'Increasing I_P·K_VCO in a type-II PLL…', opts:['makes it more stable (ζ grows)','makes it less stable','has no effect','removes the zero'], a:0, explain:'(15.47).'}},
+  {t:'check', q:{type:'mcq', q:'Why add C₂ across R_P–C_P?', opts:['To smooth the voltage jumps I_P·R_P on V_cont','To add gain','To remove the zero','To lower K_VCO'], a:0, explain:'p.561.'}},
+  {t:'recall', prompt:'Write ω_n and ζ of the charge-pump PLL.', model:'ω_n = √(I_PK_VCO/(2πC_P)); ζ = (R_P/2)√(I_PC_PK_VCO/(2π)).'}
+ ],
+ cards:[['Type-II ω_n','√(I_PK_VCO/(2πC_P))'],['Type-II ζ','(R_P/2)√(I_PC_PK_VCO/(2π))'],['Loop-filter zero','−1/(R_PC_P)'],['Ripple cap C₂','≈ C_P/5 … C_P/10']]},
+
+{id:'15e', unit:'Ch 15 · PLLs', sec:'15.3', label:'book', title:'PLL nonidealities: dead zone, mismatch, charge sharing, jitter', mins:6, pages:[562,569], prereq:['15d','12c'],
+ obj:'Identify PFD/CP error sources and how a PLL filters input and VCO jitter.',
+ blocks:[
+  {t:'idea', h:'PFD/CP nonidealities (§15.3.1)', p:R`<ul><li><b>Dead zone</b>: very narrow pulses never reach a logic level, so small phase errors produce no correction and the VCO wanders (jitter). Cure: let both UP and DOWN pulse together for ≈ 10 gate delays every cycle (the reset pulse).</li><li>Those coincident pulses expose <b>skew</b> between Q_A and Q̄_B paths (±I_P spikes) — add a pass gate to equalise delays.</li><li><b>UP/DOWN current mismatch</b>: the loop settles at a static phase error so that the net charge per cycle is zero; ripple remains, and short-channel r_o makes the mismatch depend on V_cont.</li><li><b>Charge injection / clock feedthrough</b> of the switches.</li><li><b>Charge sharing</b> between C_P and the current-source drain nodes: fix with a unity-gain buffer that “bootstraps” those nodes to V_cont (Fig. 15.47).</li></ul>`},
+  {t:'idea', h:'Jitter (§15.3.2)', p:R`Jitter = random movement of zero crossings = a time-varying excess phase φ_n(t) (its spectrum is phase noise). A PLL is a <b>low-pass</b> filter for input jitter (slow jitter passes, fast is rejected) and a <b>high-pass</b> filter for VCO jitter (slow drift is corrected, fast noise passes). The loop bandwidth must balance the two (Fig. 15.51).`},
+  {t:'check', q:{type:'mcq', q:'What eliminates the PFD dead zone?', opts:['Letting UP and DOWN both pulse briefly every cycle','Removing the reset path','Making I_P zero','Using an XOR'], a:0, explain:'p.563.'}},
+  {t:'check', q:{type:'mcq', q:'For VCO-generated jitter, the PLL acts as…', opts:['a high-pass filter','a low-pass filter','an all-pass','an integrator'], a:0, explain:'Fig. 15.51.'}},
+  {t:'recall', prompt:'Name four PFD/CP nonidealities and how a PLL treats input vs VCO jitter.', model:'Dead zone, UP/DOWN skew, current mismatch, charge sharing (plus injection/feedthrough). Input jitter: low-pass; VCO jitter: high-pass.'}
+ ],
+ cards:[['Dead zone cure','coincident reset pulses (≈ 10 gate delays)'],['UP/DOWN current mismatch','static phase error + ripple'],['Charge-sharing fix','bootstrap the CP nodes to V_cont'],['PLL and jitter','input: low-pass; VCO: high-pass']]},
+
+{id:'15f', unit:'Ch 15 · PLLs', sec:'15.4–15.5', label:'book', title:'DLLs and what PLLs are for', mins:5, pages:[569,578], prereq:['15e'],
+ obj:'Compare DLLs with PLLs, and explain frequency multiplication, synthesis, skew and jitter reduction.',
+ blocks:[
+  {t:'visual', fig:'dll', cap:'Fig. 15.53(b): a voltage-controlled delay line locked to one input period.'},
+  {t:'idea', h:'DLL vs PLL (pp.569–572)', p:R`A DLL uses a voltage-controlled <b>delay line</b>, not a VCO. Corrupted edges leave at the end instead of recirculating (less jitter accumulation), and V_cont changes delay directly (no integrator) — the loop is only as high-order as its filter, so it is easy to stabilise (Example 15.11). But a DLL <b>cannot change frequency</b>, can lock to the wrong number of periods (delay ambiguity), and stage mismatch skews the edges.`},
+  {t:'visual', fig:'pllBlock', cap:'Fig. 15.55(b): divide the output by N in the feedback path.'},
+  {t:'formal', h:'Frequency multiplication (15.52–15.55)', eq:[{tex:R`f_{out}=N\,f_{in}\ \text{(exactly)},\qquad K_{VCO}\to\frac{K_{VCO}}N`, note:'ω_n and ζ shrink by √N; the decay time constant grows ∝ N: raise I_P to compensate'}]},
+  {t:'idea', h:'Applications (§15.5)', p:R`<ul><li><b>Synthesis</b>: f_out = N·f_REF; steps of f_REF (e.g., 30 kHz channels, 900–925 MHz); accuracy = that of the crystal reference.</li><li><b>Skew reduction</b>: an on-chip PLL aligns the buffered clock with the incoming data/clock (the earliest digital use; Example 15.12).</li><li><b>Jitter reduction</b>: a narrow loop low-pass filters a noisy recovered clock.</li></ul>`},
+  {t:'check', q:{type:'mcq', q:'Which can a DLL NOT do?', opts:['generate a new output frequency','produce precise clock phases','lock with a first-order loop','reduce skew'], a:0, explain:'p.571.'}},
+  {t:'check', q:{type:'num', q:'Dividing by N = 16 in a type-II PLL changes ω_n by a factor of…', a:0.25, tol:0.01, explain:'ω_n ∝ √(K_VCO/N) → 1/√16 = 0.25.'}},
+  {t:'recall', prompt:'Give two DLL advantages, one drawback, and what ÷N does to a type-II PLL.', model:'Less jitter accumulation; easier stability (no VCO integrator). Cannot synthesise frequencies. K_VCO/N: ω_n and ζ fall by √N.'}
+ ],
+ cards:[['DLL vs PLL','delay line, no integrator; cannot multiply frequency'],['Frequency multiplier','f_out = N f_in; loop sees K_VCO/N'],['Synthesizer step size','f_REF'],['PLL skew reduction','aligns on-chip clock with incoming data']]}
+);
+
+(function(){
+ const ch=n=>CHAPTERS.find(c=>c.n===n);
+ Object.assign(ch(14),{status:'taught',bridges:[],secs:[['14.1','General considerations','14a'],['14.2','Ring oscillators','14b'],['14.3','LC tanks, tuned stages','14c'],['14.3.1','Cross-coupled oscillator','14d'],['14.3.2–14.3.3','Colpitts; one-port oscillators','14e'],['14.4','VCOs: ring and LC tuning','14f'],['14.5','Mathematical model of VCOs','14g'],['Problems','14.1– (pp.530–531)','']]});
+ Object.assign(ch(15),{status:'taught',bridges:[],secs:[['15.1.1–15.1.2','Phase detector; basic PLL','15a'],['15.1.3','Dynamics of the simple PLL','15b'],['15.2.1–15.2.2','Lock acquisition; PFD and charge pump','15c'],['15.2.3','Basic charge-pump PLL','15d'],['15.3','Nonideal effects; jitter','15e'],['15.4–15.5','DLLs; applications','15f'],['Problems','15.1– (pp.577–578)','']]});
+ GLOSSARY.push(['Ring oscillator','Odd number of inverting stages in a loop.','14b'],['Quality factor Q','Lω/R_s: how lossless a resonator is.','b-lc'],['Cross-coupled oscillator','LC oscillator whose pair provides −2/g_m; needs loop gain 1.','14d'],['Colpitts oscillator','Single-transistor LC oscillator with a capacitive divider; needs g_mR_p ≥ 4.','14e'],['Negative resistance','Incremental resistance below zero: current falls as voltage rises.','14e'],['VCO','Oscillator whose frequency is set by a voltage: ω₀ + K_VCO·V_cont.','14f'],['Varactor','Voltage-dependent capacitor used for tuning.','14f'],['Excess phase','Phase beyond ω₀t; K_VCO∫V_cont dt for a VCO.','14g'],['Phase-locked loop','Loop that forces an oscillator’s phase to track an input.','15a'],['PFD','Phase/frequency detector: three-state UP/DOWN logic.','15c'],['Charge pump','Switched current sources that turn PFD pulses into charge.','15c'],['Dead zone','Range of small phase errors a PFD/CP cannot see.','15e'],['Jitter','Random movement of zero crossings.','15e'],['DLL','Delay-locked loop: a voltage-controlled delay line locked to the input.','15f']);
+ FORMULAS.push({name:'Three-stage ring',tex:R`\omega_{osc}=\sqrt3\,\omega_0,\ \ A_0\ge2`,eq:'14.8–14.10',lesson:'14b',vars:'',when:'Identical one-pole stages'},
+  {name:'Ring frequency (large signal)',tex:R`f_{osc}=\dfrac1{2NT_D}`,eq:'§14.2',lesson:'14b',vars:'',when:'N-stage ring'},
+  {name:'Lossy inductor',tex:R`R_p\approx Q^2R_s,\ \ Q=\dfrac{L\omega}{R_s}`,eq:'14.35',lesson:'b-lc',vars:'',when:'Near resonance'},
+  {name:'Colpitts',tex:R`\omega^2=\dfrac{1}{L\frac{C_1C_2}{C_1+C_2}},\ \ g_mR_p\ge4`,eq:'14.43–14.46',lesson:'14e',vars:'',when:'C₁ = C₂'},
+  {name:'VCO',tex:R`\omega_{out}=\omega_0+K_{VCO}V_{cont},\ \ \dfrac{\phi_{ex}}{V_{cont}}=\dfrac{K_{VCO}}s`,eq:'14.55, 14.78',lesson:'14g',vars:'',when:'Linear VCO'},
+  {name:'Type-I PLL',tex:R`\omega_n=\sqrt{\omega_{LPF}K_{PD}K_{VCO}},\ \zeta=\tfrac12\sqrt{\dfrac{\omega_{LPF}}{K_{PD}K_{VCO}}}`,eq:'15.17–15.18',lesson:'15b',vars:'',when:'PD + RC filter'},
+  {name:'PFD/CP gain',tex:R`\dfrac{V_{out}}{\Delta\phi}=\dfrac{I_P}{2\pi C_Ps}`,eq:'15.39',lesson:'15c',vars:'',when:'Charge pump into C_P'},
+  {name:'Type-II PLL',tex:R`\omega_n=\sqrt{\dfrac{I_PK_{VCO}}{2\pi C_P}},\ \zeta=\dfrac{R_P}2\sqrt{\dfrac{I_PC_PK_{VCO}}{2\pi}}`,eq:'15.46–15.47',lesson:'15d',vars:'',when:'CP PLL with R_P'});
+ const mv=(id,after)=>{const i=LESSONS.findIndex(l=>l.id===id);const [b]=LESSONS.splice(i,1);LESSONS.splice(LESSONS.findIndex(l=>l.id===after)+1,0,b)};
+ mv('b-lc','b-taylor');mv('b-phase','b-lc');
+})();
+
 /* ---- intros.js ---- */
 /* Narrated preview scripts: h = the question the lesson answers; l = three short spoken lines.
    Written for text-to-speech, so symbols are spelled out in words. */
@@ -3025,6 +3325,25 @@ Object.assign(INTROS,{
 '13c':{h:'How else can we straighten an amplifier?',l:['Source degeneration makes the transconductance close to one over R.','Triode transistors and auxiliary amplifiers can help too.','Post-correction follows a nonlinearity with its exact inverse.']},
 '13d':{h:'Why do identical transistors never match?',l:['Random variations average out over a bigger gate area.','Threshold mismatch goes straight to the input of a differential pair.','Current sources need a large overdrive to match well.']},
 '13e':{h:'Can we cancel offset electronically?',l:['Short the inputs, measure the offset, and store it on capacitors.','Subtract it afterwards, at the input, the output, or with an auxiliary amplifier.','Sampling soon after cancelling also removes slow flicker noise.']}
+});
+
+/* ---- intros4.js ---- */
+Object.assign(INTROS,{
+'b-lc':{h:'What makes an L C tank ring?',l:['An inductor and a capacitor trade energy back and forth at one over root L C.','Real inductors lose energy in their series resistance.','Near resonance, that loss looks like a parallel resistor, Q squared times R s.']},
+'b-phase':{h:'How are phase and frequency connected?',l:['Frequency is how fast phase grows: omega equals d phi d t.','So phase is the integral of frequency.','A tiny frequency error makes the phase error grow forever.']},
+'14a':{h:'How does a circuit oscillate with no input?',l:['An oscillator is a feedback amplifier that amplifies its own noise.','It needs a loop gain of at least one and a total phase shift of three sixty degrees.','We design for two or three times the minimum gain, to be safe.']},
+'14b':{h:'Why does a ring oscillator need three stages?',l:['One stage cannot give enough phase. Two stages latch up.','Three inverting stages, each adding sixty degrees, oscillate at root three times omega zero.','Each stage needs a gain of at least two.']},
+'14c':{h:'What does an L C tank do inside an amplifier?',l:['At resonance a lossy tank looks like a plain resistor.','Below resonance it is inductive, above it capacitive.','A single tuned stage still cannot oscillate on its own.']},
+'14d':{h:'How does the cross-coupled L C oscillator work?',l:['Two tuned stages in a loop give three sixty degrees at resonance.','It starts if g m times R p is at least one.','A tail current sets the swing instead of the supply.']},
+'14e':{h:'What other ways are there to build L C oscillators?',l:['The Colpitts oscillator feeds the drain back to the source through a capacitor divider.','It needs a gain of at least four.','Every L C oscillator can also be seen as a negative resistance cancelling the tank’s loss.']},
+'14f':{h:'How do we tune an oscillator with a voltage?',l:['A V C O’s frequency is omega zero plus K V C O times the control voltage.','Rings are tuned by changing stage delay. L C oscillators use varactors.','A wide range needs a large K V C O, which also amplifies control-line noise.']},
+'14g':{h:'Why is a V C O an integrator?',l:['The control voltage sets frequency, and phase is the integral of frequency.','So the excess phase equals K V C O over s times the control voltage.','Ripple on the control line creates sidebands around the carrier.']},
+'15a':{h:'What is a phase-locked loop?',l:['A phase detector compares the input and output phases.','A filter smooths its output, and a V C O follows it.','Once locked, the output frequency equals the input frequency exactly.']},
+'15b':{h:'How fast does a P L L settle?',l:['The simple P L L is a second-order system with a natural frequency and a damping ratio.','Its decay rate is set by the loop filter alone.','So a cleaner control line means slower settling.']},
+'15c':{h:'How do P L Ls lock from far away?',l:['A plain phase detector cannot see a large frequency error.','A phase frequency detector can, and it drives a charge pump.','The charge pump adds an integrator, removing the static phase error.']},
+'15d':{h:'How do we stabilise a charge-pump P L L?',l:['Two integrators in a loop oscillate.','A resistor in series with the loop capacitor adds a stabilising zero.','Unlike the simple P L L, more charge-pump current makes it more stable.']},
+'15e':{h:'What goes wrong in real P L Ls?',l:['Tiny phase errors can fall into a dead zone.','Current mismatch and charge sharing disturb the control voltage.','The loop filters input jitter low-pass, and V C O jitter high-pass.']},
+'15f':{h:'What are P L Ls and D L Ls actually used for?',l:['A delay-locked loop locks a delay line instead of an oscillator.','A divider in a P L L multiplies frequency exactly, which builds synthesizers.','P L Ls also remove clock skew and clean up jitter.']}
 });
 
 /* ---- img.js ---- */
@@ -3452,7 +3771,7 @@ function renderBook(){const taught=CHAPTERS.filter(c=>c.status==='taught').lengt
   <div class="card stack"><h3>${MT(BOOK.title)}</h3><p>${esc(BOOK.author)} · <b>${esc(BOOK.edition)}</b></p>
    <p class="small">Your file is named <span class="mono">${esc(BOOK.file)}</span>, but the scan is the <b>first edition (2001, 18 chapters)</b>, not the 2017 second edition. Section and equation numbers here follow your scan. In the 2nd edition several chapters are renumbered and expanded.</p>
    <p class="small">Page references: book page N = PDF page N + ${BOOK.offset} in your ${BOOK.pdfPages}-page scan. The scan has no text layer; it was OCR’d to build this course, so tiny OCR slips are possible — the book is the authority.</p>
-   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–478 (Ch 8–13 text). <b>Not yet reviewed:</b> end-of-chapter problems, the chapter appendices, and Chapters 14–18 beyond their table of contents.</p>
+   <p class="small"><b>Read closely for these lessons:</b> pp.1–38 (Ch 1–2 text) pp.47–93 (all of Ch 3) pp.100–158 (Ch 4–5) pp.166–239 (Ch 6–7 text) and pp.246–576 (Ch 8–15 text). <b>Not yet reviewed:</b> end-of-chapter problems, the chapter appendices, and Chapters 16–18 beyond their table of contents.</p>
    <p class="small"><b>Your class decks:</b> <span class="mono">unit1.pptx</span> covers Ch 2–5 (device, CS/CG/cascode, differential pair, active loads, folded cascode). <span class="mono">Stability Issues and Frequency compensation.pptx</span> covers Ch 9–11 (op amps, compensation, folded cascode, gain boosting, slew, PSRR, references).</p></div>
   <div class="card stack"><h3>Progress against the book</h3><div class="row" style="gap:28px"><div class="stat"><b>${taught}+${partial}</b><span class="small muted">chapters taught / partly taught of 18</span></div><div class="stat"><b>${cnt('taught')}/${LESSONS.length}</b><span class="small muted">lessons done</span></div><div class="stat"><b>${cnt('practised')}</b><span class="small muted">practised (all checks right)</span></div><div class="stat"><b>${cnt('reviewed')}</b><span class="small muted">reviewed at least once</span></div></div></div>
   ${CHAPTERS.map(c=>`<div class="card stack"><div class="row" style="justify-content:space-between"><h3>Ch ${c.n} · ${esc(c.title)}</h3><span class="row"><span class="mono small muted">pp.${c.pages[0]}–${c.pages[1]} · PDF ${c.pages[0]+BOOK.offset}–${c.pages[1]+BOOK.offset}</span><span class="tag ${c.status==='taught'?'good':c.status==='partial'?'bridge':'plain'}">${c.status==='taught'?'taught':c.status==='partial'?'partly taught':'mapped from contents only'}</span></span></div>
@@ -3845,6 +4164,49 @@ WIDGETS.offset=function(el){el.innerHTML=`<div class="stack"><div class="row" st
   const bar=(y,v,l,c)=>`<rect x="190" y="${y}" width="${Math.max(1,300*v/Math.max(tot,1e-9))}" height="22" class="${c}"/>`+V.t(180,y+16,l,'end','sv-txt-m');
   $('.out',el).innerHTML=figHTML(`<svg viewBox="0 0 520 150" role="img" aria-label="Offset contributions">${bar(14,vt,'ΔV_TH','sv-fill-book')}${bar(46,pr,'load R mismatch','sv-fill-bridge')}${bar(78,pw,'W/L mismatch','sv-fill-deep')}${bar(110,tot,'total (power sum)','sv-fill-ink')}</svg>`,
    'Eq. 13.70: lower overdrive shrinks the R and W/L terms, but ΔV_TH goes straight to the input — only area helps it. For a current SOURCE the opposite holds: ΔI/I ∝ ΔV_TH/V_OD, so use a LARGE overdrive (Eq. 13.77).');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+/* ---- app13.js ---- */
+/* ===== Chapter 14–15 widgets ===== */
+WIDGETS.ring=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('rg-n','number of stages N',3,8,1,3,'')}${slider('rg-a','gain per stage A₀',1,5,0.05,2.5,'')}</div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">Each stage: −A₀/(1 + s/ω₀). Odd N: single-ended inverters. Even N: differential, with one stage’s wires crossed so the loop still inverts (Fig. 14.15b).</p></div>`;
+ const up=()=>{const N=+$('#rg-n',el).value,A=+$('#rg-a',el).value;$('#rg-n-v',el).textContent=N;$('#rg-a-v',el).textContent=A.toFixed(2);
+  const per=180/N,amin=1/Math.cos(Math.PI/N),wr=Math.tan(Math.PI/N);
+  $('.readout',el).innerHTML=`<div><span>phase per stage</span><b>${per.toFixed(1)}°</b></div><div><span>ω_osc / ω₀ = tan(180°/N)</span><b>${wr.toFixed(2)}</b></div><div><span>minimum A₀ = 1/cos(180°/N)</span><b>${amin.toFixed(2)}</b></div><div><span>will it oscillate?</span><b>${A>=amin?'yes — amplitude grows until the stages saturate':'no — loop gain < 1 at ω_osc'}</b></div><div><span>large-signal frequency</span><b>1/(2N·T_D) = 1/(${2*N}T_D)</b></div>`;
+  $('.out',el).innerHTML=figHTML(V.ringWaves(N,2),`Node waveforms, each delayed by one stage. N = 3 needs A₀ ≥ 2 (14.10); N = 4 needs only √2 (Example 14.3).`);mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.tank=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('tk-l','L (nH)',0.5,20,0.5,4,'')}${slider('tk-c','C (pF)',0.2,10,0.1,1,'')}</div>${slider('tk-q','inductor Q = Lω/R_s',2,30,1,8,'')}
+ <div class="readout" aria-live="polite"></div><div class="out"></div></div>`;
+ const up=()=>{const L=+$('#tk-l',el).value*1e-9,C=+$('#tk-c',el).value*1e-12,Q=+$('#tk-q',el).value;$('#tk-l-v',el).textContent=(L*1e9).toFixed(1);$('#tk-c-v',el).textContent=(C*1e12).toFixed(1);$('#tk-q-v',el).textContent=Q;
+  const r=V.tankZ(L,C,Q);$('.readout',el).innerHTML=`<div><span>f_res = 1/(2π√LC)</span><b>${fmtHz(r.f0)}</b></div><div><span>series R_s</span><b>${r.Rs.toFixed(1)} Ω</b></div><div><span>parallel R_p ≈ Q²R_s</span><b>${r.Rp.toFixed(0)} Ω</b></div><div><span>cross-coupled needs g_m ></span><b>${(1e3/r.Rp).toFixed(2)} mS (1/R_p)</b></div><div><span>Colpitts needs g_mR_p ≥ 4 →</span><b>${(4e3/r.Rp).toFixed(2)} mS</b></div>`;
+  $('.out',el).innerHTML=figHTML(r.svg,'At resonance the tank is a pure resistor R_p (phase 0). Below it looks inductive (+90°), above it capacitive (−90°). Higher Q → taller, sharper peak and easier start-up.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);up()};
+
+WIDGETS.pll=function(el,blk){el.innerHTML=`<div class="stack"><div class="seg" role="group" aria-label="PLL type"><button data-pt="1" aria-pressed="true">Type I (PD + RC filter)</button><button data-pt="2" aria-pressed="false">Type II (charge pump)</button></div>
+ <div class="p1"><div class="row" style="gap:16px">${slider('pl-w','ω_LPF: log₁₀ (rad/s)',3,7,0.05,5,'')}${slider('pl-k','K_PD·K_VCO: log₁₀ (rad/s)',3,8,0.05,5.5,'')}</div></div>
+ <div class="p2" hidden><div class="row" style="gap:16px">${slider('pl-i','I_P (µA)',5,500,5,100,'')}${slider('pl-c','C_P (pF)',5,500,5,100,'')}</div><div class="row" style="gap:16px">${slider('pl-r','R_P (kΩ)',0,50,0.5,10,'')}${slider('pl-n','divide ratio N',1,64,1,1,'')}</div><p class="small muted">K_VCO = 2π × 200 MHz/V.</p></div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div></div>`;
+ let type=1;const up=()=>{let wn,zeta;
+  if(type===1){const wl=Math.pow(10,+$('#pl-w',el).value),K=Math.pow(10,+$('#pl-k',el).value);$('#pl-w-v',el).textContent=V.fmt(wl);$('#pl-k-v',el).textContent=V.fmt(K);wn=Math.sqrt(wl*K);zeta=0.5*Math.sqrt(wl/K)}
+  else{const Ip=+$('#pl-i',el).value*1e-6,Cp=+$('#pl-c',el).value*1e-12,Rp=+$('#pl-r',el).value*1e3,N=+$('#pl-n',el).value,Kv=2*Math.PI*200e6/N;
+   $('#pl-i-v',el).textContent=(Ip*1e6).toFixed(0);$('#pl-c-v',el).textContent=(Cp*1e12).toFixed(0);$('#pl-r-v',el).textContent=(Rp/1e3).toFixed(1);$('#pl-n-v',el).textContent=N;
+   wn=Math.sqrt(Ip*Kv/(2*Math.PI*Cp));zeta=Rp/2*Math.sqrt(Ip*Cp*Kv/(2*Math.PI))}
+  const T=Math.min(12/(Math.max(zeta,0.05)*wn),40/wn);const ts=Math.log(2000)/(zeta*wn);
+  $('.readout',el).innerHTML=`<div><span>natural frequency ω_n</span><b>${V.fmt(wn/1e6)} Mrad/s</b></div><div><span>damping ζ</span><b>${zeta.toFixed(2)} ${zeta<0.5?'(rings a lot)':zeta<0.7?'(some ringing)':zeta<=1.05?'(good)':'(overdamped)'}</b></div><div><span>decay time constant 1/(ζω_n)</span><b>${fmtT(1/(zeta*wn))}</b></div>${type===1?`<div><span>ζω_n = ω_LPF/2 (15.23)</span><b>settling ↔ ripple trade-off</b></div>`:`<div><span>${zeta===0?'R_P = 0 →':'stability'}</span><b>${zeta===0?'two integrators: oscillates':'improves as I_P·K_VCO rises'}</b></div>`}`;
+  $('.out',el).innerHTML=figHTML(zeta===0?V.plot({w:520,h:230,x:[0,T*1e6],y:[0,2.1],xl:'time (µs)',yl:'Δω_out / Δω_in',xt:[0,T*1e6],yt:[0,1,2],series:[{f:t=>1-Math.cos(wn*t*1e-6),cls:'sv-bad'}],aria:'unstable'}):V.pllStep(zeta,wn,T),
+   type===1?'Type I: raising K_PD·K_VCO lowers the phase error but also lowers ζ (more ringing). Lowering ω_LPF cleans the control line but slows settling.':'Type II: R_P adds the zero that stabilises the loop. A divider ÷N divides K_VCO, so ω_n and ζ both shrink by √N — raise I_P to compensate.');mountZooms(el)};
+ $$('input',el).forEach(i=>i.oninput=up);const setT=t=>{type=t;$$('[data-pt]',el).forEach(x=>x.setAttribute('aria-pressed',+x.dataset.pt===t));$('.p1',el).hidden=type!==1;$('.p2',el).hidden=type!==2;up()};$$('[data-pt]',el).forEach(b=>b.onclick=()=>setT(+b.dataset.pt));setT(blk&&blk.mode===2?2:1)};
+
+WIDGETS.vco=function(el){el.innerHTML=`<div class="stack"><div class="row" style="gap:16px">${slider('vc-1','V₁ (V)',0,1.5,0.05,0.5,'')}${slider('vc-2','V₂ (V)',0,1.5,0.05,1.2,'')}</div>
+ <div class="readout" aria-live="polite"></div><div class="out"></div><p class="small muted">ω₀ = 2π × 2 (arbitrary units), K_VCO = 2π × 2 per volt; V_cont toggles between V₁ and V₂ every second unit of time (Example 14.16).</p></div>`;
+ const up=()=>{const v1=+$('#vc-1',el).value,v2=+$('#vc-2',el).value;$('#vc-1-v',el).textContent=v1.toFixed(2);$('#vc-2-v',el).textContent=v2.toFixed(2);
+  const w0=2,K=2,vc=t=>(Math.floor(t/2)%2?v2:v1),f=t=>w0+K*vc(t);let ph=0;const pts=[],ppts=[],fpts=[];const dt=0.004;for(let t=0;t<=8;t+=dt){ph+=2*Math.PI*f(t)*dt;pts.push([t,Math.cos(ph)]);ppts.push([t,ph/(2*Math.PI)]);fpts.push([t,f(t)])}
+  $('.readout',el).innerHTML=`<div><span>f during V₁</span><b>${(w0+K*v1).toFixed(2)}</b></div><div><span>f during V₂</span><b>${(w0+K*v2).toFixed(2)}</b></div><div><span>phase = ∫ω dt</span><b>slope changes, no jumps</b></div>`;
+  const a=V.plot({w:520,h:140,mb:24,x:[0,8],y:[0,6],xl:'',yl:'frequency',xt:[],yt:[0,2,4,6],series:[{pts:fpts,cls:'sv-bridge'}],aria:'frequency'});
+  const b=V.plot({w:520,h:150,mt:6,mb:24,x:[0,8],y:[0,Math.ceil(ppts[ppts.length-1][1]/10)*10],xl:'',yl:'phase (cycles)',xt:[],yt:[0,Math.ceil(ppts[ppts.length-1][1]/10)*10],series:[{pts:ppts,cls:'sv-deep'}],aria:'phase'});
+  const c=V.plot({w:520,h:150,mt:6,x:[0,8],y:[-1.3,1.3],xl:'time',yl:'V_out',xt:[0,2,4,6,8],yt:[-1,0,1],series:[{pts,cls:'sv-book',w:1.6}],aria:'output'});
+  $('.out',el).innerHTML=figHTML(a+b+c,'Frequency follows V_cont instantly; phase is its integral (14.74–14.76). That integral is why a VCO in a PLL is modelled as K_VCO/s. This is FSK modulation (Example 14.15).');mountZooms(el)};
  $$('input',el).forEach(i=>i.oninput=up);up()};
 
 </script>
