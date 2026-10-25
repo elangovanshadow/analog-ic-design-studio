@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style><meta name="description" content="Short-step study site for Razavi, Design of Analog CMOS Integrated Circuits (1st ed.)"></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Razavi Bench</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4145,11 +4145,18 @@ const WIDGETS={
 };
 
 /* ===== QUESTIONS ===== */
+/* options shown in a stable per-question shuffled order, so the right answer is not always A */
+function optOrder(qid,n){let h=2166136261;const key=String(qid).replace(/^quiz\d+-\d+:/,'').replace(':','#');for(const c of key)h=Math.imul(h^c.charCodeAt(0),16777619);const idx=[...Array(n).keys()];for(let i=n-1;i>0;i--){h=Math.imul(h^(h>>>13),1597334677)>>>0;const j=h%(i+1);[idx[i],idx[j]]=[idx[j],idx[i]]}return idx}
 function qHTML(qid,q){const a=S.answers[qid]||{};let body='';
-  if(q.type==='mcq') body=`<div class="opts" role="radiogroup">${q.opts.map((o,i)=>`<button class="opt" role="radio" aria-checked="false" data-i="${i}"><span class="k">${'ABCDEF'[i]}</span><span>${M(o)}</span></button>`).join('')}</div>`;
+  if(q.type==='mcq') body=`<div class="opts" role="radiogroup">${optOrder(qid,q.opts.length).map((i,pos)=>[q.opts[i],i,pos]).map(([o,i,pos])=>`<button class="opt" role="radio" aria-checked="false" data-i="${i}"><span class="k">${'ABCDEF'[pos]}</span><span>${M(o)}</span></button>`).join('')}</div>`;
   if(q.type==='num') body=`<div class="row"><input type="text" inputmode="decimal" id="num-${qid.replace(/[^\w]/g,'_')}" style="max-width:180px" placeholder="your answer" aria-label="Numeric answer"><span class="mono muted">${esc(q.unit||'')}</span></div>`;
   if(q.type==='order'){const idx=q.items.map((_,i)=>i);let sh=idx.slice();for(let k=0;k<6&&sh.every((v,i)=>v===i);k++)sh=sh.map(v=>({v,r:((v*7+3)%5)+Math.random()})).sort((x,y)=>x.r-y.r).map(o=>o.v);
     body=`<div class="orderlist">${sh.map(i=>`<div class="orderitem" data-i="${i}"><span class="txt">${M(q.items[i])}</span><button aria-label="Move up" data-m="-1">↑</button><button aria-label="Move down" data-m="1">↓</button></div>`).join('')}</div>`}
+  if(q.type==='label'){let svg='';try{svg=V[q.fig].apply(null,q.args||[]);if(svg&&svg.svg)svg=svg.svg}catch(e){}
+    if(q.hide)svg=svg.replace(/<text[^>]*>[\s\S]*?<\/text>/g,m=>{const t=m.replace(/<[^>]+>/g,'').trim();return q.hide.some(h=>t===h||(h.endsWith('…')&&t.startsWith(h.slice(0,-1))))?'':m});
+    const mk=q.marks.map((m,i)=>`<circle cx="${m[0]}" cy="${m[1]}" r="11" class="sv-fill-ink" opacity=".9"/><text x="${m[0]}" y="${m[1]+4}" text-anchor="middle" class="sv-txt" style="fill:var(--sheet);font-weight:700">${i+1}</text>`).join('');
+    svg=svg.replace(/<\/svg>\s*$/,mk+'</svg>');const opts=q.items.map((t,i)=>({t,i})).sort((x,y)=>x.t.localeCompare(y.t));
+    body=`${figHTML(svg,'')}<div class="stack" style="gap:6px">${q.marks.map((m,i)=>`<label class="row" style="gap:8px"><b class="mono">${i+1}</b><select data-lab="${i}" aria-label="Label ${i+1}"><option value="">choose…</option>${opts.map(o=>`<option value="${o.i}">${esc(o.t)}</option>`).join('')}</select></label>`).join('')}</div>`}
   return `<div class="q" data-qid="${qid}"><div class="prose">${M(q.q)}</div>${body}
    <div class="conf" role="group" aria-label="How sure are you?"><span class="small muted">How sure?</span><button data-c="guess" aria-pressed="false">Guessing</button><button data-c="fair" aria-pressed="false">Fairly sure</button><button data-c="sure" aria-pressed="false">Sure</button></div>
    <div class="row"><button class="btn primary sm" data-act="check">Check</button>${q.hint?'<button class="btn ghost sm" data-act="hint">Hint</button>':''}</div><div class="fbx" aria-live="polite"></div>
@@ -4164,21 +4171,22 @@ function mountQ(root,qid,q,lesson){const el=$(`.q[data-qid="${CSS.escape(qid)}"]
     if(q.type==='mcq'){if(sel===null){fb.innerHTML='<div class="fb hint">Pick an option first.</div>';return}ok=sel===q.a;given=q.opts[sel]}
     if(q.type==='num'){const raw=$('input',el).value.trim().replace('−','-').replace(',','.');const x=parseFloat(raw);if(!isFinite(x)){fb.innerHTML='<div class="fb hint">Enter a number (e.g. 4 or 0.79).</div>';return}const tol=(q.tol??0.02)*Math.max(Math.abs(q.a),1e-9);ok=Math.abs(x-q.a)<=tol;given=raw}
     if(q.type==='order'){const ord=$$('.orderitem',el).map(x=>+x.dataset.i);ok=ord.every((v,i)=>v===i);given=ord.join(',')}
+    if(q.type==='label'){const v=$$('select[data-lab]',el).map(x=>x.value);if(v.some(x=>x==='')){fb.innerHTML='<div class="fb hint">Choose a label for every number first.</div>';return}ok=v.every((x,i)=>+x===q.answer[i]);given=v.map(x=>q.items[+x]).join(', ');$$('select[data-lab]',el).forEach((x,i)=>{x.style.outline='2px solid '+(+x.value===q.answer[i]?'var(--good)':'var(--bad)')})}
     tries++;const rec=S.answers[qid]||{attempts:0,correct:false,firstTry:null};rec.attempts++;rec.last=Date.now();rec.conf=conf;if(rec.firstTry===null){rec.firstTry=ok;rec.firstConf=conf||'none';if(ok)dayLog().first++}
     if(ok)rec.correct=true;S.answers[qid]=rec;
     if(q.type==='mcq')$$('.opt',el).forEach((b,i)=>{if(i===sel)b.classList.add(ok?'right':'wrong');if(ok&&i===q.a)b.classList.add('right')});
     if(ok){fb.innerHTML=`<div class="fb ok"><b>${conf==='guess'?'Right — but you were guessing, so this card comes back sooner.':'Correct.'}</b> ${M(q.explain||'')}</div>`;
       if(S.settings.rewards&&rec.attempts===1&&dayLog().first%3===0)toast(`${dayLog().first} first-try answers today`)}
-    else{const pre=q.prereq&&LMAP[q.prereq];
+    else{const pre=LMAP[q.prereq]||((lesson&&lesson.prereq)||[]).map(id=>LMAP[id]).filter(Boolean).sort((x,y)=>(x.label==='bridge'?0:1)-(y.label==='bridge'?0:1))[0];
       if(tries===1&&q.hint){fb.innerHTML=`<div class="fb no"><b>Not quite.</b> Here is a hint, then try again (no penalty):</div><div class="fb hint">${M(q.hint)}</div>`}
-      else{fb.innerHTML=`<div class="fb no"><b>Not quite.</b> ${M(q.explain||'')}${q.type==='num'?` <span class="mono">(expected ≈ ${q.a} ${esc(q.unit||'')})</span>`:q.type==='mcq'?` <br>Answer: <b>${M(q.opts[q.a])}</b>`:''}</div>`+
+      else{fb.innerHTML=`<div class="fb no"><b>Not quite.</b> ${M(q.explain||'')}${q.type==='num'?` <span class="mono">(expected ≈ ${q.a} ${esc(q.unit||'')})</span>`:q.type==='mcq'?` <br>Answer: <b>${M(q.opts[q.a])}</b>`:q.type==='label'?` <br>Answer: ${q.answer.map((a,i)=>`<b>${i+1}</b> ${esc(q.items[a])}`).join(' · ')}`:''}</div>`+
         (pre?`<div class="fb hint">This often comes from a missing foundation: <a href="#lesson-${pre.id}">${MT(pre.title)}</a> (${pre.mins} min). Open it, then come back — your place here is saved.</div>`:'');
         S.journal.unshift({t:Date.now(),qid,lesson:lesson.id,q:q.q,given,conf:conf||'none',fix:q.explain||''});S.journal=S.journal.slice(0,200)}}
     save()}}
 
 /* ===== AI HELP (sample capability) ===== */
 let SAMPLE=null;
-async function initSample(){try{if(window.claude&&claude.use){SAMPLE=await claude.use('sample')}}catch(e){SAMPLE=null}$$('[data-ai]').forEach(b=>b.disabled=!SAMPLE||!S.settings.ai)}
+async function initSample(){try{if(window.claude&&claude.use){SAMPLE=await claude.use('sample')}}catch(e){SAMPLE=null}}
 function blockText(b){if(!b)return '';const parts=[b.h,b.p,b.intro,b.given,(b.eq||[]).map(e=>e.tex+' — '+(e.note||'')).join('\n'),(b.steps||[]).map(s=>(s.tex||'')+' — '+(s.say||'')).join('\n')];return parts.filter(Boolean).join('\n').replace(/<[^>]+>/g,' ').slice(0,3000)}
 async function askAI(kind,l,b,out){
   if(!SAMPLE){out.innerHTML='<div class="aibox">AI help is not available in this view.</div>';return}
@@ -4217,7 +4225,7 @@ function blockHTML(l,b,i,isCur){const kinds={why:'Why it matters',idea:'Idea',vi
 function mountStepper(sec,b,kind,startAll){const box=$(kind==='derive'?'.dsteps':'.esteps',sec);if(!box)return;let shown=startAll?b.steps.length:1;
   const draw=()=>{box.innerHTML=b.steps.slice(0,shown).map((s,i)=>`<div class="dstep"><span class="n">Step ${i+1} of ${b.steps.length}</span><div class="eqblock">${tex(s.tex,true)}</div>${s.say?`<div>${M(s.say)}</div>`:''}${s.why?`<div class="why">Why allowed: ${M(s.why)}</div>`:''}</div>`).join('');
     if(shown<b.steps.length){const nx=b.steps[shown];const ask=nx.ask;
-      box.insertAdjacentHTML('beforeend',`<div class="dstep">${ask?`<span class="n">Predict before you look</span><div>${M(ask.q)}</div><div class="opts">${ask.opts.map((o,i)=>`<button class="opt" data-p="${i}"><span class="k">${'ABC'[i]}</span><span>${M(o)}</span></button>`).join('')}</div><div class="pfb small"></div>`:''}<div class="row"><button class="btn sm primary" data-next>${ask?'Reveal step':'Next step'} ${shown+1}</button><button class="btn ghost sm" data-all>Show all steps</button></div></div>`);
+      box.insertAdjacentHTML('beforeend',`<div class="dstep">${ask?`<span class="n">Predict before you look</span><div>${M(ask.q)}</div><div class="opts">${optOrder(String(nx.tex)+shown,ask.opts.length).map((j,pos)=>[ask.opts[j],j,pos]).map(([o,i,pos])=>`<button class="opt" data-p="${i}"><span class="k">${'ABC'[pos]}</span><span>${M(o)}</span></button>`).join('')}</div><div class="pfb small"></div>`:''}<div class="row"><button class="btn sm primary" data-next>${ask?'Reveal step':'Next step'} ${shown+1}</button><button class="btn ghost sm" data-all>Show all steps</button></div></div>`);
       $$('[data-p]',box).forEach(o=>o.onclick=()=>{const ok=+o.dataset.p===ask.a;$$('[data-p]',box).forEach(x=>x.classList.remove('right','wrong'));o.classList.add(ok?'right':'wrong');$('.pfb',box).textContent=ok?'Yes — now reveal it.':'Not this one. Reveal the step and see why.'});
       $('[data-next]',box).onclick=()=>{shown++;draw()};$('[data-all]',box).onclick=()=>{shown=b.steps.length;draw()}}
     else if(kind==='derive') box.insertAdjacentHTML('beforeend','<div class="small muted">Derivation complete. You can always come back to it.</div>')};draw()}
@@ -4256,8 +4264,8 @@ function wireBlocks(l,root,at){
     if(b.t==='recall'){const ta=$('textarea',sec);let tm;ta.oninput=()=>{clearTimeout(tm);tm=setTimeout(()=>{S.recall[l.id+':'+i]={text:ta.value,t:Date.now()};save()},800)};
       $('[data-reveal]',sec).onclick=()=>{$('.model',sec).hidden=false};$$('[data-self]',sec).forEach(x=>x.onclick=()=>{S.recall[l.id+':'+i]=Object.assign(S.recall[l.id+':'+i]||{text:ta.value},{self:+x.dataset.self});save();toast(+x.dataset.self===2?'Nice — that idea is sticking.':'Saved. It will come back in review.');if(+x.dataset.self<2)cardsOf(l).forEach(c=>{if(S.cards[c.id])S.cards[c.id].due=Math.min(S.cards[c.id].due,Date.now()+INTERVALS[0])})})}
     const cont=$('[data-continue]',sec);if(cont)cont.onclick=()=>advance(l,i);
-    const simp=$('[data-simpler]',sec);if(simp)simp.onclick=()=>{const out=$('.aiout',sec);if(l.simpler&&!out.dataset.s){out.dataset.s=1;out.innerHTML=`<div class="aibox" style="border-color:var(--bridge);background:var(--bridge-soft)"><span class="tag bridge">Simpler version · written for this course</span>${esc(l.simpler)}</div>`+(SAMPLE&&S.settings.ai?'<button class="btn ghost sm" data-ai2>Still unclear? Ask AI for another angle</button>':'');const a2=$('[data-ai2]',out);if(a2)a2.onclick=()=>askAI('simpler',l,b,out)}else askAI('simpler',l,b,out)};
-    $$('[data-ai]',sec).forEach(x=>{x.disabled=!SAMPLE||!S.settings.ai;if(!SAMPLE||!S.settings.ai)x.title='AI help is unavailable here (or turned off in Preferences)';x.onclick=()=>askAI(x.dataset.ai,l,b,$('.aiout',sec))});
+    const simp=$('[data-simpler]',sec);if(simp)simp.onclick=()=>{const out=$('.aiout',sec);if(!l.simpler&&!(SAMPLE&&S.settings.ai)){offlineHelp('simpler',l,b,out);return}if(l.simpler&&!out.dataset.s){out.dataset.s=1;out.innerHTML=`<div class="aibox" style="border-color:var(--bridge);background:var(--bridge-soft)"><span class="tag bridge">Simpler version · written for this course</span>${esc(l.simpler)}</div>`+(SAMPLE&&S.settings.ai?'<button class="btn ghost sm" data-ai2>Still unclear? Ask AI for another angle</button>':'');const a2=$('[data-ai2]',out);if(a2)a2.onclick=()=>askAI('simpler',l,b,out)}else askAI('simpler',l,b,out)};
+    $$('[data-ai]',sec).forEach(x=>{x.dataset.offline=1;x.onclick=()=>{const out=$('.aiout',sec);offlineHelp(x.dataset.ai,l,b,out);if(SAMPLE&&S.settings.ai){const a=document.createElement('button');a.className='btn ghost sm';a.textContent='Still stuck? Ask AI (labelled, not from the book)';a.onclick=()=>askAI(x.dataset.ai,l,b,out);out.appendChild(a)}}});
   });
   mountZooms(root);
   const d=$('[data-distract]',root);if(d)d.onclick=()=>distractModal(l);const p=$('[data-park]',root);if(p)p.onclick=parkModal;
@@ -4881,5 +4889,86 @@ WIDGETS.bounce=function(el){el.innerHTML=`<div class="stack"><div class="row" st
   $('.readout',el).innerHTML=`<div><span>peak current ΔI</span><b>${I>=1?I.toFixed(2)+' A':(I*1e3).toFixed(1)+' mA'}</b></div><div><span>bounce per rail</span><b>${dv>=1?dv.toFixed(2)+' V':(dv*1e3).toFixed(0)+' mV'}</b></div><div><span>supply + ground, worst case</span><b>${(2*dv*1e3).toFixed(0)} mV ${2*dv>0.3?'— too much for analog':''}</b></div>`};
  $$('input',el).forEach(i=>i.oninput=up);up()};
 
+/* ---- app15.js ---- */
+/* ===== Study-skill upgrades: offline help buttons, chapter quizzes, revision planner, label-a-diagram checks ===== */
+
+/* ---- “Make it simpler”, “Show missing step”, “Another example” — work without AI ---- */
+function offlineHelp(kind,l,b,out){
+  const box=(tag,html)=>`<div class="aibox" style="border-color:var(--bridge);background:var(--bridge-soft)"><span class="tag bridge">${tag}</span>${html}</div>`;
+  const pre=(l.prereq||[]).map(id=>LMAP[id]).filter(Boolean);
+  const preHTML=pre.length?`<p class="small">Still missing something? These come first: ${pre.map(p=>`<a href="#lesson-${p.id}">${MT(p.title)}</a>`).join(' · ')}</p>`:'';
+  if(kind==='simpler'){const I=INTROS[l.id];
+    out.innerHTML=box('Simpler version · written for this course',`${I?`<p><b>${M(I.h)}</b></p><ol>${I.l.map(x=>`<li>${M(x)}</li>`).join('')}</ol>`:''}<p class="small"><b>The one idea of this lesson:</b> ${M(l.obj)}</p>${preHTML}`);return}
+  if(kind==='step'){let html='';
+    if(b.t==='derive')html=`<ol>${b.steps.map(s=>`<li><div>${tex(s.tex,true)}</div><div>${M(s.say||'')}</div>${s.why?`<div class="small muted">Why this step works: ${M(s.why)}</div>`:''}</li>`).join('')}</ol>`;
+    else if(b.t==='example')html=`${b.given?`<p class="small"><b>Known:</b> ${M(b.given)}</p>`:''}<ol>${(b.steps||[]).map(s=>`<li><div>${tex(s.tex,true)}</div><div>${M(s.say||'')}</div></li>`).join('')}</ol>`;
+    else if(b.t==='formal')html=`<ol>${(b.eq||[]).map(e=>`<li><div>${tex(e.tex,true)}</div><div class="small">${M(e.note||'')}</div></li>`).join('')}</ol><p class="small">Read each symbol from the note under its equation before moving on.</p>`;
+    out.innerHTML=box('Every step written out · this course',html+preHTML);return}
+  if(kind==='example'){const cands=[];
+    l.blocks.forEach(x=>{if(x.t==='example'&&x!==b)cands.push([l,x])});
+    LESSONS.filter(o=>o.unit===l.unit&&o.id!==l.id).forEach(o=>o.blocks.forEach(x=>{if(x.t==='example')cands.push([o,x])}));
+    if(!cands.length){out.innerHTML=box('Another example','<p class="small">No other worked example in this chapter yet. Try the chapter quiz on the Book page for fresh questions.</p>');return}
+    out.dataset.ex=((+out.dataset.ex||0)+1)%cands.length;const [o,x]=cands[+out.dataset.ex];
+    out.innerHTML=box(`Another worked example · ${x.src==='book'?'from the book':'our numbers'} · from “${MT(o.title)}”`,
+      `${x.h?`<p><b>${M(x.h)}</b></p>`:''}${x.given?`<p class="small"><b>Known:</b> ${M(x.given)}</p>`:''}<ol>${(x.steps||[]).map(s=>`<li><div>${tex(s.tex,true)}</div><div>${M(s.say||'')}</div></li>`).join('')}</ol>${o.id!==l.id?`<a class="small" href="#lesson-${o.id}">Open that lesson</a>`:''}<p class="small muted">Press “Another example” again for a different one.</p>`);}
+}
+
+/* ---- Label-a-diagram checks (appended as a final check to three lessons) ---- */
+(function(){const add=(id,q)=>{const l=LESSONS.find(x=>x.id===id);if(l&&!l.blocks.some(b=>b.q&&b.q.type==='label'))l.blocks.push({t:'check',q})};
+ add('8a',{type:'label',q:'Label the numbered parts of the feedback loop.',fig:'fbLoop',hide:['error','A (or H(s))','feedforward amp','β','feedback network','③ subtract','② return βY','① sense output','Y/X…'],marks:[[106,50],[200,44],[206,128]],items:['subtractor (forms the error X − βY)','feedforward amplifier A','feedback network β'],answer:[0,1,2],explain:'The error is formed at the subtractor, amplified by A, and a fraction β of the output is fed back (Fig. 8.1).'});
+ add('15a',{type:'label',q:'Label the blocks of the simple PLL.',fig:'pllBlock',hide:['PD','LPF','VCO','K_VCO/s','Locked:…'],args:[false],marks:[[70,28],[190,28],[320,28]],items:['phase detector','low-pass filter','VCO'],answer:[0,1,2],explain:'PD compares phases → LPF removes the ripple → VCO turns the control voltage into frequency (Fig. 15.5b).'});
+ add('17b',{type:'label',q:'Label the numbered layers of the CMOS cross-section.',fig:'cmosX',hide:['n-well','field oxide','p⁺','metal 1','spacers + silicide'],marks:[[300,100],[96,114],[60,50],[490,168],[500,121]],items:['field oxide','polysilicon gate','metal 1','n-well','p⁺ source/drain'],answer:[0,1,2,3,4],explain:'Field oxide isolates devices; the poly gate sits on thin oxide; metal 1 connects through contacts; PMOS lives in the n-well with p⁺ source/drain.'});
+})();
+
+/* ---- Chapter quizzes: interleaved, one question at a time; ≥ 70 % marks the chapter practised ---- */
+function chapterPool(n){const re=new RegExp('^Ch '+n+' ');const pool=[];LESSONS.filter(l=>re.test(l.unit+' ')).forEach(l=>l.blocks.forEach((b,i)=>{if(b.t==='check'&&b.q)pool.push({l,i,q:b.q})}));return pool}
+function quizState(){return S.quiz||(S.quiz={})}
+function renderQuiz(n){const ch=CHAPTERS.find(c=>c.n===n);const pool=chapterPool(n);
+  $$('[data-nav]').forEach(a=>a.setAttribute('aria-current',a.dataset.nav==='book'?'page':'false'));
+  if(!ch||!pool.length){$('#main').innerHTML=`<div class="wrap"><div class="card"><h2>No quiz for this chapter yet.</h2><a class="btn" href="#book">Back to the book map</a></div></div>`;return}
+  const seed=Date.now();const pick=pool.map((p,k)=>({p,r:Math.sin(seed+k*97)})).sort((a,b)=>a.r-b.r).map(o=>o.p).slice(0,Math.min(10,pool.length));
+  let k=0,right=0;const run='quiz'+n+'-'+seed;
+  const show=()=>{if(k>=pick.length){const pct=Math.round(100*right/pick.length);const st=quizState();const old=st[n]||{best:0};st[n]={best:Math.max(old.best||0,pct),last:pct,t:Date.now(),runs:(old.runs||0)+1};
+      Object.keys(S.answers).forEach(key=>{if(key.startsWith(run))delete S.answers[key]});save();
+      $('#main').innerHTML=`<div class="wrap stack" style="gap:18px"><div><span class="eyebrow">Chapter ${n} quiz</span><h1>${pct} % right on first try</h1></div>
+       <div class="card stack"><p>${pct>=70?'Chapter marked as <b>practised</b>. It comes back in review over the next days — that is what makes it stick.':'Under 70 % — that is useful information, not a failure. The questions you missed are in the error journal, with links to their lessons.'}</p>
+       <div class="row"><a class="btn primary" href="#quiz-${n}">Another mixed set</a><a class="btn" href="#review">Error journal</a><a class="btn ghost" href="#book">Book map</a></div></div></div>`;return}
+    const it=pick[k];const qid=run+':'+it.l.id+':'+it.i;
+    $('#main').innerHTML=`<div class="wrap stack" style="gap:18px"><div><span class="eyebrow">Chapter ${n} quiz · ${esc(ch.title)}</span><h1>Question ${k+1} of ${pick.length}</h1><p class="small muted">Mixed from all lessons of this chapter. No timer, no penalty — hints are fine. From <a href="#lesson-${it.l.id}">${MT(it.l.title)}</a>.</p></div>
+      <div class="card stack" id="qz">${qHTML(qid,it.q)}</div><div class="row"><button class="btn primary" id="qnext">${k+1<pick.length?'Skip / next question':'Finish'}</button><a class="btn ghost" href="#book">Stop here</a></div></div>`;
+    mountQ($('#qz'),qid,it.q,it.l);mountZooms($('#main'));
+    const chk=$('#qz [data-act=check]');let first=null;chk.addEventListener('click',()=>setTimeout(()=>{const a=S.answers[qid];if(a&&first===null&&a.firstTry!==null&&a.firstTry!==undefined){first=a.firstTry;if(first)right++}if(a){$('#qnext').textContent=k+1<pick.length?'Next question':'See result'}},0));
+    $('#qnext').onclick=()=>{k++;show();window.scrollTo(0,0)}};
+  show()}
+function quizRoute(){const h=(location.hash||'').slice(1);if(h.startsWith('quiz-'))renderQuiz(+h.slice(5))}
+window.addEventListener('hashchange',quizRoute);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(quizRoute,0));else setTimeout(quizRoute,0);
+
+/* ---- Book page: chapter quiz buttons and “practised” badges ---- */
+const _renderBook0=renderBook;renderBook=function(){_renderBook0.apply(this,arguments);const st=quizState();
+  $$('#main .card h3').forEach(h=>{const m=/^Ch (\d+) ·/.exec(h.textContent);if(!m)return;const n=+m[1];if(!chapterPool(n).length)return;const r=st[n];
+    const a=document.createElement('a');a.className='btn sm';a.href='#quiz-'+n;a.textContent=r?`Chapter quiz · best ${r.best} %${r.best>=70?' · practised':''}`:'Chapter quiz (10 mixed questions)';h.parentElement.after(a)})};
+
+/* ---- Review page: revision planner + chapter quiz shortcuts ---- */
+function planDays(examDate,minsPerDay){const today=new Date();today.setHours(0,0,0,0);const exam=new Date(examDate+'T00:00:00');const days=Math.round((exam-today)/864e5);
+  const todo=LESSONS.filter(l=>!lstate(l.id).done);const need=todo.reduce((s,l)=>s+l.mins,0);const studyDays=Math.max(0,days-1);
+  const learnBudget=Math.max(1,Math.round(minsPerDay*0.7));const plan=[];let q=todo.slice();
+  for(let d=0;d<Math.min(7,studyDays);d++){let m=0;const ls=[];while(q.length&&m+q[0].mins<=learnBudget){m+=q[0].mins;ls.push(q.shift())}if(!ls.length&&q.length){ls.push(q.shift())}
+    const date=new Date(today.getTime()+d*864e5);plan.push({date,ls,review:minsPerDay-learnBudget})}
+  return {days,studyDays,need,perDay:studyDays?Math.ceil(need/studyDays/0.7):null,plan,todo:todo.length}}
+const _renderReview0=renderReview;renderReview=function(){_renderReview0.apply(this,arguments);const col=$('#main .col');if(!col)return;const P=S.plan||{};
+  const card=document.createElement('div');card.className='card stack';
+  const draw=()=>{const date=$('#pl-date',card).value,mins=+$('#pl-min',card).value;S.plan={date,mins};save();const out=$('#pl-out',card);
+    if(!date){out.innerHTML='<p class="small muted">Pick an exam (or target) date to see a plan.</p>';return}const r=planDays(date,mins);
+    if(r.days<=0){out.innerHTML='<p class="small">That date is today or past. Pick a future date.</p>';return}
+    out.innerHTML=`<p class="small">${r.todo} lessons left (~${r.need} min of lessons). With ${r.studyDays} study day${r.studyDays===1?'':'s'} before the exam, that is about <b>${r.perDay} min/day</b> including review time${r.perDay>mins?` — more than your ${mins} min. Consider fewer chapters, or accept that some will be review-only.`:'. That fits.'}</p>
+     <div class="tbl"><table><tr><th>Day</th><th>New lessons (≈70 % of your time)</th><th>Review</th></tr>${r.plan.map(p=>`<tr><td class="mono small">${p.date.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})}</td><td class="small">${p.ls.map(l=>`<a href="#lesson-${l.id}">${MT(l.title)}</a> (${l.mins}′)`).join('<br>')||'—'}</td><td class="small">due cards, ~${p.review} min</td></tr>`).join('')}</table></div>
+     <p class="small muted">Simple rule: lessons in path order fill 70 % of each day; the rest goes to due review cards. Leave the last day for light review only. It recalculates as you finish lessons.</p>`};
+  card.innerHTML=`<h3>Revision planner</h3><div class="row" style="gap:12px"><label class="field">Exam / target date<input type="date" id="pl-date" value="${esc(P.date||'')}"></label><label class="field">Minutes per day<input type="number" id="pl-min" min="10" max="300" step="5" value="${P.mins||45}" style="max-width:110px"></label></div><div id="pl-out"></div>`;
+  col.appendChild(card);$('#pl-date',card).onchange=draw;$('#pl-min',card).onchange=draw;draw();
+  const st=quizState();const qc=document.createElement('div');qc.className='card stack';
+  qc.innerHTML=`<h3>Mixed chapter quizzes</h3><p class="small muted">Interleaved questions from a whole chapter — good once its lessons are done.</p><div class="row" style="flex-wrap:wrap;gap:6px">${CHAPTERS.filter(c=>chapterPool(c.n).length).map(c=>`<a class="btn sm" href="#quiz-${c.n}">Ch ${c.n}${st[c.n]?` · ${st[c.n].best} %`:''}</a>`).join('')}</div>`;col.appendChild(qc)};
+
 </script>
-</body></html>
+
+</html>
