@@ -3771,8 +3771,11 @@ V.smallsigCS=()=>`<svg viewBox="0 0 560 200" role="img" aria-label="CS small-sig
  ${V.t(280,192,'KCL at v_out:  g_m v₁ + v_out/r_o + v_out/R_D = 0','middle','sv-txt-m')}</svg>`;
 
 function subify(root){if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentElement;if(!p||p.closest('svg,math,textarea,script,style,input,.mono-raw'))return NodeFilter.FILTER_REJECT;return /[A-Za-z0-9µ\u0370-\u03FF′)\]][_^][-−{A-Za-z0-9.½]/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});const list=[];while(w.nextNode())list.push(w.currentNode);
- list.forEach(n=>{const sp=document.createElement('span');sp.innerHTML=scriptText(esc(n.nodeValue));n.replaceWith(...sp.childNodes)})}
-new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)subify(n);else if(n.nodeType===3&&n.parentElement)subify(n.parentElement)}))}).observe(document.documentElement,{childList:true,subtree:true});
+ list.forEach(n=>{const raw=esc(n.nodeValue),out=scriptText(raw);if(out===raw)return; /* nothing to convert: leave it alone, or the observer would loop forever */
+  const sp=document.createElement('span');sp.innerHTML=out;n.replaceWith(...sp.childNodes)})}
+let SUBIFY_BUSY=false,SUBIFY_RUNS=0,SUBIFY_T0=0;
+new MutationObserver(ms=>{if(SUBIFY_BUSY)return;const now=Date.now();if(now-SUBIFY_T0>1000){SUBIFY_T0=now;SUBIFY_RUNS=0}if(++SUBIFY_RUNS>400)return; /* safety valve: never let this observer monopolise the page */
+ SUBIFY_BUSY=true;try{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)subify(n);else if(n.nodeType===3&&n.parentElement)subify(n.parentElement)}))}catch(e){}finally{SUBIFY_BUSY=false}}).observe(document.documentElement,{childList:true,subtree:true});
 
 async function saveFile(filename,data,mime){let dl=null;try{dl=window.claude&&claude.use?await claude.use('downloads'):null}catch(e){}
  if(dl){try{await dl.save({filename,data});toast('Saved');}catch(e){toast('Not saved')}return}
@@ -4126,6 +4129,10 @@ const TIMER={left:null,total:null,run:false,brk:false,iv:null,open:false,noise:n
     if(auto){modal(wasBreak?'<h2>Break over</h2><p>Come back when you’re ready. Your place is saved.</p><div class="row"><button class="btn primary" data-close>OK</button></div>':`<h2>Sprint done</h2><p>That was a real piece of work. Stop here, take a short break, or do one more.</p><div class="row"><button class="btn primary" id="tm-more">One more sprint</button><button class="btn" id="tm-brk">2-min break</button><button class="btn" id="tm-wrap">Wrap up</button><button class="btn ghost" data-close>Close</button></div>`,(m,close)=>{const a=$('#tm-more',m);if(a)a.onclick=()=>{close();TIMER.reset();TIMER.start()};const b=$('#tm-brk',m);if(b)b.onclick=()=>{close();TIMER.startBreak(2)};const w=$('#tm-wrap',m);if(w)w.onclick=()=>{close();wrapModal()}})}},
   startBreak(min){this.stop();this.brk=true;this.total=min*60;this.left=this.total;this.start();this.open=true;this.paint()},
   paint(){const d=$('#dock');if(!d)return;const t=this.left==null?S.settings.focus*60:this.left;const mm=String(Math.floor(t/60)),ss=String(t%60).padStart(2,'0');
+    /* Only rebuild the panel when its layout changes; otherwise just update the numbers. Rebuilding 4×/s swallowed clicks. */
+    const key=[this.open,this.run,this.brk,S.settings.focus,S.settings.tick||0,!!this.noise,this.left!=null&&this.left<this.total&&this.left>0].join('|');
+    if(key===this.key&&d.firstChild){const r=$('.ring',d);if(r)r.textContent=mm+':'+ss;const pb=$('.progressbar i',d);if(pb)pb.style.width=(this.total?100*(1-t/this.total):0)+'%';const pl=$('#tm-pill',d);if(pl){pl.textContent=(this.run?'●':'○')+' '+(this.brk?'break':'focus')+' '+mm+':'+ss;pl.setAttribute('aria-label','Focus timer '+mm+':'+ss)}return}
+    this.key=key;
     d.innerHTML=`${this.open?`<div class="panel" role="dialog" aria-label="Focus timer"><div class="row" style="justify-content:space-between"><b>${this.brk?'Break':'Focus sprint'}</b><button class="btn ghost sm" id="tm-x" aria-label="Close timer panel">Close</button></div>
      <div class="ring" aria-live="off">${mm}:${ss}</div><div class="progressbar"><i style="width:${this.total?100*(1-t/this.total):0}%"></i></div>
      ${this.run||this.brk?'':`<div class="seg" aria-label="Sprint length">${[1,2,3,5,8,10,15,25].map(m=>`<button data-m="${m}" aria-pressed="${S.settings.focus===m}">${m}</button>`).join('')}</div>`}
