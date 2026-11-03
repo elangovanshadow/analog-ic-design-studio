@@ -1,0 +1,718 @@
+{
+  "title": "Ch 1 · Levels of abstraction (Fig. 1.8)",
+  "subtitle": "Press ▶ to climb the levels · tap a layer · Explode spreads them",
+  "background": "#10131a",
+  "camera": [
+    8.5,
+    7.0,
+    10.5
+  ],
+  "target": [
+    0,
+    2.8,
+    0
+  ],
+  "gridSize": 16,
+  "steps": [
+    "Device level: one transistor, its fields and charges",
+    "Circuit (transistor) level: a few devices wired together",
+    "Architecture level: building blocks working as one unit",
+    "System level: whole subsystems (amp/filter, ADC, clock recovery, equalizer)",
+    "Designers move up and down between levels"
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        5.2,
+        0.18,
+        3.4
+      ],
+      "position": [
+        0,
+        0.0,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.92,
+      "edges": false,
+      "label": "1 · device",
+      "labelOffset": [
+        -3.9,
+        0.1,
+        0
+      ],
+      "info": "Device level: we look inside one transistor, at its electric fields and how charge moves (p. 7, Fig. 1.8a). This is where Chapter 2 starts.",
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        0.45,
+        1.4
+      ],
+      "position": [
+        0,
+        0.32499999999999996,
+        0
+      ],
+      "color": "#a78bfa",
+      "label": "MOSFET cross-section",
+      "labelOffset": [
+        1.9,
+        0.5,
+        0.9
+      ],
+      "info": "A transistor sliced open: silicon body, two doped regions (source and drain) and a gate on top. You'll meet each part in Chapter 2.",
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.6,
+        0.24,
+        1.2
+      ],
+      "position": [
+        -0.8,
+        0.43999999999999995,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.6,
+        0.24,
+        1.2
+      ],
+      "position": [
+        0.8,
+        0.43999999999999995,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.04,
+        1.2
+      ],
+      "position": [
+        0,
+        0.575,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.8,
+        0.24,
+        1.2
+      ],
+      "position": [
+        0,
+        0.72,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0,
+      "explode": [
+        0,
+        -0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        5.2,
+        0.18,
+        3.4
+      ],
+      "position": [
+        0,
+        1.7,
+        0
+      ],
+      "color": "#2563eb",
+      "opacity": 0.92,
+      "edges": false,
+      "label": "2 · circuit",
+      "labelOffset": [
+        -3.9,
+        0.1,
+        0
+      ],
+      "info": "Circuit (transistor) level: how a small group of devices interact through their electrical behaviour, i.e. their voltages and currents (Fig. 1.8b).",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.4,
+          2.09,
+          0
+        ],
+        [
+          0,
+          2.09,
+          0
+        ],
+        [
+          0,
+          2.09,
+          0.9
+        ],
+        [
+          1.4,
+          2.09,
+          0.9
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "wires",
+      "labelOffset": [
+        0.9,
+        2.44,
+        0.9
+      ],
+      "info": "Metal connections between the devices.",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.2,
+      "height": 0.6,
+      "position": [
+        -1.4,
+        2.09,
+        0
+      ],
+      "color": "#93c5fd",
+      "label": "transistors",
+      "labelOffset": [
+        -0.5,
+        0.65,
+        0
+      ],
+      "info": "Each cylinder stands for one transistor. At this level we care about its voltages and currents, not its insides.",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.2,
+      "height": 0.6,
+      "position": [
+        0,
+        2.09,
+        0
+      ],
+      "color": "#93c5fd",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.2,
+      "height": 0.6,
+      "position": [
+        1.4,
+        2.09,
+        0.9
+      ],
+      "color": "#93c5fd",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.25,
+        0.25,
+        0.7
+      ],
+      "position": [
+        0,
+        2.09,
+        -0.85
+      ],
+      "color": "#e2e8f0",
+      "label": "resistor",
+      "labelOffset": [
+        0.6,
+        0.3,
+        -0.4
+      ],
+      "info": "A passive part. Fig. 1.8(b) mixes transistors and a resistor.",
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          0,
+          2.09,
+          0
+        ],
+        [
+          0,
+          2.09,
+          -0.5
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 1,
+      "explode": [
+        0,
+        -0.25,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        5.2,
+        0.18,
+        3.4
+      ],
+      "position": [
+        0,
+        3.4,
+        0
+      ],
+      "color": "#059669",
+      "opacity": 0.92,
+      "edges": false,
+      "label": "3 · architecture",
+      "labelOffset": [
+        -3.9,
+        0.1,
+        0
+      ],
+      "info": "Architecture level: several building blocks, e.g. an op amp with capacitors and a switch, studied as one unit by what they do together (Fig. 1.8c).",
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "extrude",
+      "shape": [
+        [
+          -0.6,
+          -0.5
+        ],
+        [
+          -0.6,
+          0.5
+        ],
+        [
+          0.65,
+          0
+        ]
+      ],
+      "depth": 0.6,
+      "position": [
+        0.2,
+        4.04,
+        -0.3
+      ],
+      "color": "#34d399",
+      "label": "op amp",
+      "labelOffset": [
+        0.0,
+        0.7,
+        0.3
+      ],
+      "info": "An amplifier block, drawn as a triangle. Chapter 9 designs these.",
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.06,
+        0.6,
+        0.6
+      ],
+      "position": [
+        -1.3,
+        3.84,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "capacitor",
+      "labelOffset": [
+        -0.2,
+        0.6,
+        0
+      ],
+      "info": "Two metal plates with a gap. Blocks DC and stores charge.",
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        0.06,
+        0.6,
+        0.6
+      ],
+      "position": [
+        -1.12,
+        3.84,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.2,
+          3.7899999999999996,
+          0
+        ],
+        [
+          -1.33,
+          3.7899999999999996,
+          0
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#e2e8f0",
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.09,
+          3.7899999999999996,
+          0
+        ],
+        [
+          -0.4,
+          3.7899999999999996,
+          0
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#e2e8f0",
+      "step": 2,
+      "explode": [
+        0,
+        0.25,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        5.2,
+        0.18,
+        3.4
+      ],
+      "position": [
+        0,
+        5.1,
+        0
+      ],
+      "color": "#d97706",
+      "opacity": 0.92,
+      "edges": false,
+      "label": "4 · system",
+      "labelOffset": [
+        -3.9,
+        0.1,
+        0
+      ],
+      "info": "System level: we judge the whole system by the performance of its subsystems (Fig. 1.8d). Example from the book: a receiver with amp/filter, ADC, clock recovery and equalizer, plus an AGC loop.",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.0,
+        0.45,
+        0.8
+      ],
+      "position": [
+        -1.95,
+        5.414999999999999,
+        0.0
+      ],
+      "color": "#fbbf24",
+      "label": "amp/filter",
+      "labelOffset": [
+        0,
+        0.4,
+        0
+      ],
+      "info": "Amplifies and filters the incoming signal (the same job as in Fig. 1.1b).",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.0,
+        0.45,
+        0.8
+      ],
+      "position": [
+        -0.65,
+        5.414999999999999,
+        0.0
+      ],
+      "color": "#fbbf24",
+      "label": "ADC",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "Turns the analog signal into bits.",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.0,
+        0.45,
+        0.8
+      ],
+      "position": [
+        0.65,
+        5.414999999999999,
+        0.0
+      ],
+      "color": "#fbbf24",
+      "label": "clock recovery",
+      "labelOffset": [
+        0,
+        0.4,
+        0
+      ],
+      "info": "Works out the timing of the incoming data so the bits can be sampled at the right moments.",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.0,
+        0.45,
+        0.8
+      ],
+      "position": [
+        1.95,
+        5.414999999999999,
+        0.0
+      ],
+      "color": "#fbbf24",
+      "label": "equalizer",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "Undoes some of the distortion the channel added to the data.",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -0.65,
+          5.6499999999999995,
+          -0.3
+        ],
+        [
+          -1.3,
+          6.09,
+          -0.55
+        ],
+        [
+          -1.95,
+          5.6499999999999995,
+          -0.3
+        ]
+      ],
+      "radius": 0.03,
+      "color": "#f472b6",
+      "label": "AGC loop",
+      "labelOffset": [
+        -2.9,
+        6.09,
+        -0.4
+      ],
+      "info": "Automatic gain control: a feedback path that sets the amplifier's gain from what the ADC sees.",
+      "step": 3,
+      "explode": [
+        0,
+        0.75,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.3,
+        0.2,
+        0
+      ],
+      "to": [
+        3.3,
+        5.6,
+        0
+      ],
+      "color": "#e2e8f0",
+      "label": "zoom out",
+      "labelOffset": [
+        3.9,
+        5.2,
+        0
+      ],
+      "step": 4,
+      "info": "Going up: fewer details, bigger picture."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.8,
+        5.6,
+        0
+      ],
+      "to": [
+        3.8,
+        0.2,
+        0
+      ],
+      "color": "#94a3b8",
+      "label": "zoom in",
+      "labelOffset": [
+        4.4,
+        0.6,
+        0
+      ],
+      "step": 4,
+      "info": "Going down: more physical detail. Real IC teams need both directions (p. 7)."
+    }
+  ]
+}

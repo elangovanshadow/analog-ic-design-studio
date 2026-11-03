@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Ch 1 · Receiver signal chain (Fig. 1.1)</title>
+<style>
+  :root{--bg:#0f1115;--panel:rgba(20,23,30,.86);--ink:#e8ebf1;--muted:#9aa3b2;--accent:#5aa9ff}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;touch-action:none}
+  .lbl{padding:2px 7px;border-radius:6px;background:rgba(10,12,16,.78);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,255,255,.18)}
+  #hud{position:fixed;left:10px;top:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+  #title{background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;pointer-events:auto;max-width:60%}
+  #title small{display:block;font-weight:400;color:var(--muted)}
+  #tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+  button{background:var(--panel);color:var(--ink);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 10px;font:inherit;cursor:pointer}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #info{position:fixed;left:10px;bottom:10px;max-width:min(420px,calc(100% - 20px));background:var(--panel);padding:10px 12px;border-radius:10px;display:none}
+  #info b{display:block;margin-bottom:3px}
+  #steps{position:fixed;right:10px;bottom:10px;background:var(--panel);padding:6px;border-radius:10px;display:none;gap:6px;align-items:center}
+  #stepTxt{padding:0 6px;color:var(--muted);max-width:240px}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="title"></div>
+  <div id="tools">
+    <button id="bLabels" class="on">Labels</button>
+    <button id="bSpin">Spin</button>
+    <button id="bExplode">Explode</button>
+    <button id="bReset">Reset</button>
+  </div>
+</div>
+<div id="info"></div>
+<div id="steps"><button id="bPrev">◀</button><span id="stepTxt"></span><button id="bNext">▶</button></div>
+<script id="scene-data" type="application/json">{"title": "Ch 1 · Receiver signal chain (Fig. 1.1)", "subtitle": "Press ▶ to build it · tap any block · drag to orbit, pinch to zoom", "background": "#10131a", "camera": [1.0, 6.5, 13.5], "target": [0, 0.8, 0], "gridSize": 24, "steps": ["A natural signal: tiny (µV to mV), analog, with interferers riding on it", "Fig. 1.1(a): an ADC turns it into bits, a DSP processes the bits", "Problem: the signal is too small to digitize directly. Add an amplifier", "Out-of-band interferers are still there. Add an analog filter", "Result: a large, clean signal goes into the ADC and becomes reliable bits"], "objects": [{"type": "cylinder", "radius": 0.08, "height": 2.2, "position": [-7.5, 1.1, 0], "color": "#cbd5e1", "metalness": 0.6, "label": "signal source (sensor / antenna)", "labelOffset": [0, 1.6, 0], "info": "Where the analog signal comes from: a microphone, camera photocell, seismic sensor or radio antenna. Its output can be as small as a few microvolts (p. 1).", "step": 0}, {"type": "sphere", "radius": 0.28, "position": [-7.5, 2.3, 0], "color": "#94a3b8", "metalness": 0.5, "step": 0}, {"type": "tube", "points": [[-7.1, 1.4, 0], [-7.065, 1.478, 0], [-7.03, 1.447, 0], [-6.995, 1.392, 0], [-6.96, 1.436, 0], [-6.925, 1.52, 0], [-6.89, 1.505, 0], [-6.855, 1.423, 0], [-6.82, 1.416, 0], [-6.785, 1.485, 0], [-6.75, 1.487, 0], [-6.715, 1.394, 0], [-6.68, 1.343, 0], [-6.645, 1.394, 0], [-6.61, 1.425, 0], [-6.575, 1.351, 0], [-6.54, 1.28, 0], [-6.505, 1.32, 0], [-6.47, 1.387, 0], [-6.435, 1.357, 0], [-6.4, 1.287, 0], [-6.365, 1.315, 0], [-6.33, 1.41, 0], [-6.295, 1.426, 0], [-6.26, 1.365, 0], [-6.225, 1.366, 0], [-6.19, 1.459, 0], [-6.155, 1.507, 0], [-6.12, 1.448, 0], [-6.085, 1.408, 0], [-6.05, 1.47, 0], [-6.015, 1.527, 0], [-5.98, 1.473, 0], [-5.945, 1.392, 0], [-5.91, 1.411, 0], [-5.875, 1.47, 0], [-5.84, 1.435, 0], [-5.805, 1.337, 0], [-5.77, 1.32, 0], [-5.735, 1.386, 0], [-5.7, 1.391, 0], [-5.665, 1.308, 0], [-5.63, 1.273, 0], [-5.595, 1.345, 0], [-5.56, 1.399, 0], [-5.525, 1.351, 0], [-5.49, 1.305, 0], [-5.455, 1.369, 0], [-5.42, 1.457, 0], [-5.385, 1.443, 0], [-5.35, 1.383, 0], [-5.315, 1.414, 0], [-5.28, 1.505, 0], [-5.245, 1.512, 0], [-5.21, 1.435, 0], [-5.175, 1.416, 0], [-5.14, 1.485, 0], [-5.105, 1.507, 0], [-5.07, 1.423, 0], [-5.035, 1.358, 0], [-5.0, 1.4, 0]], "radius": 0.035, "color": "#f87171", "label": "weak signal + interferers", "labelOffset": [-6.0, 0.55, 0], "info": "Red = the raw signal. The slow wave is what we want; the fast ripple is an unwanted out-of-band interferer. Both are tiny.", "step": 0}, {"type": "box", "size": [1.6, 1.2, 1.2], "position": [3.0, 0.6, 0], "color": "#3b82f6", "label": "ADC", "labelOffset": [0, 1.0, 0], "info": "Analog-to-digital converter. Measures the analog voltage many times per second and writes each sample as a binary number. Making ADCs fast, precise and low-power is a hard analog design job (p. 1).", "step": 1}, {"type": "box", "size": [1.8, 0.35, 1.8], "position": [6.4, 0.175, 0], "color": "#1f2937", "metalness": 0.3, "label": "DSP", "labelOffset": [0, 0.7, 0], "info": "Digital signal processor. Works only on bits (0s and 1s). Everything after the ADC is digital.", "step": 1}, {"type": "tube", "points": [[-4.9, 1.4, 0], [2.2, 1.4, 0]], "radius": 0.02, "color": "#64748b", "step": 1}, {"type": "extrude", "shape": [[-0.8, -0.65], [-0.8, 0.65], [0.85, 0]], "depth": 1.0, "position": [-3.6, 1.4, -0.5], "color": "#22c55e", "label": "amplifier", "labelOffset": [0, 1.0, 0.5], "info": "Makes the signal bigger (adds gain) so the ADC can resolve it. A good amplifier adds as little noise of its own as possible.", "step": 2}, {"type": "tube", "points": [[-2.6, 1.4, 0], [-2.578, 1.723, 0], [-2.557, 1.785, 0], [-2.535, 1.583, 0], [-2.513, 1.376, 0], [-2.492, 1.423, 0], [-2.47, 1.721, 0], [-2.448, 2.01, 0], [-2.427, 2.03, 0], [-2.405, 1.779, 0], [-2.383, 1.518, 0], [-2.362, 1.506, 0], [-2.34, 1.744, 0], [-2.318, 1.972, 0], [-2.297, 1.931, 0], [-2.275, 1.623, 0], [-2.253, 1.309, 0], [-2.232, 1.25, 0], [-2.21, 1.448, 0], [-2.188, 1.644, 0], [-2.167, 1.581, 0], [-2.145, 1.26, 0], [-2.123, 0.943, 0], [-2.102, 0.892, 0], [-2.08, 1.107, 0], [-2.058, 1.331, 0], [-2.037, 1.304, 0], [-2.015, 1.027, 0], [-1.993, 0.76, 0], [-1.972, 0.764, 0], [-1.95, 1.039, 0], [-1.928, 1.323, 0], [-1.907, 1.357, 0], [-1.885, 1.14, 0], [-1.863, 0.93, 0], [-1.842, 0.986, 0], [-1.82, 1.305, 0], [-1.798, 1.628, 0], [-1.777, 1.692, 0], [-1.755, 1.495, 0], [-1.733, 1.295, 0], [-1.712, 1.35, 0], [-1.69, 1.66, 0], [-1.668, 1.962, 0], [-1.647, 1.997, 0], [-1.625, 1.761, 0], [-1.603, 1.516, 0], [-1.582, 1.52, 0], [-1.56, 1.773, 0], [-1.538, 2.016, 0], [-1.517, 1.989, 0], [-1.495, 1.693, 0], [-1.473, 1.388, 0], [-1.452, 1.337, 0], [-1.43, 1.54, 0], [-1.408, 1.739, 0], [-1.387, 1.676, 0], [-1.365, 1.352, 0], [-1.343, 1.03, 0], [-1.322, 0.971, 0], [-1.3, 1.177, 0]], "radius": 0.04, "color": "#fb923c", "label": "big, but still noisy", "labelOffset": [-1.95, 0.85, 0], "info": "After the amplifier the wanted signal is large, but the interferer was amplified too.", "step": 2}, {"type": "box", "size": [1.3, 1.1, 1.1], "position": [-0.45, 1.4, 0], "color": "#a855f7", "label": "analog filter", "labelOffset": [0, 0.95, 0], "info": "Lets the wanted frequencies through and blocks the out-of-band ones. It works on the analog signal, before the ADC (Fig. 1.1b).", "step": 3}, {"type": "tube", "points": [[0.3, 1.4, 0], [0.33, 1.487, 0], [0.36, 1.569, 0], [0.39, 1.642, 0], [0.42, 1.703, 0], [0.45, 1.747, 0], [0.48, 1.773, 0], [0.51, 1.78, 0], [0.54, 1.766, 0], [0.57, 1.733, 0], [0.6, 1.682, 0], [0.63, 1.617, 0], [0.66, 1.54, 0], [0.69, 1.456, 0], [0.72, 1.368, 0], [0.75, 1.283, 0], [0.78, 1.203, 0], [0.81, 1.134, 0], [0.84, 1.079, 0], [0.87, 1.041, 0], [0.9, 1.022, 0], [0.93, 1.023, 0], [0.96, 1.044, 0], [0.99, 1.083, 0], [1.02, 1.14, 0], [1.05, 1.21, 0], [1.08, 1.29, 0], [1.11, 1.376, 0], [1.14, 1.463, 0], [1.17, 1.547, 0], [1.2, 1.623, 0], [1.23, 1.688, 0], [1.26, 1.737, 0], [1.29, 1.768, 0], [1.32, 1.78, 0], [1.35, 1.772, 0], [1.38, 1.744, 0], [1.41, 1.698, 0], [1.44, 1.636, 0], [1.47, 1.562, 0], [1.5, 1.479, 0], [1.53, 1.392, 0], [1.56, 1.305, 0], [1.59, 1.224, 0], [1.62, 1.152, 0], [1.65, 1.093, 0], [1.68, 1.05, 0], [1.71, 1.025, 0], [1.74, 1.021, 0], [1.77, 1.036, 0], [1.8, 1.071, 0], [1.83, 1.123, 0], [1.86, 1.19, 0], [1.89, 1.268, 0], [1.92, 1.352, 0], [1.95, 1.44, 0], [1.98, 1.525, 0], [2.01, 1.604, 0], [2.04, 1.671, 0], [2.07, 1.725, 0], [2.1, 1.761, 0]], "radius": 0.045, "color": "#4ade80", "label": "big and clean", "labelOffset": [1.2, 0.85, 0], "info": "Green = what the ADC now receives: large enough to measure, and without the interferer.", "step": 3}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [3.95, 0.9, 0], "color": "#fde047", "step": 4, "label": "bits", "labelOffset": [0.9, 0.55, 0], "info": "Yellow = 1, grey = 0. These are the ADC's output. Their accuracy depends on how clean and large the analog signal was."}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [4.2, 0.5, 0], "color": "#475569", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [4.45, 0.9, 0], "color": "#fde047", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [4.7, 0.9, 0], "color": "#fde047", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [4.95, 0.5, 0], "color": "#475569", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [5.2, 0.9, 0], "color": "#fde047", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [5.45, 0.5, 0], "color": "#475569", "step": 4}, {"type": "box", "size": [0.22, 0.22, 0.22], "position": [5.7, 0.5, 0], "color": "#475569", "step": 4}]}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const S = JSON.parse(document.getElementById('scene-data').textContent);
+const deg = d => d * Math.PI / 180;
+const stage = document.getElementById('stage');
+document.getElementById('title').innerHTML = (S.title||'3D model') + (S.subtitle ? `<small>${S.subtitle}</small>` : '');
+if (S.background) document.documentElement.style.setProperty('--bg', S.background);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+stage.appendChild(renderer.domElement);
+const labelR = new CSS2DRenderer();
+labelR.setSize(innerWidth, innerHeight);
+Object.assign(labelR.domElement.style, { position: 'fixed', inset: '0', pointerEvents: 'none' });
+document.body.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(S.background || '#0f1115');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 2000);
+const camPos = S.camera || [6, 5, 8], target = S.target || [0, 0, 0];
+camera.position.set(...camPos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(...target); controls.enableDamping = true; controls.update();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 10, 7); scene.add(sun);
+if (S.grid !== false) { const g = new THREE.GridHelper(S.gridSize || 20, 20, 0x334055, 0x222a36); g.position.y = S.gridY ?? -0.001; scene.add(g); }
+
+const pickable = [], items = [];
+function material(o) {
+  return new THREE.MeshStandardMaterial({
+    color: o.color || '#8899aa', metalness: o.metalness ?? 0.1, roughness: o.roughness ?? 0.6,
+    transparent: (o.opacity ?? 1) < 1, opacity: o.opacity ?? 1, wireframe: !!o.wireframe,
+    side: (o.opacity ?? 1) < 1 ? THREE.DoubleSide : THREE.FrontSide, depthWrite: (o.opacity ?? 1) >= 1 });
+}
+function geometry(o) {
+  switch (o.type) {
+    case 'box': return new THREE.BoxGeometry(...(o.size || [1, 1, 1]));
+    case 'cylinder': return new THREE.CylinderGeometry(o.radiusTop ?? o.radius ?? 0.5, o.radiusBottom ?? o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'cone': return new THREE.ConeGeometry(o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'sphere': return new THREE.SphereGeometry(o.radius ?? 0.5, 48, 32);
+    case 'torus': return new THREE.TorusGeometry(o.radius ?? 1, o.tube ?? 0.2, 24, 96);
+    case 'plane': return new THREE.PlaneGeometry(...(o.size || [1, 1]));
+    case 'tube': return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(o.points.map(p => new THREE.Vector3(...p)), false, 'catmullrom', 0), 64 * o.points.length, o.radius ?? 0.05, 12, false);
+    case 'extrude': { const sh = new THREE.Shape(o.shape.map(p => new THREE.Vector2(...p))); return new THREE.ExtrudeGeometry(sh, { depth: o.depth ?? 1, bevelEnabled: false }); }
+  }
+  return null;
+}
+function addLabel(obj, o) {
+  if (!o.label) return;
+  const d = document.createElement('div'); d.className = 'lbl'; d.textContent = o.label;
+  const l = new CSS2DObject(d); l.position.set(...(o.labelOffset || [0, 0, 0])); obj.add(l);
+}
+function place(obj, o) {
+  obj.position.set(...(o.position || [0, 0, 0]));
+  if (o.rotation) obj.rotation.set(...o.rotation.map(deg));
+  if (o.scale) typeof o.scale === 'number' ? obj.scale.setScalar(o.scale) : obj.scale.set(...o.scale);
+  obj.userData = { o, home: obj.position.clone() };
+  addLabel(obj, o); scene.add(obj); items.push(obj);
+}
+const loader = new GLTFLoader();
+for (const o of S.objects || []) {
+  if (o.type === 'gltf') { loader.load(o.url, g => { place(g.scene, o); g.scene.traverse(m => { if (m.isMesh) { m.userData.root = g.scene; pickable.push(m); } }); applyStep(); }); continue; }
+  if (o.type === 'arrow') {
+    const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), len = dir.length();
+    const ar = new THREE.ArrowHelper(dir.normalize(), a, len, new THREE.Color(o.color || '#ffcc33'), Math.min(0.35, len * 0.3), Math.min(0.2, len * 0.18));
+    const g = new THREE.Group(); g.add(ar); place(g, { ...o, position: [0, 0, 0] }); g.userData.o = o; continue;
+  }
+  const geo = geometry(o); if (!geo) { console.warn('unknown type', o.type); continue; }
+  const m = new THREE.Mesh(geo, material(o)); place(m, o); m.userData.root = m; pickable.push(m);
+  if (o.edges !== false && (o.opacity ?? 1) >= 1) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .35 })); m.add(e); }
+}
+
+// Steps: objects with "step": n appear at step n (build-up walkthrough)
+const steps = S.steps || []; let cur = steps.length ? 0 : -1;
+const stepsBox = document.getElementById('steps'), stepTxt = document.getElementById('stepTxt');
+function applyStep() {
+  if (cur < 0) return;
+  for (const it of items) { const s = it.userData.o.step ?? 0; it.visible = s <= cur; it.traverse(c => { if (c.isCSS2DObject) c.visible = it.visible; }); }
+  stepTxt.textContent = `${cur + 1}/${steps.length} · ${steps[cur]}`;
+}
+if (steps.length) { stepsBox.style.display = 'flex'; applyStep(); }
+document.getElementById('bPrev').onclick = () => { if (cur > 0) { cur--; applyStep(); } };
+document.getElementById('bNext').onclick = () => { if (cur < steps.length - 1) { cur++; applyStep(); } };
+
+// Click / tap an object for its info
+const info = document.getElementById('info'), ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  ptr.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickable.filter(m => m.userData.root?.visible !== false), false)[0];
+  const o = hit?.object.userData.root?.userData.o || hit?.object.userData.o;
+  if (o && (o.label || o.info)) { info.innerHTML = `<b>${o.label || ''}</b>${o.info || ''}`; info.style.display = 'block'; } else info.style.display = 'none';
+});
+
+let spin = !!S.autoRotate, labels = true, exploded = false;
+const tog = (id, v) => document.getElementById(id).classList.toggle('on', v);
+tog('bSpin', spin); controls.autoRotate = spin;
+document.getElementById('bSpin').onclick = () => { spin = !spin; controls.autoRotate = spin; tog('bSpin', spin); };
+document.getElementById('bLabels').onclick = () => { labels = !labels; labelR.domElement.style.display = labels ? '' : 'none'; tog('bLabels', labels); };
+document.getElementById('bReset').onclick = () => { camera.position.set(...camPos); controls.target.set(...target); controls.update(); };
+const bEx = document.getElementById('bExplode');
+if (!S.objects?.some(o => o.explode)) bEx.style.display = 'none';
+bEx.onclick = () => { exploded = !exploded; tog('bExplode', exploded); };
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta(), k = 1 - Math.pow(0.001, dt);
+  for (const it of items) {
+    const o = it.userData.o, home = it.userData.home;
+    if (o.explode && home) it.position.lerp(exploded ? home.clone().add(new THREE.Vector3(...o.explode)) : home, k);
+    if (o.spin) it.rotation.y += deg(o.spin) * dt;
+  }
+  controls.update(); renderer.render(scene, camera); labelR.render(scene, camera);
+});
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); labelR.setSize(innerWidth, innerHeight); });
+window.__ready = true;
+</script>
+</body>
+</html>

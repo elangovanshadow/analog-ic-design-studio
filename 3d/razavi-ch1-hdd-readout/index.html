@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Ch 1 · Hard-disk read-out (Fig. 1.4)</title>
+<style>
+  :root{--bg:#0f1115;--panel:rgba(20,23,30,.86);--ink:#e8ebf1;--muted:#9aa3b2;--accent:#5aa9ff}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;touch-action:none}
+  .lbl{padding:2px 7px;border-radius:6px;background:rgba(10,12,16,.78);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,255,255,.18)}
+  #hud{position:fixed;left:10px;top:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+  #title{background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;pointer-events:auto;max-width:60%}
+  #title small{display:block;font-weight:400;color:var(--muted)}
+  #tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+  button{background:var(--panel);color:var(--ink);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 10px;font:inherit;cursor:pointer}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #info{position:fixed;left:10px;bottom:10px;max-width:min(420px,calc(100% - 20px));background:var(--panel);padding:10px 12px;border-radius:10px;display:none}
+  #info b{display:block;margin-bottom:3px}
+  #steps{position:fixed;right:10px;bottom:10px;background:var(--panel);padding:6px;border-radius:10px;display:none;gap:6px;align-items:center}
+  #stepTxt{padding:0 6px;color:var(--muted);max-width:240px}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="title"></div>
+  <div id="tools">
+    <button id="bLabels" class="on">Labels</button>
+    <button id="bSpin">Spin</button>
+    <button id="bExplode">Explode</button>
+    <button id="bReset">Reset</button>
+  </div>
+</div>
+<div id="info"></div>
+<div id="steps"><button id="bPrev">◀</button><span id="stepTxt"></span><button id="bNext">▶</button></div>
+<script id="scene-data" type="application/json">{"title": "Ch 1 · Hard-disk read-out (Fig. 1.4)", "subtitle": "Press ▶ to follow the data · tap a part · Explode lifts the head", "background": "#10131a", "camera": [6.0, 8.0, 11.0], "target": [0, 1.0, 0], "gridSize": 16, "steps": ["The platter stores bits as tiny magnetic regions on a track", "A magnetic read head sits just above the track", "The head turns magnetism into an electrical signal: only a few mV", "Compare: stored data (clean) vs retrieved signal (small, noisy, distorted)", "Fix it with the chain of Fig. 1.1: amplify, filter, digitize"], "objects": [{"type": "cylinder", "radius": 3.0, "height": 0.1, "position": [0, 0.5, 0], "color": "#cbd5e1", "metalness": 0.85, "roughness": 0.25, "label": "platter", "labelOffset": [-2.6, 0.2, 2.0], "info": "A spinning disk coated with magnetic material. Data is stored as binary: each tiny region is magnetised one way or the other (p. 3).", "step": 0}, {"type": "cylinder", "radius": 0.35, "height": 0.3, "position": [0, 0.7, 0], "color": "#475569", "metalness": 0.6, "step": 0}, {"type": "box", "size": [7.0, 0.4, 7.0], "position": [0, 0.2, 0], "color": "#1e293b", "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [2.067, 0.5660000000000001, -0.752], "rotation": [0, 110.0, 0], "color": "#ef4444", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [2.16, 0.5660000000000001, -0.42], "rotation": [0, 101.0, 0], "color": "#3b82f6", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [2.199, 0.5660000000000001, -0.077], "rotation": [0, 92.0, 0], "color": "#ef4444", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [2.184, 0.5660000000000001, 0.268], "rotation": [0, 83.0, 0], "color": "#ef4444", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [2.115, 0.5660000000000001, 0.606], "rotation": [0, 74.0, 0], "color": "#3b82f6", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [1.994, 0.5660000000000001, 0.93], "rotation": [0, 65.0, 0], "color": "#3b82f6", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [1.824, 0.5660000000000001, 1.23], "rotation": [0, 56.0, 0], "color": "#ef4444", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [1.609, 0.5660000000000001, 1.5], "rotation": [0, 47.0, 0], "color": "#3b82f6", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [1.354, 0.5660000000000001, 1.734], "rotation": [0, 38.0, 0], "color": "#ef4444", "edges": false, "step": 0}, {"type": "box", "size": [0.3, 0.03, 0.18], "position": [1.067, 0.5660000000000001, 1.924], "rotation": [0, 29.0, 0], "color": "#ef4444", "edges": false, "step": 0, "label": "magnetic bits", "labelOffset": [-0.4, 0.4, 0.4], "info": "Red and blue = the two magnetic directions, i.e. 1 and 0. This is the 'stored data'."}, {"type": "cylinder", "radius": 0.3, "height": 0.9, "position": [3.0, 0.85, -2.6], "color": "#64748b", "metalness": 0.6, "step": 1, "explode": [0, 1.0, 0], "label": "pivot", "labelOffset": [0.5, 0.6, 0], "info": "The arm rotates about this to move the head between tracks."}, {"type": "box", "size": [0.35, 0.08, 3.4], "position": [2.6, 1.0, -0.95], "rotation": [0, 12, 0], "color": "#94a3b8", "metalness": 0.7, "step": 1, "explode": [0, 1.0, 0], "label": "arm", "labelOffset": [0.3, 0.3, 0], "info": "Holds the read head over the spinning platter."}, {"type": "box", "size": [0.3, 0.12, 0.3], "position": [2.25, 0.66, 0.65], "color": "#f59e0b", "metalness": 0.6, "step": 1, "explode": [0, 1.0, 0], "label": "read head", "labelOffset": [0.5, 0.35, 0.3], "info": "Senses the magnetic field of the bits passing under it and produces a small voltage. The signal it makes is weak and messy (Fig. 1.4)."}, {"type": "tube", "points": [[2.25, 0.75, 0.65], [2.6, 1.08, -0.9], [3.0, 1.35, -2.6], [2.6, 1.6, -3.6]], "radius": 0.025, "color": "#fbbf24", "step": 2}, {"type": "tube", "points": [[-2.98, 3.1, -3.8], [-2.52, 3.1, -3.8], [-2.48, 2.3, -3.8], [-2.02, 2.3, -3.8], [-1.98, 3.1, -3.8], [-1.52, 3.1, -3.8], [-1.48, 3.1, -3.8], [-1.02, 3.1, -3.8], [-0.98, 2.3, -3.8], [-0.52, 2.3, -3.8], [-0.48, 2.3, -3.8], [-0.02, 2.3, -3.8], [0.02, 3.1, -3.8], [0.48, 3.1, -3.8], [0.52, 2.3, -3.8], [0.98, 2.3, -3.8], [1.02, 3.1, -3.8], [1.48, 3.1, -3.8], [1.52, 3.1, -3.8], [1.98, 3.1, -3.8]], "radius": 0.04, "color": "#60a5fa", "step": 3, "label": "stored data", "labelOffset": [-3.6, 2.7, -3.8], "info": "What was written: clean binary levels (top trace of Fig. 1.4)."}, {"type": "tube", "points": [[-3.0, 1.756, -3.8], [-2.958, 1.738, -3.8], [-2.917, 1.813, -3.8], [-2.875, 1.734, -3.8], [-2.833, 1.799, -3.8], [-2.792, 1.773, -3.8], [-2.75, 1.724, -3.8], [-2.708, 1.779, -3.8], [-2.667, 1.702, -3.8], [-2.625, 1.745, -3.8], [-2.583, 1.679, -3.8], [-2.542, 1.666, -3.8], [-2.5, 1.697, -3.8], [-2.458, 1.738, -3.8], [-2.417, 1.626, -3.8], [-2.375, 1.628, -3.8], [-2.333, 1.676, -3.8], [-2.292, 1.715, -3.8], [-2.25, 1.661, -3.8], [-2.208, 1.639, -3.8], [-2.167, 1.726, -3.8], [-2.125, 1.606, -3.8], [-2.083, 1.732, -3.8], [-2.042, 1.668, -3.8], [-2.0, 1.665, -3.8], [-1.958, 1.68, -3.8], [-1.917, 1.726, -3.8], [-1.875, 1.815, -3.8], [-1.833, 1.744, -3.8], [-1.792, 1.817, -3.8], [-1.75, 1.839, -3.8], [-1.708, 1.815, -3.8], [-1.667, 1.85, -3.8], [-1.625, 1.79, -3.8], [-1.583, 1.795, -3.8], [-1.542, 1.819, -3.8], [-1.5, 1.887, -3.8], [-1.458, 1.85, -3.8], [-1.417, 1.831, -3.8], [-1.375, 1.863, -3.8], [-1.333, 1.836, -3.8], [-1.292, 1.803, -3.8], [-1.25, 1.859, -3.8], [-1.208, 1.831, -3.8], [-1.167, 1.749, -3.8], [-1.125, 1.776, -3.8], [-1.083, 1.748, -3.8], [-1.042, 1.775, -3.8], [-1.0, 1.732, -3.8], [-0.958, 1.648, -3.8], [-0.917, 1.723, -3.8], [-0.875, 1.581, -3.8], [-0.833, 1.603, -3.8], [-0.792, 1.633, -3.8], [-0.75, 1.533, -3.8], [-0.708, 1.567, -3.8], [-0.667, 1.493, -3.8], [-0.625, 1.573, -3.8], [-0.583, 1.58, -3.8], [-0.542, 1.55, -3.8], [-0.5, 1.591, -3.8], [-0.458, 1.514, -3.8], [-0.417, 1.571, -3.8], [-0.375, 1.562, -3.8], [-0.333, 1.568, -3.8], [-0.292, 1.561, -3.8], [-0.25, 1.628, -3.8], [-0.208, 1.657, -3.8], [-0.167, 1.607, -3.8], [-0.125, 1.652, -3.8], [-0.083, 1.586, -3.8], [-0.042, 1.695, -3.8], [0.0, 1.706, -3.8], [0.042, 1.772, -3.8], [0.083, 1.763, -3.8], [0.125, 1.701, -3.8], [0.167, 1.725, -3.8], [0.208, 1.771, -3.8], [0.25, 1.683, -3.8], [0.292, 1.744, -3.8], [0.333, 1.698, -3.8], [0.375, 1.683, -3.8], [0.417, 1.664, -3.8], [0.458, 1.751, -3.8], [0.5, 1.648, -3.8], [0.542, 1.651, -3.8], [0.583, 1.659, -3.8], [0.625, 1.716, -3.8], [0.667, 1.597, -3.8], [0.708, 1.644, -3.8], [0.75, 1.657, -3.8], [0.792, 1.706, -3.8], [0.833, 1.704, -3.8], [0.875, 1.72, -3.8], [0.917, 1.651, -3.8], [0.958, 1.686, -3.8], [1.0, 1.695, -3.8], [1.042, 1.787, -3.8], [1.083, 1.817, -3.8], [1.125, 1.722, -3.8], [1.167, 1.744, -3.8], [1.208, 1.768, -3.8], [1.25, 1.784, -3.8], [1.292, 1.832, -3.8], [1.333, 1.857, -3.8], [1.375, 1.821, -3.8], [1.417, 1.791, -3.8], [1.458, 1.854, -3.8], [1.5, 1.851, -3.8], [1.542, 1.88, -3.8], [1.583, 1.934, -3.8], [1.625, 1.895, -3.8], [1.667, 1.867, -3.8], [1.708, 1.877, -3.8], [1.75, 1.879, -3.8], [1.792, 1.784, -3.8], [1.833, 1.894, -3.8], [1.875, 1.867, -3.8], [1.917, 1.87, -3.8], [1.958, 1.849, -3.8], [2.0, 1.78, -3.8]], "radius": 0.03, "color": "#f87171", "step": 2, "label": "retrieved signal (~2 mV)", "labelOffset": [-3.8, 1.75, -3.8], "info": "What the head actually delivers: only a few millivolts, with a lot of noise, and the bit edges are smeared (distortion). Fig. 1.4 marks about 2 mV."}, {"type": "tube", "points": [[2.6, 1.6, -3.6], [2.0, 1.7, -3.8]], "radius": 0.025, "color": "#fbbf24", "step": 2}, {"type": "box", "size": [1.0, 0.6, 0.6], "position": [-0.6, 0.3, 3.9], "color": "#22c55e", "step": 4, "label": "amplifier", "labelOffset": [0, 0.6, 0], "info": "Boosts the few-mV signal."}, {"type": "box", "size": [1.0, 0.6, 0.6], "position": [0.9, 0.3, 3.9], "color": "#a855f7", "step": 4, "label": "filter", "labelOffset": [0, 0.6, 0], "info": "Removes much of the noise and distortion (p. 3)."}, {"type": "box", "size": [1.0, 0.6, 0.6], "position": [2.4, 0.3, 3.9], "color": "#3b82f6", "step": 4, "label": "ADC", "labelOffset": [0, 0.6, 0], "info": "Decides each bit and outputs clean binary data. Book: disk drives then needed 500 Mb/s (p. 3)."}, {"type": "arrow", "from": [-2.2, 0.3, 3.9], "to": [-1.15, 0.3, 3.9], "color": "#fbbf24", "step": 4, "label": "from head", "labelOffset": [-2.6, 0.6, 3.9], "info": "The weak head signal enters the read chain."}]}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const S = JSON.parse(document.getElementById('scene-data').textContent);
+const deg = d => d * Math.PI / 180;
+const stage = document.getElementById('stage');
+document.getElementById('title').innerHTML = (S.title||'3D model') + (S.subtitle ? `<small>${S.subtitle}</small>` : '');
+if (S.background) document.documentElement.style.setProperty('--bg', S.background);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+stage.appendChild(renderer.domElement);
+const labelR = new CSS2DRenderer();
+labelR.setSize(innerWidth, innerHeight);
+Object.assign(labelR.domElement.style, { position: 'fixed', inset: '0', pointerEvents: 'none' });
+document.body.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(S.background || '#0f1115');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 2000);
+const camPos = S.camera || [6, 5, 8], target = S.target || [0, 0, 0];
+camera.position.set(...camPos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(...target); controls.enableDamping = true; controls.update();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 10, 7); scene.add(sun);
+if (S.grid !== false) { const g = new THREE.GridHelper(S.gridSize || 20, 20, 0x334055, 0x222a36); g.position.y = S.gridY ?? -0.001; scene.add(g); }
+
+const pickable = [], items = [];
+function material(o) {
+  return new THREE.MeshStandardMaterial({
+    color: o.color || '#8899aa', metalness: o.metalness ?? 0.1, roughness: o.roughness ?? 0.6,
+    transparent: (o.opacity ?? 1) < 1, opacity: o.opacity ?? 1, wireframe: !!o.wireframe,
+    side: (o.opacity ?? 1) < 1 ? THREE.DoubleSide : THREE.FrontSide, depthWrite: (o.opacity ?? 1) >= 1 });
+}
+function geometry(o) {
+  switch (o.type) {
+    case 'box': return new THREE.BoxGeometry(...(o.size || [1, 1, 1]));
+    case 'cylinder': return new THREE.CylinderGeometry(o.radiusTop ?? o.radius ?? 0.5, o.radiusBottom ?? o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'cone': return new THREE.ConeGeometry(o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'sphere': return new THREE.SphereGeometry(o.radius ?? 0.5, 48, 32);
+    case 'torus': return new THREE.TorusGeometry(o.radius ?? 1, o.tube ?? 0.2, 24, 96);
+    case 'plane': return new THREE.PlaneGeometry(...(o.size || [1, 1]));
+    case 'tube': return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(o.points.map(p => new THREE.Vector3(...p)), false, 'catmullrom', 0), 64 * o.points.length, o.radius ?? 0.05, 12, false);
+    case 'extrude': { const sh = new THREE.Shape(o.shape.map(p => new THREE.Vector2(...p))); return new THREE.ExtrudeGeometry(sh, { depth: o.depth ?? 1, bevelEnabled: false }); }
+  }
+  return null;
+}
+function addLabel(obj, o) {
+  if (!o.label) return;
+  const d = document.createElement('div'); d.className = 'lbl'; d.textContent = o.label;
+  const l = new CSS2DObject(d); l.position.set(...(o.labelOffset || [0, 0, 0])); obj.add(l);
+}
+function place(obj, o) {
+  obj.position.set(...(o.position || [0, 0, 0]));
+  if (o.rotation) obj.rotation.set(...o.rotation.map(deg));
+  if (o.scale) typeof o.scale === 'number' ? obj.scale.setScalar(o.scale) : obj.scale.set(...o.scale);
+  obj.userData = { o, home: obj.position.clone() };
+  addLabel(obj, o); scene.add(obj); items.push(obj);
+}
+const loader = new GLTFLoader();
+for (const o of S.objects || []) {
+  if (o.type === 'gltf') { loader.load(o.url, g => { place(g.scene, o); g.scene.traverse(m => { if (m.isMesh) { m.userData.root = g.scene; pickable.push(m); } }); applyStep(); }); continue; }
+  if (o.type === 'arrow') {
+    const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), len = dir.length();
+    const ar = new THREE.ArrowHelper(dir.normalize(), a, len, new THREE.Color(o.color || '#ffcc33'), Math.min(0.35, len * 0.3), Math.min(0.2, len * 0.18));
+    const g = new THREE.Group(); g.add(ar); place(g, { ...o, position: [0, 0, 0] }); g.userData.o = o; continue;
+  }
+  const geo = geometry(o); if (!geo) { console.warn('unknown type', o.type); continue; }
+  const m = new THREE.Mesh(geo, material(o)); place(m, o); m.userData.root = m; pickable.push(m);
+  if (o.edges !== false && (o.opacity ?? 1) >= 1) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .35 })); m.add(e); }
+}
+
+// Steps: objects with "step": n appear at step n (build-up walkthrough)
+const steps = S.steps || []; let cur = steps.length ? 0 : -1;
+const stepsBox = document.getElementById('steps'), stepTxt = document.getElementById('stepTxt');
+function applyStep() {
+  if (cur < 0) return;
+  for (const it of items) { const s = it.userData.o.step ?? 0; it.visible = s <= cur; it.traverse(c => { if (c.isCSS2DObject) c.visible = it.visible; }); }
+  stepTxt.textContent = `${cur + 1}/${steps.length} · ${steps[cur]}`;
+}
+if (steps.length) { stepsBox.style.display = 'flex'; applyStep(); }
+document.getElementById('bPrev').onclick = () => { if (cur > 0) { cur--; applyStep(); } };
+document.getElementById('bNext').onclick = () => { if (cur < steps.length - 1) { cur++; applyStep(); } };
+
+// Click / tap an object for its info
+const info = document.getElementById('info'), ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  ptr.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickable.filter(m => m.userData.root?.visible !== false), false)[0];
+  const o = hit?.object.userData.root?.userData.o || hit?.object.userData.o;
+  if (o && (o.label || o.info)) { info.innerHTML = `<b>${o.label || ''}</b>${o.info || ''}`; info.style.display = 'block'; } else info.style.display = 'none';
+});
+
+let spin = !!S.autoRotate, labels = true, exploded = false;
+const tog = (id, v) => document.getElementById(id).classList.toggle('on', v);
+tog('bSpin', spin); controls.autoRotate = spin;
+document.getElementById('bSpin').onclick = () => { spin = !spin; controls.autoRotate = spin; tog('bSpin', spin); };
+document.getElementById('bLabels').onclick = () => { labels = !labels; labelR.domElement.style.display = labels ? '' : 'none'; tog('bLabels', labels); };
+document.getElementById('bReset').onclick = () => { camera.position.set(...camPos); controls.target.set(...target); controls.update(); };
+const bEx = document.getElementById('bExplode');
+if (!S.objects?.some(o => o.explode)) bEx.style.display = 'none';
+bEx.onclick = () => { exploded = !exploded; tog('bExplode', exploded); };
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta(), k = 1 - Math.pow(0.001, dt);
+  for (const it of items) {
+    const o = it.userData.o, home = it.userData.home;
+    if (o.explode && home) it.position.lerp(exploded ? home.clone().add(new THREE.Vector3(...o.explode)) : home, k);
+    if (o.spin) it.rotation.y += deg(o.spin) * dt;
+  }
+  controls.update(); renderer.render(scene, camera); labelR.render(scene, camera);
+});
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); labelR.setSize(innerWidth, innerHeight); });
+window.__ready = true;
+</script>
+</body>
+</html>
