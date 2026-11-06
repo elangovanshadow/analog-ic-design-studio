@@ -1,0 +1,723 @@
+{
+  "title": "Tristate bus with three registers (Fig. 1-36)",
+  "subtitle": "Press ▶ to build the bus step by step · tap a part for its job · drag to turn",
+  "background": "#10131a",
+  "camera": [
+    1.5,
+    6.5,
+    10.5
+  ],
+  "target": [
+    0,
+    1.6,
+    0
+  ],
+  "steps": [
+    "The bus is 8 parallel wires. The input data is one source.",
+    "Registers A, B and C connect to the bus. One clock goes to all registers.",
+    "Each source has a tristate buffer group. With its enable at 0, the output is hi-Z.",
+    "Enb = 1. Register B drives the bus. All other buffers stay hi-Z.",
+    "Ldc = 1. At the clock edge, register C copies the value of register B."
+  ],
+  "objects": [
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          -0.42
+        ],
+        [
+          5.2,
+          3.0,
+          -0.42
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "label": "8-bit bus",
+      "labelOffset": [
+        4.6,
+        3.45,
+        0.0
+      ],
+      "info": "The bus is 8 parallel wires. Each wire carries one bit. Only one source can drive the bus at a time.",
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          -0.3
+        ],
+        [
+          5.2,
+          3.0,
+          -0.3
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          -0.18
+        ],
+        [
+          5.2,
+          3.0,
+          -0.18
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          -0.06
+        ],
+        [
+          5.2,
+          3.0,
+          -0.06
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          0.06
+        ],
+        [
+          5.2,
+          3.0,
+          0.06
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          0.18
+        ],
+        [
+          5.2,
+          3.0,
+          0.18
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          0.3
+        ],
+        [
+          5.2,
+          3.0,
+          0.3
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          3.0,
+          0.42
+        ],
+        [
+          5.2,
+          3.0,
+          0.42
+        ]
+      ],
+      "radius": 0.035,
+      "color": "#f59e0b",
+      "step": 0,
+      "metalness": 0.7
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.9,
+        1.1
+      ],
+      "position": [
+        -4.0,
+        0.45,
+        0
+      ],
+      "color": "#64748b",
+      "step": 0,
+      "label": "Input data",
+      "labelOffset": [
+        0,
+        0.75,
+        0.75
+      ],
+      "info": "The input data comes from outside the system. Its buffer group Eni puts it on the bus.",
+      "explode": [
+        0,
+        -0.6,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -3.65,
+          0.9,
+          0
+        ],
+        [
+          -3.65,
+          1.55,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "cone",
+      "radius": 0.28,
+      "height": 0.5,
+      "position": [
+        -3.65,
+        1.85,
+        0
+      ],
+      "color": "#9ca3af",
+      "label": "Eni",
+      "labelOffset": [
+        0.55,
+        0,
+        0
+      ],
+      "info": "This tristate buffer group stands for 8 buffers with one enable, Eni. If Eni = 0, the output is hi-Z, which acts as an open circuit.",
+      "step": 2,
+      "explode": [
+        0,
+        0.3,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -3.65,
+          2.1,
+          0
+        ],
+        [
+          -3.65,
+          2.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.9,
+        1.1
+      ],
+      "position": [
+        -1.4,
+        0.45,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 1,
+      "label": "Reg. A",
+      "labelOffset": [
+        0,
+        0.75,
+        0.75
+      ],
+      "info": "Register A holds 8 bits. Its buffer group Ena can put its value on the bus.",
+      "explode": [
+        0,
+        -0.6,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.0499999999999998,
+          0.9,
+          0
+        ],
+        [
+          -1.0499999999999998,
+          1.55,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "cone",
+      "radius": 0.28,
+      "height": 0.5,
+      "position": [
+        -1.0499999999999998,
+        1.85,
+        0
+      ],
+      "color": "#9ca3af",
+      "label": "Ena",
+      "labelOffset": [
+        0.55,
+        0,
+        0
+      ],
+      "info": "This tristate buffer group stands for 8 buffers with one enable, Ena. If Ena = 0, the output is hi-Z, which acts as an open circuit.",
+      "step": 2,
+      "explode": [
+        0,
+        0.3,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.0499999999999998,
+          2.1,
+          0
+        ],
+        [
+          -1.0499999999999998,
+          2.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.75,
+          2.95,
+          0.3
+        ],
+        [
+          -1.75,
+          0.9,
+          0.3
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#94a3b8",
+      "step": 2,
+      "label": "Lda",
+      "labelOffset": [
+        -2.25,
+        1.6,
+        0.3
+      ],
+      "info": "This wire brings the bus value to the register input. The register loads it only if Lda = 1 at the clock edge."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.9,
+        1.1
+      ],
+      "position": [
+        1.2,
+        0.45,
+        0
+      ],
+      "color": "#8b5cf6",
+      "step": 1,
+      "label": "Reg. B",
+      "labelOffset": [
+        0,
+        0.75,
+        0.75
+      ],
+      "info": "Register B holds 8 bits. Its buffer group Enb can put its value on the bus.",
+      "explode": [
+        0,
+        -0.6,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          1.5499999999999998,
+          0.9,
+          0
+        ],
+        [
+          1.5499999999999998,
+          1.55,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "cone",
+      "radius": 0.28,
+      "height": 0.5,
+      "position": [
+        1.5499999999999998,
+        1.85,
+        0
+      ],
+      "color": "#9ca3af",
+      "label": "Enb",
+      "labelOffset": [
+        0.55,
+        0,
+        0
+      ],
+      "info": "This tristate buffer group stands for 8 buffers with one enable, Enb. If Enb = 0, the output is hi-Z, which acts as an open circuit.",
+      "step": 2,
+      "explode": [
+        0,
+        0.3,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          1.5499999999999998,
+          2.1,
+          0
+        ],
+        [
+          1.5499999999999998,
+          2.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          0.85,
+          2.95,
+          0.3
+        ],
+        [
+          0.85,
+          0.9,
+          0.3
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#94a3b8",
+      "step": 2,
+      "label": "Ldb",
+      "labelOffset": [
+        0.35,
+        1.6,
+        0.3
+      ],
+      "info": "This wire brings the bus value to the register input. The register loads it only if Ldb = 1 at the clock edge."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.9,
+        1.1
+      ],
+      "position": [
+        3.8,
+        0.45,
+        0
+      ],
+      "color": "#0ea5e9",
+      "step": 1,
+      "label": "Reg. C",
+      "labelOffset": [
+        0,
+        0.75,
+        0.75
+      ],
+      "info": "Register C holds 8 bits. Its buffer group Enc can put its value on the bus.",
+      "explode": [
+        0,
+        -0.6,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          4.1499999999999995,
+          0.9,
+          0
+        ],
+        [
+          4.1499999999999995,
+          1.55,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "cone",
+      "radius": 0.28,
+      "height": 0.5,
+      "position": [
+        4.1499999999999995,
+        1.85,
+        0
+      ],
+      "color": "#9ca3af",
+      "label": "Enc",
+      "labelOffset": [
+        0.55,
+        0,
+        0
+      ],
+      "info": "This tristate buffer group stands for 8 buffers with one enable, Enc. If Enc = 0, the output is hi-Z, which acts as an open circuit.",
+      "step": 2,
+      "explode": [
+        0,
+        0.3,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          4.1499999999999995,
+          2.1,
+          0
+        ],
+        [
+          4.1499999999999995,
+          2.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 2
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          3.4499999999999997,
+          2.95,
+          0.3
+        ],
+        [
+          3.4499999999999997,
+          0.9,
+          0.3
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#94a3b8",
+      "step": 2,
+      "label": "Ldc",
+      "labelOffset": [
+        2.9499999999999997,
+        1.6,
+        0.3
+      ],
+      "info": "This wire brings the bus value to the register input. The register loads it only if Ldc = 1 at the clock edge."
+    },
+    {
+      "type": "box",
+      "size": [
+        11,
+        0.12,
+        0.25
+      ],
+      "position": [
+        0,
+        0.06,
+        -1.0
+      ],
+      "color": "#475569",
+      "step": 1,
+      "label": "Clock",
+      "labelOffset": [
+        6.1,
+        -0.15,
+        -1.0
+      ],
+      "info": "The clock line goes to all registers. A register loads only at the active clock edge and only if its load signal is 1."
+    },
+    {
+      "type": "cone",
+      "radius": 0.3,
+      "height": 0.52,
+      "position": [
+        1.55,
+        1.85,
+        0.01
+      ],
+      "color": "#22c55e",
+      "label": "Enb = 1",
+      "labelOffset": [
+        0.7,
+        0.35,
+        0
+      ],
+      "info": "Enb = 1 enables the buffers of register B. All other enables stay 0, so their outputs stay hi-Z.",
+      "step": 3
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.55,
+        1.0,
+        0.6
+      ],
+      "to": [
+        1.55,
+        2.9,
+        0.6
+      ],
+      "color": "#22c55e",
+      "step": 3
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.8,
+        3.25,
+        0.6
+      ],
+      "to": [
+        3.3,
+        3.25,
+        0.6
+      ],
+      "color": "#22c55e",
+      "step": 3,
+      "label": "data from B",
+      "labelOffset": [
+        2.5,
+        3.6,
+        0.6
+      ],
+      "info": "The 8 bits of register B now travel along the bus to all register inputs."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.45,
+        2.9,
+        0.6
+      ],
+      "to": [
+        3.45,
+        1.0,
+        0.6
+      ],
+      "color": "#38bdf8",
+      "step": 4,
+      "label": "Ldc = 1: C loads",
+      "labelOffset": [
+        5.0,
+        1.45,
+        0.6
+      ],
+      "info": "Ldc = 1, so register C loads the bus value at the clock edge. Registers A and B keep their values."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.64,
+        0.94,
+        1.14
+      ],
+      "position": [
+        3.8,
+        0.45,
+        0
+      ],
+      "color": "#38bdf8",
+      "step": 4,
+      "opacity": 0.35,
+      "edges": false
+    }
+  ]
+}

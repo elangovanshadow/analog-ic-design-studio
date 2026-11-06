@@ -1,0 +1,437 @@
+{
+  "title": "Mealy machine vs Moore machine",
+  "subtitle": "Press ▶ to build both machines · tap a part for its job · drag to turn",
+  "background": "#10131a",
+  "camera": [
+    0,
+    3.2,
+    12.5
+  ],
+  "target": [
+    0,
+    1.0,
+    0
+  ],
+  "steps": [
+    "Mealy machine: a combinational logic block and a state register.",
+    "The present state feeds back to the logic. The clock loads the next state.",
+    "X enters the logic. The Mealy output Z depends on X and on the state.",
+    "Moore machine: next-state logic, a state register and a feedback loop.",
+    "A separate output logic block makes Z from the state only."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        1.2,
+        1.2
+      ],
+      "position": [
+        -3.6,
+        2.6,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "Combinational logic",
+      "labelOffset": [
+        0,
+        0.95,
+        0.7
+      ],
+      "info": "This block makes the next state and the output Z. It uses the input X and the present state.",
+      "explode": [
+        0,
+        0.5,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        0.9,
+        1.2
+      ],
+      "position": [
+        -3.6,
+        0.6,
+        0
+      ],
+      "color": "#8b5cf6",
+      "step": 0,
+      "label": "State register",
+      "labelOffset": [
+        0,
+        -0.75,
+        0.7
+      ],
+      "info": "The state register holds the present state. It is a group of D flip-flops. It loads the next state at the clock edge.",
+      "explode": [
+        0,
+        -0.5,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -4.1,
+        2.0,
+        0
+      ],
+      "to": [
+        -4.1,
+        1.05,
+        0
+      ],
+      "color": "#fde047",
+      "step": 1,
+      "label": "next state",
+      "labelOffset": [
+        -4.95,
+        1.55,
+        0
+      ],
+      "info": "The next state goes from the logic block to the D inputs of the register."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.4000000000000004,
+          0.6,
+          0
+        ],
+        [
+          -1.9000000000000001,
+          0.6,
+          0
+        ],
+        [
+          -1.9000000000000001,
+          2.6,
+          0
+        ],
+        [
+          -2.4000000000000004,
+          2.6,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#fde047",
+      "step": 1,
+      "label": "present state",
+      "labelOffset": [
+        -1.15,
+        1.6,
+        0
+      ],
+      "info": "The present state feeds back to the logic. This loop gives the circuit its memory."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.6,
+        0.1,
+        0.2
+      ],
+      "position": [
+        -3.6,
+        0.08,
+        -0.9
+      ],
+      "color": "#475569",
+      "step": 1,
+      "label": "clock",
+      "labelOffset": [
+        -1.6,
+        0.2,
+        -0.9
+      ],
+      "info": "The clock edge loads the next state into the register."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -6.800000000000001,
+        2.9,
+        0
+      ],
+      "to": [
+        -4.85,
+        2.9,
+        0
+      ],
+      "color": "#22c55e",
+      "step": 2,
+      "label": "input X",
+      "labelOffset": [
+        -6.1,
+        3.25,
+        0
+      ],
+      "info": "The input X can change at any time between clock edges."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -2.4,
+        2.9,
+        0
+      ],
+      "to": [
+        -0.6,
+        2.9,
+        0
+      ],
+      "color": "#f472b6",
+      "step": 2,
+      "label": "Z (Mealy)",
+      "labelOffset": [
+        -1.2,
+        3.3,
+        0
+      ],
+      "info": "The Mealy output comes from the same logic as the next state. It depends on X and on the state, so it can change between clock edges."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        1.2,
+        1.2
+      ],
+      "position": [
+        3.6,
+        2.6,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 3,
+      "label": "Next-state logic",
+      "labelOffset": [
+        0,
+        0.95,
+        0.7
+      ],
+      "info": "This block makes the next state from the input X and the present state.",
+      "explode": [
+        0,
+        0.5,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        0.9,
+        1.2
+      ],
+      "position": [
+        3.6,
+        0.6,
+        0
+      ],
+      "color": "#8b5cf6",
+      "step": 3,
+      "label": "State register",
+      "labelOffset": [
+        0,
+        -0.75,
+        0.7
+      ],
+      "info": "The state register holds the present state. It is a group of D flip-flops. It loads the next state at the clock edge.",
+      "explode": [
+        0,
+        -0.5,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.1,
+        2.0,
+        0
+      ],
+      "to": [
+        3.1,
+        1.05,
+        0
+      ],
+      "color": "#fde047",
+      "step": 4,
+      "label": "next state",
+      "labelOffset": [
+        2.25,
+        1.55,
+        0
+      ],
+      "info": "The next state goes from the logic block to the D inputs of the register."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          4.8,
+          0.6,
+          0
+        ],
+        [
+          5.3,
+          0.6,
+          0
+        ],
+        [
+          5.3,
+          2.6,
+          0
+        ],
+        [
+          4.8,
+          2.6,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#fde047",
+      "step": 4,
+      "label": "present state",
+      "labelOffset": [
+        6.050000000000001,
+        1.6,
+        0
+      ],
+      "info": "The present state feeds back to the logic. This loop gives the circuit its memory."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.6,
+        0.1,
+        0.2
+      ],
+      "position": [
+        3.6,
+        0.08,
+        -0.9
+      ],
+      "color": "#475569",
+      "step": 4,
+      "label": "clock",
+      "labelOffset": [
+        -1.6,
+        0.2,
+        -0.9
+      ],
+      "info": "The clock edge loads the next state into the register."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.3999999999999999,
+        2.9,
+        0
+      ],
+      "to": [
+        2.35,
+        2.9,
+        0
+      ],
+      "color": "#22c55e",
+      "step": 3,
+      "label": "input X",
+      "labelOffset": [
+        1.1,
+        3.25,
+        0
+      ],
+      "info": "The input X can change at any time between clock edges."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.9,
+        1.2
+      ],
+      "position": [
+        3.6,
+        -1.5,
+        0
+      ],
+      "color": "#14b8a6",
+      "step": 4,
+      "label": "Output logic",
+      "labelOffset": [
+        0,
+        -0.75,
+        0.7
+      ],
+      "info": "This block makes Z from the present state only. The input X does not reach it.",
+      "explode": [
+        0,
+        -0.5,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.6,
+        0.15,
+        0
+      ],
+      "to": [
+        3.6,
+        -1.0,
+        0
+      ],
+      "color": "#fde047",
+      "step": 4
+    },
+    {
+      "type": "arrow",
+      "from": [
+        4.6,
+        -1.5,
+        0
+      ],
+      "to": [
+        6.3,
+        -1.5,
+        0
+      ],
+      "color": "#f472b6",
+      "step": 4,
+      "label": "Z (Moore)",
+      "labelOffset": [
+        5.5,
+        -1.1,
+        0
+      ],
+      "info": "The Moore output depends only on the state. It changes only after a clock edge."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.08,
+        5.6,
+        1.4
+      ],
+      "position": [
+        0,
+        1.0,
+        0
+      ],
+      "color": "#334155",
+      "step": 0,
+      "edges": false,
+      "opacity": 0.5
+    }
+  ]
+}

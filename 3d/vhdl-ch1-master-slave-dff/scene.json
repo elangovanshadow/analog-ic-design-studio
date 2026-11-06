@@ -1,0 +1,345 @@
+{
+  "title": "Master-slave D flip-flop from two latches",
+  "subtitle": "Press ▶ to step the clock · tap a part for its job · drag to turn",
+  "background": "#10131a",
+  "camera": [
+    0.5,
+    4.5,
+    9.5
+  ],
+  "target": [
+    0,
+    0.7,
+    0
+  ],
+  "steps": [
+    "The master latch takes D. Its gate is CLK′.",
+    "The slave latch takes Q1 and gives Q. Its gate is CLK.",
+    "One clock drives both latches. The inverter makes CLK′ for the master.",
+    "CLK = 0. The master is open and Q1 follows D. The slave holds Q.",
+    "Rising edge, CLK = 1. The master holds. The slave copies Q1 to Q."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        1.4,
+        1.2
+      ],
+      "position": [
+        -2.0,
+        0.7,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "Master latch",
+      "labelOffset": [
+        0,
+        1.05,
+        0.7
+      ],
+      "info": "The master is a gated D latch. Its gate is CLK′, so it is open while CLK = 0. Then Q1 follows D.",
+      "explode": [
+        -0.8,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          0.95,
+          0
+        ],
+        [
+          -3.1,
+          0.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 0,
+      "label": "D",
+      "labelOffset": [
+        -5.4,
+        1.2,
+        0
+      ],
+      "info": "D is the data input of the flip-flop."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        1.4,
+        1.2
+      ],
+      "position": [
+        2.0,
+        0.7,
+        0
+      ],
+      "color": "#8b5cf6",
+      "step": 1,
+      "label": "Slave latch",
+      "labelOffset": [
+        0,
+        1.05,
+        0.7
+      ],
+      "info": "The slave is a gated D latch. Its gate is CLK, so it is open while CLK = 1. Then Q follows Q1.",
+      "explode": [
+        0.8,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -0.9,
+          0.95,
+          0
+        ],
+        [
+          0.9,
+          0.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#fde047",
+      "step": 1,
+      "label": "Q1",
+      "labelOffset": [
+        0,
+        1.25,
+        0
+      ],
+      "info": "Q1 is the master output. It is also the slave input."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          3.1,
+          0.95,
+          0
+        ],
+        [
+          5.2,
+          0.95,
+          0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#cbd5e1",
+      "step": 1,
+      "label": "Q",
+      "labelOffset": [
+        5.4,
+        1.2,
+        0
+      ],
+      "info": "Q is the flip-flop output. It changes only just after a rising edge of CLK."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -5.2,
+          0.15,
+          0.9
+        ],
+        [
+          3.0,
+          0.15,
+          0.9
+        ],
+        [
+          3.0,
+          0.15,
+          0.0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#94a3b8",
+      "step": 2,
+      "label": "CLK",
+      "labelOffset": [
+        -5.4,
+        0.4,
+        0.9
+      ],
+      "info": "The clock goes straight to the slave gate. An inverter gives CLK′ to the master gate."
+    },
+    {
+      "type": "cone",
+      "radius": 0.2,
+      "height": 0.45,
+      "position": [
+        -1.2,
+        0.15,
+        0.9
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "color": "#e5e7eb",
+      "label": "inverter",
+      "labelOffset": [
+        0,
+        -0.45,
+        0.35
+      ],
+      "info": "The inverter makes CLK′. Because of it, the two latches are never open at the same time.",
+      "step": 2
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.0,
+          0.15,
+          0.9
+        ],
+        [
+          -1.0,
+          0.15,
+          0.0
+        ]
+      ],
+      "radius": 0.05,
+      "color": "#94a3b8",
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        1.8,
+        1.0,
+        0.04
+      ],
+      "position": [
+        -2.0,
+        0.7,
+        0.63
+      ],
+      "color": "#22c55e",
+      "step": 3,
+      "info": "CLK = 0, so the master is open. Q1 follows each change of D.",
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        1.8,
+        1.0,
+        0.04
+      ],
+      "position": [
+        2.0,
+        0.7,
+        0.63
+      ],
+      "color": "#ef4444",
+      "step": 3,
+      "info": "CLK = 0, so the slave holds. Q keeps its old value, whatever D does.",
+      "edges": false
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -4.8,
+        1.35,
+        0
+      ],
+      "to": [
+        -3.2,
+        1.35,
+        0
+      ],
+      "color": "#22c55e",
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        1.82,
+        1.02,
+        0.04
+      ],
+      "position": [
+        -2.0,
+        0.7,
+        0.66
+      ],
+      "color": "#ef4444",
+      "step": 4,
+      "info": "After the rising edge, CLK = 1. The master closes and holds the last D value.",
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        1.82,
+        1.02,
+        0.04
+      ],
+      "position": [
+        2.0,
+        0.7,
+        0.66
+      ],
+      "color": "#22c55e",
+      "step": 4,
+      "info": "After the rising edge, CLK = 1. The slave opens and copies Q1 to Q.",
+      "edges": false
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -0.8,
+        1.35,
+        0
+      ],
+      "to": [
+        0.8,
+        1.35,
+        0
+      ],
+      "color": "#22c55e",
+      "step": 4
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.2,
+        1.35,
+        0
+      ],
+      "to": [
+        4.8,
+        1.35,
+        0
+      ],
+      "color": "#22c55e",
+      "step": 4,
+      "label": "Q takes the old D",
+      "labelOffset": [
+        4.0,
+        1.75,
+        0
+      ],
+      "info": "Q now shows the D value from just before the rising edge. This is the rule Q+ = D."
+    }
+  ]
+}
