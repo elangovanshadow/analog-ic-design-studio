@@ -14,11 +14,11 @@
   ],
   "gridSize": 16,
   "steps": [
-    "The platter stores bits as tiny magnetic regions on a track",
-    "A magnetic read head sits just above the track",
-    "The head turns magnetism into an electrical signal: only a few mV",
-    "Compare: stored data (clean) vs retrieved signal (small, noisy, distorted)",
-    "Fix it with the chain of Fig. 1.1: amplify, filter, digitize"
+    "The platter keeps bits as very small magnetic regions on a track",
+    "A magnetic read head is near the track, a small distance above it",
+    "The head changes the magnetic field into a voltage of only a few mV",
+    "Compare the stored data (clean) with the read signal (small, noisy, distorted)",
+    "Repair the signal with the chain of Fig. 1.1: amplify, filter, digitize"
   ],
   "objects": [
     {
@@ -39,7 +39,7 @@
         0.2,
         2.0
       ],
-      "info": "A spinning disk coated with magnetic material. Data is stored as binary: each tiny region is magnetised one way or the other (p. 3).",
+      "info": "The platter is a disk that turns. It has a magnetic layer. Each very small region of the layer has a magnetic direction. The two directions show the binary data (p. 3).",
       "step": 0
     },
     {
@@ -285,7 +285,7 @@
         0.4,
         0.4
       ],
-      "info": "Red and blue = the two magnetic directions, i.e. 1 and 0. This is the 'stored data'."
+      "info": "Red and blue show the two magnetic directions, 1 and 0. These regions are the stored data."
     },
     {
       "type": "cylinder",
@@ -310,7 +310,7 @@
         0.6,
         0
       ],
-      "info": "The arm rotates about this to move the head between tracks."
+      "info": "The arm turns around this pivot. It moves the head from one track to a different track."
     },
     {
       "type": "box",
@@ -343,7 +343,7 @@
         0.3,
         0
       ],
-      "info": "Holds the read head over the spinning platter."
+      "info": "The arm holds the read head above the platter."
     },
     {
       "type": "box",
@@ -371,7 +371,7 @@
         0.35,
         0.3
       ],
-      "info": "Senses the magnetic field of the bits passing under it and produces a small voltage. The signal it makes is weak and messy (Fig. 1.4)."
+      "info": "The head senses the magnetic field of each bit below it. It gives a small voltage. This signal is weak and it has distortion (Fig. 1.4)."
     },
     {
       "type": "tube",
@@ -514,7 +514,7 @@
         2.7,
         -3.8
       ],
-      "info": "What was written: clean binary levels (top trace of Fig. 1.4)."
+      "info": "This line shows the data on the disk: clean binary levels (top trace of Fig. 1.4)."
     },
     {
       "type": "tube",
@@ -1134,7 +1134,7 @@
         1.75,
         -3.8
       ],
-      "info": "What the head actually delivers: only a few millivolts, with a lot of noise, and the bit edges are smeared (distortion). Fig. 1.4 marks about 2 mV."
+      "info": "This line shows the signal from the head. It is only a few millivolts, and it has much noise. The edges of the bits are not sharp (distortion). Fig. 1.4 shows approximately 2 mV."
     },
     {
       "type": "tube",
@@ -1174,7 +1174,7 @@
         0.6,
         0
       ],
-      "info": "Boosts the few-mV signal."
+      "info": "The amplifier makes the few-mV signal larger."
     },
     {
       "type": "box",
@@ -1196,7 +1196,7 @@
         0.6,
         0
       ],
-      "info": "Removes much of the noise and distortion (p. 3)."
+      "info": "The filter removes much of the noise and distortion (p. 3)."
     },
     {
       "type": "box",
@@ -1218,7 +1218,7 @@
         0.6,
         0
       ],
-      "info": "Decides each bit and outputs clean binary data. Book: disk drives then needed 500 Mb/s (p. 3)."
+      "info": "The ADC finds each bit and gives clean binary data. The book says that disk drives then needed 500 Mb/s (p. 3)."
     },
     {
       "type": "arrow",
@@ -1240,7 +1240,7 @@
         0.6,
         3.9
       ],
-      "info": "The weak head signal enters the read chain."
+      "info": "The weak signal from the head goes into the read chain."
     }
   ]
 }

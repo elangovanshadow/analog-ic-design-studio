@@ -1,6 +1,6 @@
 {
   "title": "Ch 1 · Receiver signal chain (Fig. 1.1)",
-  "subtitle": "Press ▶ to build it · tap any block · drag to orbit, pinch to zoom",
+  "subtitle": "Press ▶ to add each block · tap a block · drag to turn, pinch to zoom",
   "background": "#10131a",
   "camera": [
     1.0,
@@ -14,11 +14,11 @@
   ],
   "gridSize": 24,
   "steps": [
-    "A natural signal: tiny (µV to mV), analog, with interferers riding on it",
-    "Fig. 1.1(a): an ADC turns it into bits, a DSP processes the bits",
-    "Problem: the signal is too small to digitize directly. Add an amplifier",
-    "Out-of-band interferers are still there. Add an analog filter",
-    "Result: a large, clean signal goes into the ADC and becomes reliable bits"
+    "A natural signal is small (µV to mV) and analog. Interferers come with it",
+    "Fig. 1.1(a): an ADC changes the signal into bits. A DSP processes the bits",
+    "Problem: the signal is too small for the ADC. Add an amplifier",
+    "The out-of-band interferers are still there. Add an analog filter",
+    "Result: a large, clean signal goes into the ADC. The ADC gives correct bits"
   ],
   "objects": [
     {
@@ -38,7 +38,7 @@
         1.6,
         0
       ],
-      "info": "Where the analog signal comes from: a microphone, camera photocell, seismic sensor or radio antenna. Its output can be as small as a few microvolts (p. 1).",
+      "info": "This part gives the analog signal. It can be a microphone, a camera photocell, a seismic sensor or a radio antenna. Its output can be only a few microvolts (p. 1).",
       "step": 0
     },
     {
@@ -370,7 +370,7 @@
         0.55,
         0
       ],
-      "info": "Red = the raw signal. The slow wave is what we want; the fast ripple is an unwanted out-of-band interferer. Both are tiny.",
+      "info": "The red line is the raw signal. The slow wave is the wanted signal. The fast ripple is an unwanted out-of-band interferer. The two are very small.",
       "step": 0
     },
     {
@@ -392,7 +392,7 @@
         1.0,
         0
       ],
-      "info": "Analog-to-digital converter. Measures the analog voltage many times per second and writes each sample as a binary number. Making ADCs fast, precise and low-power is a hard analog design job (p. 1).",
+      "info": "The analog-to-digital converter measures the analog voltage many times each second. It writes each sample as a binary number. A fast, precise ADC with low power is a difficult analog design task (p. 1).",
       "step": 1
     },
     {
@@ -415,7 +415,7 @@
         0.7,
         0
       ],
-      "info": "Digital signal processor. Works only on bits (0s and 1s). Everything after the ADC is digital.",
+      "info": "The digital signal processor uses only bits (0 and 1). All blocks after the ADC are digital.",
       "step": 1
     },
     {
@@ -465,7 +465,7 @@
         1.0,
         0.5
       ],
-      "info": "Makes the signal bigger (adds gain) so the ADC can resolve it. A good amplifier adds as little noise of its own as possible.",
+      "info": "The amplifier makes the signal larger (it gives gain). Then the ADC can measure the signal. A good amplifier adds very little noise of its own.",
       "step": 2
     },
     {
@@ -785,7 +785,7 @@
         0.85,
         0
       ],
-      "info": "After the amplifier the wanted signal is large, but the interferer was amplified too.",
+      "info": "After the amplifier, the wanted signal is large. But the amplifier also made the interferer larger.",
       "step": 2
     },
     {
@@ -807,7 +807,7 @@
         0.95,
         0
       ],
-      "info": "Lets the wanted frequencies through and blocks the out-of-band ones. It works on the analog signal, before the ADC (Fig. 1.1b).",
+      "info": "The filter passes the wanted frequencies. It stops the out-of-band frequencies. It operates on the analog signal, before the ADC (Fig. 1.1b).",
       "step": 3
     },
     {
@@ -1127,7 +1127,7 @@
         0.85,
         0
       ],
-      "info": "Green = what the ADC now receives: large enough to measure, and without the interferer.",
+      "info": "The green line is the signal at the ADC input. It is large enough to measure, and it has no interferer.",
       "step": 3
     },
     {
@@ -1150,7 +1150,7 @@
         0.55,
         0
       ],
-      "info": "Yellow = 1, grey = 0. These are the ADC's output. Their accuracy depends on how clean and large the analog signal was."
+      "info": "Yellow is 1 and grey is 0. These bits are the ADC output. Their accuracy depends on the size and the quality of the analog signal."
     },
     {
       "type": "box",

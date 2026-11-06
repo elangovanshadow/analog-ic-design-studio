@@ -1,6 +1,6 @@
 {
   "title": "Ch 1 · Levels of abstraction (Fig. 1.8)",
-  "subtitle": "Press ▶ to climb the levels · tap a layer · Explode spreads them",
+  "subtitle": "Press ▶ to go up the levels · tap a layer · Explode moves the layers apart",
   "background": "#10131a",
   "camera": [
     8.5,
@@ -14,11 +14,11 @@
   ],
   "gridSize": 16,
   "steps": [
-    "Device level: one transistor, its fields and charges",
-    "Circuit (transistor) level: a few devices wired together",
-    "Architecture level: building blocks working as one unit",
-    "System level: whole subsystems (amp/filter, ADC, clock recovery, equalizer)",
-    "Designers move up and down between levels"
+    "Device level: one transistor, with its fields and charges",
+    "Circuit (transistor) level: some devices with wires between them",
+    "Architecture level: building blocks that operate as one unit",
+    "System level: full subsystems (amp/filter, ADC, clock recovery, equalizer)",
+    "Designers move up and down between the levels"
   ],
   "objects": [
     {
@@ -42,7 +42,7 @@
         0.1,
         0
       ],
-      "info": "Device level: we look inside one transistor, at its electric fields and how charge moves (p. 7, Fig. 1.8a). This is where Chapter 2 starts.",
+      "info": "At the device level, you look into one transistor. You study its electric fields and the movement of charge (p. 7, Fig. 1.8a). Chapter 2 starts here.",
       "step": 0,
       "explode": [
         0,
@@ -69,7 +69,7 @@
         0.5,
         0.9
       ],
-      "info": "A transistor sliced open: silicon body, two doped regions (source and drain) and a gate on top. You'll meet each part in Chapter 2.",
+      "info": "This is a transistor cut open. It has a silicon body, two doped regions (the source and the drain) and a gate on top. Chapter 2 explains each part.",
       "step": 0,
       "explode": [
         0,
@@ -179,7 +179,7 @@
         0.1,
         0
       ],
-      "info": "Circuit (transistor) level: how a small group of devices interact through their electrical behaviour, i.e. their voltages and currents (Fig. 1.8b).",
+      "info": "At the circuit (transistor) level, you study how a small group of devices operate together. You look at their voltages and currents (Fig. 1.8b).",
       "step": 1,
       "explode": [
         0,
@@ -220,7 +220,7 @@
         2.44,
         0.9
       ],
-      "info": "Metal connections between the devices.",
+      "info": "The wires are metal connections between the devices.",
       "step": 1,
       "explode": [
         0,
@@ -244,7 +244,7 @@
         0.65,
         0
       ],
-      "info": "Each cylinder stands for one transistor. At this level we care about its voltages and currents, not its insides.",
+      "info": "Each cylinder shows one transistor. At this level, you study its voltages and currents. You do not study its inner parts.",
       "step": 1,
       "explode": [
         0,
@@ -305,7 +305,7 @@
         0.3,
         -0.4
       ],
-      "info": "A passive part. Fig. 1.8(b) mixes transistors and a resistor.",
+      "info": "The resistor is a passive part. Fig. 1.8(b) has transistors and a resistor.",
       "step": 1,
       "explode": [
         0,
@@ -358,7 +358,7 @@
         0.1,
         0
       ],
-      "info": "Architecture level: several building blocks, e.g. an op amp with capacitors and a switch, studied as one unit by what they do together (Fig. 1.8c).",
+      "info": "At the architecture level, you study a group of building blocks as one unit. Example: an op amp with capacitors and a switch (Fig. 1.8c).",
       "step": 2,
       "explode": [
         0,
@@ -395,7 +395,7 @@
         0.7,
         0.3
       ],
-      "info": "An amplifier block, drawn as a triangle. Chapter 9 designs these.",
+      "info": "The op amp is an amplifier block with high gain. Its symbol is a triangle. Chapter 9 shows its design.",
       "step": 2,
       "explode": [
         0,
@@ -423,7 +423,7 @@
         0.6,
         0
       ],
-      "info": "Two metal plates with a gap. Blocks DC and stores charge.",
+      "info": "A capacitor has two metal plates with a gap between them. It stops DC and it keeps charge.",
       "step": 2,
       "explode": [
         0,
@@ -519,7 +519,7 @@
         0.1,
         0
       ],
-      "info": "System level: we judge the whole system by the performance of its subsystems (Fig. 1.8d). Example from the book: a receiver with amp/filter, ADC, clock recovery and equalizer, plus an AGC loop.",
+      "info": "At the system level, you look at the performance of the full system through its subsystems (Fig. 1.8d). The book example is a receiver. It has an amp/filter, an ADC, a clock recovery block and an equalizer, with an AGC loop.",
       "step": 3,
       "explode": [
         0,
@@ -546,7 +546,7 @@
         0.4,
         0
       ],
-      "info": "Amplifies and filters the incoming signal (the same job as in Fig. 1.1b).",
+      "info": "This block amplifies and filters the input signal. It does the same task as in Fig. 1.1b.",
       "step": 3,
       "explode": [
         0,
@@ -573,7 +573,7 @@
         0.8,
         0
       ],
-      "info": "Turns the analog signal into bits.",
+      "info": "The ADC changes the analog signal into bits.",
       "step": 3,
       "explode": [
         0,
@@ -600,7 +600,7 @@
         0.4,
         0
       ],
-      "info": "Works out the timing of the incoming data so the bits can be sampled at the right moments.",
+      "info": "This block finds the time of each data bit. Then the system can sample each bit at the correct time.",
       "step": 3,
       "explode": [
         0,
@@ -627,7 +627,7 @@
         0.8,
         0
       ],
-      "info": "Undoes some of the distortion the channel added to the data.",
+      "info": "The equalizer removes part of the distortion that the channel added to the data.",
       "step": 3,
       "explode": [
         0,
@@ -662,7 +662,7 @@
         6.09,
         -0.4
       ],
-      "info": "Automatic gain control: a feedback path that sets the amplifier's gain from what the ADC sees.",
+      "info": "AGC means automatic gain control. This feedback path sets the gain of the amplifier from the ADC signal.",
       "step": 3,
       "explode": [
         0,
@@ -690,7 +690,7 @@
         0
       ],
       "step": 4,
-      "info": "Going up: fewer details, bigger picture."
+      "info": "When you go up, you see fewer details and a larger picture."
     },
     {
       "type": "arrow",
@@ -712,7 +712,7 @@
         0
       ],
       "step": 4,
-      "info": "Going down: more physical detail. Real IC teams need both directions (p. 7)."
+      "info": "When you go down, you see more physical details. Real IC teams need the two directions (p. 7)."
     }
   ]
 }
