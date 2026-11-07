@@ -1,0 +1,427 @@
+{
+  "title": "Ch 2 · Channel pinch-off: triode to saturation (Figs. 2.10, 2.16)",
+  "subtitle": "Press ▶ to increase VDS · tap the channel · drag to turn",
+  "background": "#10131a",
+  "camera": [
+    1.0,
+    4.2,
+    11.0
+  ],
+  "target": [
+    0,
+    -0.4,
+    0
+  ],
+  "gridSize": 20,
+  "grid": false,
+  "steps": [
+    "An NMOS device with VGS > VTH. The source and the bulk are at 0 V",
+    "VDS = 0: the channel charge is the same at all points",
+    "Small VDS: the channel becomes thinner near the drain (triode region)",
+    "VDS = VGS − VTH: the charge at the drain end becomes zero (edge of saturation)",
+    "VDS > VGS − VTH: the pinch-off point moves toward the source (saturation)",
+    "The channel length is now L′. ID stays almost constant: ½µnCox(W/L′)(VGS − VTH)²"
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        11,
+        2.0,
+        3.0
+      ],
+      "position": [
+        0,
+        -1.0,
+        0
+      ],
+      "color": "#7d5a9e",
+      "label": "p-substrate",
+      "labelOffset": [
+        -4.6,
+        -0.6,
+        1.6
+      ],
+      "info": "The bulk. In this model, the bulk is at 0 V, the same as the source.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.6,
+        3.04
+      ],
+      "position": [
+        -3.2,
+        -0.29,
+        0
+      ],
+      "color": "#2563eb",
+      "label": "n+ source (0 V)",
+      "labelOffset": [
+        -0.3,
+        0.1,
+        1.7
+      ],
+      "info": "The source is at 0 V. The channel potential V(x) is 0 at the source.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.6,
+        3.04
+      ],
+      "position": [
+        3.2,
+        -0.29,
+        0
+      ],
+      "color": "#2563eb",
+      "label": "n+ drain (VD)",
+      "labelOffset": [
+        0.3,
+        0.1,
+        1.7
+      ],
+      "info": "The drain voltage is VDS. The channel potential at the drain end is VDS.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        4.6000000000000005,
+        0.08,
+        3.0
+      ],
+      "position": [
+        0,
+        0.05,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        4.4,
+        0.5,
+        3.0
+      ],
+      "position": [
+        0,
+        0.34,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "label": "gate (VG > VTH)",
+      "labelOffset": [
+        1.6,
+        0.5,
+        -1.2
+      ],
+      "info": "The gate voltage stays the same in all steps. The local voltage between the gate and the channel is VGS − V(x). Thus the channel charge at point x is proportional to VGS − V(x) − VTH (Eq. 2.4).",
+      "step": 0,
+      "explode": [
+        0,
+        1.2,
+        0
+      ]
+    },
+    {
+      "type": "extrude",
+      "shape": [
+        [
+          -2.2,
+          0
+        ],
+        [
+          2.2,
+          0
+        ],
+        [
+          2.2,
+          -0.42
+        ],
+        [
+          -2.2,
+          -0.42
+        ]
+      ],
+      "depth": 3.08,
+      "position": [
+        0,
+        0.001,
+        -1.54
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.9,
+      "edges": false,
+      "step": 1,
+      "stepEnd": 1,
+      "label": "uniform channel",
+      "labelOffset": [
+        0.0,
+        -0.55,
+        1.75
+      ],
+      "info": "With VDS = 0, V(x) is 0 at all points. The channel charge density is WCox(VGS − VTH) at all points (Eq. 2.3)."
+    },
+    {
+      "type": "extrude",
+      "shape": [
+        [
+          -2.2,
+          0
+        ],
+        [
+          2.2,
+          0
+        ],
+        [
+          2.2,
+          -0.2
+        ],
+        [
+          -2.2,
+          -0.42
+        ]
+      ],
+      "depth": 3.08,
+      "position": [
+        0,
+        0.001,
+        -1.54
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.9,
+      "edges": false,
+      "step": 2,
+      "stepEnd": 2,
+      "label": "channel (triode)",
+      "labelOffset": [
+        0.0,
+        -0.55,
+        1.75
+      ],
+      "info": "V(x) increases from 0 at the source to VDS at the drain. Thus the gate-to-channel voltage, and the charge, decrease toward the drain. The current follows Eq. 2.8."
+    },
+    {
+      "type": "extrude",
+      "shape": [
+        [
+          -2.2,
+          0
+        ],
+        [
+          2.2,
+          0
+        ],
+        [
+          2.2,
+          -0.012
+        ],
+        [
+          -2.2,
+          -0.42
+        ]
+      ],
+      "depth": 3.08,
+      "position": [
+        0,
+        0.001,
+        -1.54
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.9,
+      "edges": false,
+      "step": 3,
+      "stepEnd": 3,
+      "label": "channel (edge)",
+      "labelOffset": [
+        0.0,
+        -0.55,
+        1.75
+      ],
+      "info": "At VDS = VGS − VTH, V(x) at the drain is equal to VGS − VTH. The charge at the drain end is zero. This is the peak of the triode parabola."
+    },
+    {
+      "type": "extrude",
+      "shape": [
+        [
+          -2.2,
+          0
+        ],
+        [
+          1.2,
+          0
+        ],
+        [
+          1.2,
+          -0.008
+        ],
+        [
+          -2.2,
+          -0.42
+        ]
+      ],
+      "depth": 3.08,
+      "position": [
+        0,
+        0.001,
+        -1.54
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.9,
+      "edges": false,
+      "step": 4,
+      "label": "channel (saturation)",
+      "labelOffset": [
+        -0.5,
+        -0.55,
+        1.75
+      ],
+      "info": "The channel stops before the drain. The point where the charge is zero moves toward the source when VDS increases (Fig. 2.16)."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.0500000000000003,
+        0.42,
+        3.06
+      ],
+      "position": [
+        1.7,
+        -0.21,
+        0
+      ],
+      "color": "#fde68a",
+      "opacity": 0.65,
+      "edges": false,
+      "step": 4,
+      "label": "pinched-off region",
+      "labelOffset": [
+        0,
+        -0.5,
+        1.75
+      ],
+      "info": "This region has no inversion layer. The strong electric field carries the electrons from the pinch-off point to the drain."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -2.6,
+        -0.14,
+        1.85
+      ],
+      "to": [
+        2.6,
+        -0.14,
+        1.85
+      ],
+      "color": "#fde047",
+      "step": 2,
+      "label": "electron flow",
+      "labelOffset": [
+        -3.6,
+        -0.85,
+        2.0
+      ],
+      "info": "Electrons move from the source to the drain. ID flows from the drain to the source."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -2.2,
+        -1.25,
+        1.65
+      ],
+      "to": [
+        1.2,
+        -1.25,
+        1.65
+      ],
+      "color": "#e2e8f0",
+      "step": 5,
+      "label": "L′ (channel length)",
+      "labelOffset": [
+        -0.5,
+        -1.5,
+        1.65
+      ],
+      "info": "L′ is the distance from the source to the pinch-off point. Because L′ decreases a little when VDS increases, ID also increases a little. Section 2.3 calls this channel-length modulation."
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 1.0,
+      "position": [
+        -3.2,
+        0.51,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "S",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "Source terminal, at 0 V.",
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 1.0,
+      "position": [
+        3.2,
+        0.51,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "D",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "Drain terminal. You increase VDS step by step.",
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 0.6,
+      "position": [
+        0,
+        0.89,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "G",
+      "labelOffset": [
+        0,
+        0.6,
+        0
+      ],
+      "info": "Gate terminal.",
+      "step": 0,
+      "explode": [
+        0,
+        1.2,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Ch 2 · Channel pinch-off: triode to saturation (Figs. 2.10, 2.16)</title>
+<style>
+  :root{--bg:#0f1115;--panel:rgba(20,23,30,.86);--ink:#e8ebf1;--muted:#9aa3b2;--accent:#5aa9ff}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;touch-action:none}
+  .lbl{padding:2px 7px;border-radius:6px;background:rgba(10,12,16,.78);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,255,255,.18)}
+  #hud{position:fixed;left:10px;top:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+  #title{background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;pointer-events:auto;max-width:60%}
+  #title small{display:block;font-weight:400;color:var(--muted)}
+  #tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+  button{background:var(--panel);color:var(--ink);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 10px;font:inherit;cursor:pointer}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #info{position:fixed;left:10px;bottom:10px;max-width:min(420px,calc(100% - 20px));background:var(--panel);padding:10px 12px;border-radius:10px;display:none}
+  #info b{display:block;margin-bottom:3px}
+  #steps{position:fixed;right:10px;bottom:10px;background:var(--panel);padding:6px;border-radius:10px;display:none;gap:6px;align-items:center}
+  #stepTxt{padding:0 6px;color:var(--muted);max-width:240px}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="title"></div>
+  <div id="tools">
+    <button id="bLabels" class="on">Labels</button>
+    <button id="bSpin">Spin</button>
+    <button id="bExplode">Explode</button>
+    <button id="bReset">Reset</button>
+  </div>
+</div>
+<div id="info"></div>
+<div id="steps"><button id="bPrev">◀</button><span id="stepTxt"></span><button id="bNext">▶</button></div>
+<script id="scene-data" type="application/json">{"title": "Ch 2 · Channel pinch-off: triode to saturation (Figs. 2.10, 2.16)", "subtitle": "Press ▶ to increase VDS · tap the channel · drag to turn", "background": "#10131a", "camera": [1.0, 4.2, 11.0], "target": [0, -0.4, 0], "gridSize": 20, "grid": false, "steps": ["An NMOS device with VGS > VTH. The source and the bulk are at 0 V", "VDS = 0: the channel charge is the same at all points", "Small VDS: the channel becomes thinner near the drain (triode region)", "VDS = VGS − VTH: the charge at the drain end becomes zero (edge of saturation)", "VDS > VGS − VTH: the pinch-off point moves toward the source (saturation)", "The channel length is now L′. ID stays almost constant: ½µnCox(W/L′)(VGS − VTH)²"], "objects": [{"type": "box", "size": [11, 2.0, 3.0], "position": [0, -1.0, 0], "color": "#7d5a9e", "label": "p-substrate", "labelOffset": [-4.6, -0.6, 1.6], "info": "The bulk. In this model, the bulk is at 0 V, the same as the source.", "step": 0}, {"type": "box", "size": [2.0, 0.6, 3.04], "position": [-3.2, -0.29, 0], "color": "#2563eb", "label": "n+ source (0 V)", "labelOffset": [-0.3, 0.1, 1.7], "info": "The source is at 0 V. The channel potential V(x) is 0 at the source.", "step": 0}, {"type": "box", "size": [2.0, 0.6, 3.04], "position": [3.2, -0.29, 0], "color": "#2563eb", "label": "n+ drain (VD)", "labelOffset": [0.3, 0.1, 1.7], "info": "The drain voltage is VDS. The channel potential at the drain end is VDS.", "step": 0}, {"type": "box", "size": [4.6000000000000005, 0.08, 3.0], "position": [0, 0.05, 0], "color": "#e5e7eb", "step": 0}, {"type": "box", "size": [4.4, 0.5, 3.0], "position": [0, 0.34, 0], "color": "#9ca3af", "metalness": 0.4, "label": "gate (VG > VTH)", "labelOffset": [1.6, 0.5, -1.2], "info": "The gate voltage stays the same in all steps. The local voltage between the gate and the channel is VGS − V(x). Thus the channel charge at point x is proportional to VGS − V(x) − VTH (Eq. 2.4).", "step": 0, "explode": [0, 1.2, 0]}, {"type": "extrude", "shape": [[-2.2, 0], [2.2, 0], [2.2, -0.42], [-2.2, -0.42]], "depth": 3.08, "position": [0, 0.001, -1.54], "color": "#22d3ee", "opacity": 0.9, "edges": false, "step": 1, "stepEnd": 1, "label": "uniform channel", "labelOffset": [0.0, -0.55, 1.75], "info": "With VDS = 0, V(x) is 0 at all points. The channel charge density is WCox(VGS − VTH) at all points (Eq. 2.3)."}, {"type": "extrude", "shape": [[-2.2, 0], [2.2, 0], [2.2, -0.2], [-2.2, -0.42]], "depth": 3.08, "position": [0, 0.001, -1.54], "color": "#22d3ee", "opacity": 0.9, "edges": false, "step": 2, "stepEnd": 2, "label": "channel (triode)", "labelOffset": [0.0, -0.55, 1.75], "info": "V(x) increases from 0 at the source to VDS at the drain. Thus the gate-to-channel voltage, and the charge, decrease toward the drain. The current follows Eq. 2.8."}, {"type": "extrude", "shape": [[-2.2, 0], [2.2, 0], [2.2, -0.012], [-2.2, -0.42]], "depth": 3.08, "position": [0, 0.001, -1.54], "color": "#22d3ee", "opacity": 0.9, "edges": false, "step": 3, "stepEnd": 3, "label": "channel (edge)", "labelOffset": [0.0, -0.55, 1.75], "info": "At VDS = VGS − VTH, V(x) at the drain is equal to VGS − VTH. The charge at the drain end is zero. This is the peak of the triode parabola."}, {"type": "extrude", "shape": [[-2.2, 0], [1.2, 0], [1.2, -0.008], [-2.2, -0.42]], "depth": 3.08, "position": [0, 0.001, -1.54], "color": "#22d3ee", "opacity": 0.9, "edges": false, "step": 4, "label": "channel (saturation)", "labelOffset": [-0.5, -0.55, 1.75], "info": "The channel stops before the drain. The point where the charge is zero moves toward the source when VDS increases (Fig. 2.16)."}, {"type": "box", "size": [1.0500000000000003, 0.42, 3.06], "position": [1.7, -0.21, 0], "color": "#fde68a", "opacity": 0.65, "edges": false, "step": 4, "label": "pinched-off region", "labelOffset": [0, -0.5, 1.75], "info": "This region has no inversion layer. The strong electric field carries the electrons from the pinch-off point to the drain."}, {"type": "arrow", "from": [-2.6, -0.14, 1.85], "to": [2.6, -0.14, 1.85], "color": "#fde047", "step": 2, "label": "electron flow", "labelOffset": [-3.6, -0.85, 2.0], "info": "Electrons move from the source to the drain. ID flows from the drain to the source."}, {"type": "arrow", "from": [-2.2, -1.25, 1.65], "to": [1.2, -1.25, 1.65], "color": "#e2e8f0", "step": 5, "label": "L′ (channel length)", "labelOffset": [-0.5, -1.5, 1.65], "info": "L′ is the distance from the source to the pinch-off point. Because L′ decreases a little when VDS increases, ID also increases a little. Section 2.3 calls this channel-length modulation."}, {"type": "cylinder", "radius": 0.12, "height": 1.0, "position": [-3.2, 0.51, 0], "color": "#f59e0b", "metalness": 0.8, "roughness": 0.3, "label": "S", "labelOffset": [0, 0.8, 0], "info": "Source terminal, at 0 V.", "step": 0}, {"type": "cylinder", "radius": 0.12, "height": 1.0, "position": [3.2, 0.51, 0], "color": "#f59e0b", "metalness": 0.8, "roughness": 0.3, "label": "D", "labelOffset": [0, 0.8, 0], "info": "Drain terminal. You increase VDS step by step.", "step": 0}, {"type": "cylinder", "radius": 0.12, "height": 0.6, "position": [0, 0.89, 0], "color": "#f59e0b", "metalness": 0.8, "roughness": 0.3, "label": "G", "labelOffset": [0, 0.6, 0], "info": "Gate terminal.", "step": 0, "explode": [0, 1.2, 0]}]}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const S = JSON.parse(document.getElementById('scene-data').textContent);
+const deg = d => d * Math.PI / 180;
+const stage = document.getElementById('stage');
+document.getElementById('title').innerHTML = (S.title||'3D model') + (S.subtitle ? `<small>${S.subtitle}</small>` : '');
+if (S.background) document.documentElement.style.setProperty('--bg', S.background);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+stage.appendChild(renderer.domElement);
+const labelR = new CSS2DRenderer();
+labelR.setSize(innerWidth, innerHeight);
+Object.assign(labelR.domElement.style, { position: 'fixed', inset: '0', pointerEvents: 'none' });
+document.body.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(S.background || '#0f1115');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 2000);
+const camPos = S.camera || [6, 5, 8], target = S.target || [0, 0, 0];
+camera.position.set(...camPos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(...target); controls.enableDamping = true; controls.update();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 10, 7); scene.add(sun);
+if (S.grid !== false) { const g = new THREE.GridHelper(S.gridSize || 20, 20, 0x334055, 0x222a36); g.position.y = S.gridY ?? -0.001; scene.add(g); }
+
+const pickable = [], items = [];
+function material(o) {
+  return new THREE.MeshStandardMaterial({
+    color: o.color || '#8899aa', metalness: o.metalness ?? 0.1, roughness: o.roughness ?? 0.6,
+    transparent: (o.opacity ?? 1) < 1, opacity: o.opacity ?? 1, wireframe: !!o.wireframe,
+    side: (o.opacity ?? 1) < 1 ? THREE.DoubleSide : THREE.FrontSide, depthWrite: (o.opacity ?? 1) >= 1 });
+}
+function geometry(o) {
+  switch (o.type) {
+    case 'box': return new THREE.BoxGeometry(...(o.size || [1, 1, 1]));
+    case 'cylinder': return new THREE.CylinderGeometry(o.radiusTop ?? o.radius ?? 0.5, o.radiusBottom ?? o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'cone': return new THREE.ConeGeometry(o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'sphere': return new THREE.SphereGeometry(o.radius ?? 0.5, 48, 32);
+    case 'torus': return new THREE.TorusGeometry(o.radius ?? 1, o.tube ?? 0.2, 24, 96);
+    case 'plane': return new THREE.PlaneGeometry(...(o.size || [1, 1]));
+    case 'tube': return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(o.points.map(p => new THREE.Vector3(...p)), false, 'catmullrom', 0), 64 * o.points.length, o.radius ?? 0.05, 12, false);
+    case 'extrude': { const sh = new THREE.Shape(o.shape.map(p => new THREE.Vector2(...p))); return new THREE.ExtrudeGeometry(sh, { depth: o.depth ?? 1, bevelEnabled: false }); }
+  }
+  return null;
+}
+function addLabel(obj, o) {
+  if (!o.label) return;
+  const d = document.createElement('div'); d.className = 'lbl'; d.textContent = o.label;
+  const l = new CSS2DObject(d); l.position.set(...(o.labelOffset || [0, 0, 0])); obj.add(l);
+}
+function place(obj, o) {
+  obj.position.set(...(o.position || [0, 0, 0]));
+  if (o.rotation) obj.rotation.set(...o.rotation.map(deg));
+  if (o.scale) typeof o.scale === 'number' ? obj.scale.setScalar(o.scale) : obj.scale.set(...o.scale);
+  obj.userData = { o, home: obj.position.clone() };
+  addLabel(obj, o); scene.add(obj); items.push(obj);
+}
+const loader = new GLTFLoader();
+for (const o of S.objects || []) {
+  if (o.type === 'gltf') { loader.load(o.url, g => { place(g.scene, o); g.scene.traverse(m => { if (m.isMesh) { m.userData.root = g.scene; pickable.push(m); } }); applyStep(); }); continue; }
+  if (o.type === 'arrow') {
+    const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), len = dir.length();
+    const ar = new THREE.ArrowHelper(dir.normalize(), a, len, new THREE.Color(o.color || '#ffcc33'), Math.min(0.35, len * 0.3), Math.min(0.2, len * 0.18));
+    const g = new THREE.Group(); g.add(ar); place(g, { ...o, position: [0, 0, 0] }); g.userData.o = o; continue;
+  }
+  const geo = geometry(o); if (!geo) { console.warn('unknown type', o.type); continue; }
+  const m = new THREE.Mesh(geo, material(o)); place(m, o); m.userData.root = m; pickable.push(m);
+  if (o.edges !== false && (o.opacity ?? 1) >= 1) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .35 })); m.add(e); }
+}
+
+// Steps: objects with "step": n appear at step n (build-up walkthrough)
+const steps = S.steps || []; let cur = steps.length ? 0 : -1;
+const stepsBox = document.getElementById('steps'), stepTxt = document.getElementById('stepTxt');
+function applyStep() {
+  if (cur < 0) return;
+  for (const it of items) { const s = it.userData.o.step ?? 0; it.visible = s <= cur && (it.userData.o.stepEnd === undefined || cur <= it.userData.o.stepEnd); it.traverse(c => { if (c.isCSS2DObject) c.visible = it.visible; }); }
+  stepTxt.textContent = `${cur + 1}/${steps.length} · ${steps[cur]}`;
+}
+if (steps.length) { stepsBox.style.display = 'flex'; applyStep(); }
+document.getElementById('bPrev').onclick = () => { if (cur > 0) { cur--; applyStep(); } };
+document.getElementById('bNext').onclick = () => { if (cur < steps.length - 1) { cur++; applyStep(); } };
+
+// Click / tap an object for its info
+const info = document.getElementById('info'), ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  ptr.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickable.filter(m => m.userData.root?.visible !== false), false)[0];
+  const o = hit?.object.userData.root?.userData.o || hit?.object.userData.o;
+  if (o && (o.label || o.info)) { info.innerHTML = `<b>${o.label || ''}</b>${o.info || ''}`; info.style.display = 'block'; } else info.style.display = 'none';
+});
+
+let spin = !!S.autoRotate, labels = true, exploded = false;
+const tog = (id, v) => document.getElementById(id).classList.toggle('on', v);
+tog('bSpin', spin); controls.autoRotate = spin;
+document.getElementById('bSpin').onclick = () => { spin = !spin; controls.autoRotate = spin; tog('bSpin', spin); };
+document.getElementById('bLabels').onclick = () => { labels = !labels; labelR.domElement.style.display = labels ? '' : 'none'; tog('bLabels', labels); };
+document.getElementById('bReset').onclick = () => { camera.position.set(...camPos); controls.target.set(...target); controls.update(); };
+const bEx = document.getElementById('bExplode');
+if (!S.objects?.some(o => o.explode)) bEx.style.display = 'none';
+bEx.onclick = () => { exploded = !exploded; tog('bExplode', exploded); };
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta(), k = 1 - Math.pow(0.001, dt);
+  for (const it of items) {
+    const o = it.userData.o, home = it.userData.home;
+    if (o.explode && home) it.position.lerp(exploded ? home.clone().add(new THREE.Vector3(...o.explode)) : home, k);
+    if (o.spin) it.rotation.y += deg(o.spin) * dt;
+  }
+  controls.update(); renderer.render(scene, camera); labelR.render(scene, camera);
+});
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); labelR.setSize(innerWidth, innerHeight); });
+window.__ready = true;
+</script>
+</body>
+</html>

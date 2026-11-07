@@ -1,0 +1,546 @@
+{
+  "title": "Ch 2 · MOS device capacitances (Figs. 2.30, 2.31)",
+  "subtitle": "Press ▶ to add each capacitance · tap the gold plates · drag to turn",
+  "background": "#10131a",
+  "camera": [
+    0.5,
+    3.6,
+    11.5
+  ],
+  "target": [
+    0,
+    -0.5,
+    0
+  ],
+  "gridSize": 20,
+  "grid": false,
+  "steps": [
+    "An NMOS device that is on: inversion layer and depletion layer under the gate",
+    "C1: oxide capacitance between the gate and the channel, WLCox",
+    "C2: depletion capacitance between the channel and the substrate",
+    "C3 and C4: overlap capacitances between the gate and the source or drain, WCov each",
+    "C5 and C6: junction capacitances of the source and the drain (bottom plate and sidewall)",
+    "Terminal view: CGS, CGD, CGB, CSB and CDB come from these parts (Fig. 2.30)"
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        11,
+        2.4,
+        3.0
+      ],
+      "position": [
+        0,
+        -1.2,
+        0
+      ],
+      "color": "#7d5a9e",
+      "label": "p-substrate",
+      "labelOffset": [
+        -4.6,
+        -0.8,
+        1.6
+      ],
+      "info": "The bulk (B).",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.7,
+        3.04
+      ],
+      "position": [
+        -3.0,
+        -0.34,
+        0
+      ],
+      "color": "#2563eb",
+      "label": "n+ source",
+      "labelOffset": [
+        -0.4,
+        0.1,
+        1.7
+      ],
+      "info": "The source region.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.7,
+        3.04
+      ],
+      "position": [
+        3.0,
+        -0.34,
+        0
+      ],
+      "color": "#2563eb",
+      "label": "n+ drain",
+      "labelOffset": [
+        0.4,
+        0.1,
+        1.7
+      ],
+      "info": "The drain region.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        4.4,
+        0.08,
+        3.0
+      ],
+      "position": [
+        0,
+        0.05,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        4.2,
+        0.5,
+        3.0
+      ],
+      "position": [
+        0,
+        0.34,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "label": "gate",
+      "labelOffset": [
+        1.6,
+        0.55,
+        -1.2
+      ],
+      "info": "The gate extends a little over the source and the drain. This overlap gives C3 and C4.",
+      "step": 0,
+      "explode": [
+        0,
+        1.2,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        4.0,
+        0.07,
+        3.08
+      ],
+      "position": [
+        0,
+        -0.03,
+        0
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.9,
+      "edges": false,
+      "label": "inversion layer",
+      "labelOffset": [
+        -1.0,
+        -0.1,
+        1.95
+      ],
+      "info": "The channel of electrons. It connects the source and the drain.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        4.0,
+        0.55,
+        3.06
+      ],
+      "position": [
+        0,
+        -0.345,
+        0
+      ],
+      "color": "#fde68a",
+      "opacity": 0.6,
+      "edges": false,
+      "label": "depletion layer",
+      "labelOffset": [
+        1.5,
+        -0.62,
+        1.95
+      ],
+      "info": "The region of negative ions under the channel.",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        0,
+        0.14,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C1",
+      "labelOffset": [
+        0.55,
+        0.3,
+        0.1
+      ],
+      "info": "C1 = WLCox. It is the oxide capacitance between the gate and the channel (p. 30).",
+      "step": 1
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        0,
+        -0.020000000000000004,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 1
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        0,
+        -0.42,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C2",
+      "labelOffset": [
+        0.55,
+        0.0,
+        0.1
+      ],
+      "info": "C2 is the depletion capacitance between the channel and the substrate. C2 = WL√(qεsiNsub/(4ΦF)) (p. 30).",
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        0,
+        -0.58,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        -1.95,
+        0.14,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C3",
+      "labelOffset": [
+        -0.45,
+        0.3,
+        0.1
+      ],
+      "info": "C3 is the overlap capacitance between the gate and the source. Fringe fields make it larger than WLDCox. Its value per unit width is Cov, so C3 = WCov (p. 30).",
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        -1.95,
+        -0.020000000000000004,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        1.95,
+        0.14,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C4",
+      "labelOffset": [
+        0.45,
+        0.3,
+        0.1
+      ],
+      "info": "C4 is the overlap capacitance between the gate and the drain, WCov.",
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        1.95,
+        -0.020000000000000004,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        -3.0,
+        -0.8200000000000001,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C5",
+      "labelOffset": [
+        0,
+        -0.45,
+        0.1
+      ],
+      "info": "C5 is the junction capacitance between the source and the substrate. It has a bottom-plate part (Cj per unit area) and a sidewall part (Cjsw per unit length) (Fig. 2.31b).",
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        -3.0,
+        -0.98,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        3.0,
+        -0.8200000000000001,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "C6 (bottom, Cj)",
+      "labelOffset": [
+        0,
+        -0.45,
+        0.1
+      ],
+      "info": "C6 is the junction capacitance between the drain and the substrate. The bottom-plate part uses Cj, the capacitance per unit area.",
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.5,
+        0.05,
+        0.34
+      ],
+      "position": [
+        3.0,
+        -0.98,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.42,
+        0.34
+      ],
+      "position": [
+        4.07,
+        -0.34,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "label": "Cjsw (sidewall)",
+      "labelOffset": [
+        0.9,
+        0.3,
+        0.1
+      ],
+      "info": "The sidewall part uses Cjsw, the capacitance per unit length of the junction perimeter. Each junction capacitance decreases when its reverse voltage increases: Cj = Cj0/[1 + VR/ΦB]^m (p. 30).",
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.42,
+        0.34
+      ],
+      "position": [
+        4.23,
+        -0.34,
+        1.85
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.7,
+      "step": 4
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 1.0,
+      "position": [
+        -3.0,
+        0.51,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "S",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "CGS = (part of C1) + C3. In saturation, CGS = (2/3)WLCox + WCov. In deep triode, CGS = WLCox/2 + WCov (p. 32).",
+      "step": 5
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 1.0,
+      "position": [
+        3.0,
+        0.51,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "D",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "CGD = (part of C1) + C4. In saturation, CGD ≈ WCov. In deep triode, CGD = WLCox/2 + WCov. CDB = C6 (p. 32).",
+      "step": 5
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 0.6,
+      "position": [
+        0,
+        0.89,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "G",
+      "labelOffset": [
+        0,
+        0.6,
+        0
+      ],
+      "info": "When the device is off, CGB is C1 and C2 in series. When the device is on, the channel shields the gate from the bulk, so designers usually ignore CGB (p. 32).",
+      "step": 5,
+      "explode": [
+        0,
+        1.2,
+        0
+      ]
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.12,
+      "height": 1.0,
+      "position": [
+        -4.8,
+        0.51,
+        0
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "label": "B",
+      "labelOffset": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "The bulk terminal. CSB = C5 and CDB = C6. They depend on the source and drain voltages with respect to the bulk.",
+      "step": 5
+    }
+  ]
+}
