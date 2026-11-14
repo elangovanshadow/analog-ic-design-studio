@@ -1,0 +1,1733 @@
+{
+  "title": "Silicon crystal with a donor and an acceptor",
+  "subtitle": "Press ▶ to build it. Tap a part to read about it. Drag to turn the model.",
+  "background": "#10131a",
+  "camera": [
+    5.5,
+    6.5,
+    7.5
+  ],
+  "target": [
+    0,
+    0.5,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "Pure silicon: each atom shares electron pairs with four neighbours.",
+    "Heat breaks one bond. One free electron and one hole appear together.",
+    "A phosphorus donor takes the place of one silicon atom.",
+    "The fifth P electron becomes free. P stays as a fixed positive ion.",
+    "A boron acceptor takes the place of another silicon atom.",
+    "Boron takes an electron from a bond. A hole forms and B becomes a negative ion."
+  ],
+  "objects": [
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -3.2,
+        0.5,
+        -2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -3.2,
+        0.5,
+        -0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -3.2,
+        0.5,
+        0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -3.2,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0,
+      "label": "Si atom",
+      "labelOffset": [
+        0,
+        0.55,
+        0
+      ],
+      "info": "A silicon atom has four valence electrons. It shares one electron pair with each of its four neighbours."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -1.6,
+        0.5,
+        -2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -1.6,
+        0.5,
+        -0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -1.6,
+        0.5,
+        0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        -1.6,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        0.0,
+        0.5,
+        -2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        0.0,
+        0.5,
+        -0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        0.0,
+        0.5,
+        0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        0.0,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        1.6,
+        0.5,
+        -2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        1.6,
+        0.5,
+        -0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        1.6,
+        0.5,
+        0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        1.6,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        3.2,
+        0.5,
+        -2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        3.2,
+        0.5,
+        -0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        3.2,
+        0.5,
+        0.8
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.34,
+      "position": [
+        3.2,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#9aa3b2",
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -2.4000000000000004,
+        0.5,
+        -2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0,
+      "label": "covalent bond",
+      "labelOffset": [
+        0,
+        0.45,
+        -0.3
+      ],
+      "info": "Two atoms share two electrons in one bond. At 0 K, every bond is complete and no electron is free."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        -2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        -2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -3.2,
+        0.5,
+        -1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.3200000000000003,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.08,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -2.4000000000000004,
+        0.5,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        -0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        -0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -3.2,
+        0.5,
+        0.0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.3200000000000003,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.08,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -2.4000000000000004,
+        0.5,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -3.2,
+        0.5,
+        1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.3200000000000003,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -3.08,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -2.4000000000000004,
+        0.5,
+        2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -2.4000000000000004,
+        0.62,
+        2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -0.8,
+        0.5,
+        -2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        -2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        -2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -1.6,
+        0.5,
+        -1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.7200000000000002,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.48,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -0.8,
+        0.5,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        -0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        -0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -1.6,
+        0.5,
+        0.0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.7200000000000002,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.48,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -0.8,
+        0.5,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -1.6,
+        0.5,
+        1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.7200000000000002,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -1.48,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        -0.8,
+        0.5,
+        2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.8,
+        0.62,
+        2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.8,
+        0.5,
+        -2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        -2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        -2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.0,
+        0.5,
+        -1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.12,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.12,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.8,
+        0.5,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        -0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        -0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.0,
+        0.5,
+        0.0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.12,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.12,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.8,
+        0.5,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.0,
+        0.5,
+        1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        -0.12,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.12,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        0.8,
+        0.5,
+        2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        0.8,
+        0.62,
+        2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        2.4000000000000004,
+        0.5,
+        -2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        -2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        -2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        1.6,
+        0.5,
+        -1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.48,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.7200000000000002,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        2.4000000000000004,
+        0.5,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        -0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        -0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        1.6,
+        0.5,
+        0.0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.48,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.7200000000000002,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        2.4000000000000004,
+        0.5,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        0.68
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        0.92
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        1.6,
+        0.5,
+        1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.48,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        1.7200000000000002,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        2.4000000000000004,
+        0.5,
+        2.4000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        2.2800000000000002
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        2.5200000000000005
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        3.2,
+        0.5,
+        -1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.08,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.3200000000000003,
+        0.62,
+        -1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        3.2,
+        0.5,
+        0.0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.08,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.3200000000000003,
+        0.62,
+        0.0
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.05,
+      "height": 0.92,
+      "position": [
+        3.2,
+        0.5,
+        1.6
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#cbd5e1",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.08,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "sphere",
+      "radius": 0.07,
+      "position": [
+        3.3200000000000003,
+        0.62,
+        1.6
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 0
+    },
+    {
+      "type": "torus",
+      "radius": 0.16,
+      "tube": 0.05,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        -2.4000000000000004
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#f8fafc",
+      "label": "hole (from heat)",
+      "labelOffset": [
+        0.2,
+        0.35,
+        -0.5
+      ],
+      "step": 1,
+      "info": "Heat breaks a bond. The empty place in the bond is a hole. A hole acts like a positive charge that can move."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.13,
+      "position": [
+        2.7,
+        1.6,
+        -2.8000000000000003
+      ],
+      "color": "#2563eb",
+      "label": "free electron (from heat)",
+      "labelOffset": [
+        0.4,
+        0.35,
+        0
+      ],
+      "step": 1,
+      "info": "The electron from the broken bond is free. It moves through the crystal and carries current. Heat makes electron and hole in pairs."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        2.4000000000000004,
+        0.75,
+        -2.4000000000000004
+      ],
+      "to": [
+        2.6500000000000004,
+        1.45,
+        -2.7500000000000004
+      ],
+      "color": "#93c5fd",
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.4,
+      "position": [
+        -1.6,
+        0.5,
+        0.8
+      ],
+      "color": "#f97316",
+      "label": "P donor (+ ion)",
+      "labelOffset": [
+        -0.9,
+        0.45,
+        0.7
+      ],
+      "step": 2,
+      "info": "Phosphorus has five valence electrons. Four of them make bonds with silicon. The atom stays in place as a fixed positive ion."
+    },
+    {
+      "type": "torus",
+      "radius": 0.52,
+      "tube": 0.04,
+      "position": [
+        -1.6,
+        0.5,
+        0.8
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#fdba74",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.13,
+      "position": [
+        -0.6000000000000001,
+        1.5,
+        0.20000000000000007
+      ],
+      "color": "#2563eb",
+      "label": "donor electron",
+      "labelOffset": [
+        0.5,
+        0.35,
+        0
+      ],
+      "step": 3,
+      "info": "The fifth electron has no bond. At room temperature, it becomes free. No hole forms, so n-type silicon has many more electrons than holes."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.4,
+      "position": [
+        1.6,
+        0.5,
+        2.4000000000000004
+      ],
+      "color": "#22c55e",
+      "label": "B acceptor (− ion)",
+      "labelOffset": [
+        0,
+        0.65,
+        0.3
+      ],
+      "step": 4,
+      "info": "Boron has three valence electrons. It completes three bonds. After it takes a fourth electron, it is a fixed negative ion."
+    },
+    {
+      "type": "torus",
+      "radius": 0.16,
+      "tube": 0.05,
+      "position": [
+        2.4000000000000004,
+        0.62,
+        2.4000000000000004
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#f8fafc",
+      "label": "hole (from acceptor)",
+      "labelOffset": [
+        0.5,
+        0.35,
+        0.4
+      ],
+      "step": 5,
+      "info": "Boron pulls an electron from a nearby bond. The empty place is a hole. It moves when neighbour electrons hop into it."
+    },
+    {
+      "type": "torus",
+      "radius": 0.52,
+      "tube": 0.04,
+      "position": [
+        1.6,
+        0.5,
+        2.4000000000000004
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "color": "#86efac",
+      "edges": false,
+      "step": 5
+    }
+  ]
+}
