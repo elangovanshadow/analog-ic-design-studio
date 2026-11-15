@@ -1,0 +1,657 @@
+{
+  "title": "MOSFET leakage paths — ON, OFF and analog cases",
+  "subtitle": "Press ▶ for each case. Tap an arrow for its current. Drag to orbit.",
+  "background": "#10131a",
+  "camera": [
+    0,
+    1.8,
+    15.5
+  ],
+  "target": [
+    0,
+    -0.3,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "Three identical NMOS devices: one for each operation case.",
+    "Case (a), digital ON: gate at VDD. The channel current flows, and the gate oxide leaks by tunnelling.",
+    "Case (b), digital OFF: gate at 0 V, drain at VDD. Subthreshold, punchthrough, junction, GIDL and drain-gate currents flow.",
+    "Case (c), analog: strong inversion and saturation. Hot-carrier currents add to the junction and GIDL currents."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        4.2,
+        1.7,
+        1.8
+      ],
+      "position": [
+        -5.4,
+        -0.85,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.45,
+      "step": 0,
+      "label": "p body",
+      "labelOffset": [
+        -1.6,
+        -0.7,
+        0.95
+      ],
+      "info": "The p-type body (substrate). Junction, GIDL and hot-carrier currents flow into it."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        -6.9,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "S",
+      "labelOffset": [
+        -0.2,
+        0.35,
+        0.95
+      ],
+      "info": "The n+ source."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        -3.9000000000000004,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "D",
+      "labelOffset": [
+        0.2,
+        0.35,
+        0.95
+      ],
+      "info": "The n+ drain. It is at a high voltage in cases (b) and (c)."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        0.08,
+        1.8
+      ],
+      "position": [
+        -5.4,
+        0.04,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.45,
+        1.8
+      ],
+      "position": [
+        -5.4,
+        0.305,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0,
+      "label": "G",
+      "labelOffset": [
+        0,
+        0.45,
+        0
+      ],
+      "info": "The gate over a thin oxide. Thin oxides let electrons tunnel through."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        -5.4,
+        1.45,
+        0
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 0,
+      "label": "Case (a): digital ON",
+      "labelOffset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        4.2,
+        1.7,
+        1.8
+      ],
+      "position": [
+        0.0,
+        -0.85,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.45,
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        -1.5,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        1.5,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        0.08,
+        1.8
+      ],
+      "position": [
+        0.0,
+        0.04,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.45,
+        1.8
+      ],
+      "position": [
+        0.0,
+        0.305,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        0.0,
+        1.45,
+        0
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 0,
+      "label": "Case (b): digital OFF",
+      "labelOffset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        4.2,
+        1.7,
+        1.8
+      ],
+      "position": [
+        5.4,
+        -0.85,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.45,
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        3.9000000000000004,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        1.2,
+        0.5,
+        1.82
+      ],
+      "position": [
+        6.9,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        0.08,
+        1.8
+      ],
+      "position": [
+        5.4,
+        0.04,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.0,
+        0.45,
+        1.8
+      ],
+      "position": [
+        5.4,
+        0.305,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        5.4,
+        1.45,
+        0
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 0,
+      "label": "Case (c): analog",
+      "labelOffset": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -4.4,
+        -0.12,
+        0.98
+      ],
+      "to": [
+        -6.4,
+        -0.12,
+        0.98
+      ],
+      "color": "#22c55e",
+      "step": 1,
+      "label": "IDS",
+      "labelOffset": [
+        -5.4,
+        -0.38,
+        0.98
+      ],
+      "info": "The main channel current in strong inversion. It flows from drain to source."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -5.4,
+        0.95,
+        0.98
+      ],
+      "to": [
+        -5.4,
+        0.12,
+        0.98
+      ],
+      "color": "#f43f5e",
+      "step": 1,
+      "label": "IGC,tun",
+      "labelOffset": [
+        -4.95,
+        1.05,
+        0.98
+      ],
+      "info": "Gate-to-channel tunnelling current. A high oxide field and a thin oxide let carriers tunnel straight through."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -6.15,
+        0.95,
+        0.98
+      ],
+      "to": [
+        -6.45,
+        0.05,
+        0.98
+      ],
+      "color": "#fb923c",
+      "step": 1,
+      "label": "IGS,tun",
+      "labelOffset": [
+        -6.75,
+        1.05,
+        0.98
+      ],
+      "info": "Tunnelling current through the gate–source overlap region."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -4.65,
+        0.95,
+        0.98
+      ],
+      "to": [
+        -4.3500000000000005,
+        0.05,
+        0.98
+      ],
+      "color": "#fb923c",
+      "step": 1,
+      "label": "IGD,tun",
+      "labelOffset": [
+        -3.8500000000000005,
+        1.05,
+        0.98
+      ],
+      "info": "Tunnelling current through the gate–drain overlap region."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.0,
+        -0.15,
+        0.98
+      ],
+      "to": [
+        -1.0,
+        -0.15,
+        0.98
+      ],
+      "color": "#22c55e",
+      "step": 2,
+      "label": "Iweak",
+      "labelOffset": [
+        0.0,
+        0.13,
+        1.03
+      ],
+      "info": "Subthreshold (weak-inversion) current. It is frequently the largest off-state leakage, and DIBL makes it larger."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.95,
+        -0.75,
+        0.98
+      ],
+      "to": [
+        -0.95,
+        -0.75,
+        0.98
+      ],
+      "color": "#a3e635",
+      "step": 2,
+      "label": "Ip",
+      "labelOffset": [
+        0.0,
+        -0.98,
+        0.98
+      ],
+      "info": "Punchthrough current. It flows below the surface when the source and drain depletion regions merge."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.5,
+        -0.55,
+        0.98
+      ],
+      "to": [
+        1.5,
+        -1.45,
+        0.98
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "label": "IJ",
+      "labelOffset": [
+        1.85,
+        -1.1,
+        0.98
+      ],
+      "info": "Reverse-bias junction leakage from drain to body. High doping makes the depletion region narrow, so band-to-band tunnelling adds to it."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.92,
+        -0.05,
+        0.98
+      ],
+      "to": [
+        0.6,
+        -1.3,
+        0.98
+      ],
+      "color": "#e879f9",
+      "step": 2,
+      "label": "IGIDL",
+      "labelOffset": [
+        0.35,
+        -1.5,
+        0.98
+      ],
+      "info": "Gate-induced drain leakage. Under the gate-drain overlap, a high field causes band-to-band tunnelling. Electrons go to the drain and holes go to the body."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.15,
+        0.0,
+        0.98
+      ],
+      "to": [
+        0.85,
+        0.85,
+        0.98
+      ],
+      "color": "#fb923c",
+      "step": 2,
+      "label": "IDG,tun",
+      "labelOffset": [
+        1.45,
+        0.95,
+        0.98
+      ],
+      "info": "Drain-to-gate tunnelling current through the overlap region, with the gate at 0 V and the drain at VDD."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        6.4,
+        -0.12,
+        0.98
+      ],
+      "to": [
+        4.4,
+        -0.12,
+        0.98
+      ],
+      "color": "#22c55e",
+      "step": 3,
+      "label": "IDS",
+      "labelOffset": [
+        5.0,
+        -0.38,
+        0.98
+      ],
+      "info": "The channel current in strong inversion and saturation."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        6.9,
+        -0.55,
+        0.98
+      ],
+      "to": [
+        6.9,
+        -1.45,
+        0.98
+      ],
+      "color": "#38bdf8",
+      "step": 3,
+      "label": "IJ",
+      "labelOffset": [
+        7.25,
+        -1.1,
+        0.98
+      ],
+      "info": "Junction leakage, as in the off case, with a different size."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        6.32,
+        -0.05,
+        0.98
+      ],
+      "to": [
+        6.25,
+        -1.3,
+        0.98
+      ],
+      "color": "#e879f9",
+      "step": 3,
+      "label": "IGIDL",
+      "labelOffset": [
+        6.1000000000000005,
+        -1.5,
+        0.98
+      ],
+      "info": "GIDL, as in the off case. In the analog case it is usually much smaller."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        6.15,
+        -0.2,
+        0.98
+      ],
+      "to": [
+        5.65,
+        -1.3,
+        0.98
+      ],
+      "color": "#facc15",
+      "step": 3,
+      "label": "IDB,hot",
+      "labelOffset": [
+        5.1000000000000005,
+        -1.05,
+        0.98
+      ],
+      "info": "Hot-carrier drain-to-body current. Impact ionization near the drain makes holes that flow to the body. It dominates at high VD."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        6.050000000000001,
+        0.0,
+        0.98
+      ],
+      "to": [
+        5.8500000000000005,
+        0.85,
+        0.98
+      ],
+      "color": "#f97316",
+      "step": 3,
+      "label": "IDG,hot",
+      "labelOffset": [
+        6.6000000000000005,
+        0.95,
+        0.98
+      ],
+      "info": "Hot-carrier current from drain to gate. A few hot electrons jump over the oxide barrier."
+    }
+  ]
+}
