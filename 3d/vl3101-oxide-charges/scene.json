@@ -1,0 +1,1872 @@
+{
+  "title": "Oxide charges in a MOS structure",
+  "subtitle": "Press ▶ to add each kind of charge. Tap a part to read about it. Drag to turn the model.",
+  "background": "#10131a",
+  "camera": [
+    6.5,
+    4.8,
+    7.5
+  ],
+  "target": [
+    0,
+    2.0,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "A metal gate, a thick SiO₂ layer, a thin SiOₓ layer and silicon.",
+    "Fixed oxide charge Qf: positive, within 1 nm of the interface.",
+    "Interface trapped charge Qit: states at the Si–SiO₂ interface.",
+    "Oxide trapped charge Qot: holes or electrons in traps in the oxide.",
+    "Mobile ionic charge Qm: Na⁺ and K⁺ ions in the oxide.",
+    "A positive gate voltage pushes the ions to the interface, so V_FB shifts."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        5.0,
+        1.2,
+        3.0
+      ],
+      "position": [
+        0,
+        0.6,
+        0
+      ],
+      "color": "#a855f7",
+      "opacity": 0.35,
+      "label": "silicon",
+      "labelOffset": [
+        -2.0,
+        -0.8,
+        1.6
+      ],
+      "step": 0,
+      "info": "The silicon body under the oxide."
+    },
+    {
+      "type": "box",
+      "size": [
+        5.0,
+        0.18,
+        3.0
+      ],
+      "position": [
+        0,
+        1.29,
+        0
+      ],
+      "color": "#fcd34d",
+      "opacity": 0.35,
+      "edges": false,
+      "label": "SiOₓ transition layer",
+      "labelOffset": [
+        3.4,
+        0,
+        0
+      ],
+      "step": 0,
+      "info": "A thin layer (about 1 nm) of SiOₓ between the silicon and the SiO₂. Its bonds are not complete."
+    },
+    {
+      "type": "box",
+      "size": [
+        5.0,
+        2.0,
+        3.0
+      ],
+      "position": [
+        0,
+        2.39,
+        0
+      ],
+      "color": "#e5e7eb",
+      "opacity": 0.18,
+      "edges": false,
+      "label": "SiO₂",
+      "labelOffset": [
+        3.0,
+        0.5,
+        0
+      ],
+      "step": 0,
+      "info": "The gate oxide. This model shows it very thick, so you can see the charges inside it."
+    },
+    {
+      "type": "box",
+      "size": [
+        5.0,
+        0.3,
+        3.0
+      ],
+      "position": [
+        0,
+        3.55,
+        0
+      ],
+      "color": "#d4a017",
+      "metalness": 0.6,
+      "label": "metal gate",
+      "labelOffset": [
+        -2.0,
+        0.4,
+        1.6
+      ],
+      "step": 0,
+      "info": "The gate electrode on top of the oxide."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -2.0,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1,
+      "label": "Qf (fixed, +)",
+      "labelOffset": [
+        -1.2,
+        0.0,
+        2.3
+      ],
+      "info": "Fixed oxide charge. It is always positive and sits within 1 nm of the interface. It comes from incomplete Si–Si bonds. Annealing in argon above 900 °C decreases it."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -2.0,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -2.0,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.5,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.5,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.5,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.0,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.0,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -1.0,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -0.5,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -0.5,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        -0.5,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.0,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.0,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.0,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.5,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.5,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        0.5,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.0,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.0,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.0,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.5,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.5,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        1.5,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        2.0,
+        1.29,
+        -0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        2.0,
+        1.29,
+        0.0
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "sphere",
+      "radius": 0.08,
+      "position": [
+        2.0,
+        1.29,
+        0.8
+      ],
+      "color": "#f97316",
+      "edges": false,
+      "step": 1
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2,
+      "label": "Qit (interface traps)",
+      "labelOffset": [
+        1.2,
+        -0.55,
+        2.2
+      ],
+      "info": "Interface trapped charge. Its states lie in the silicon bandgap and capture or emit carriers. Its charge changes with the surface potential."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -1.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -0.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        0.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        1.75,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        -0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        0.0
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "box",
+      "size": [
+        0.28,
+        0.07,
+        0.07
+      ],
+      "position": [
+        2.25,
+        1.215,
+        0.8
+      ],
+      "rotation": [
+        0,
+        0,
+        -45
+      ],
+      "color": "#ef4444",
+      "edges": false,
+      "step": 2
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        0.367,
+        2.785,
+        -0.19
+      ],
+      "color": "#fb7185",
+      "edges": false,
+      "step": 3,
+      "label": "Qot (trapped + / −)",
+      "labelOffset": [
+        0.3,
+        0.3,
+        0
+      ],
+      "info": "Oxide trapped charge. Traps in the oxide are neutral until radiation puts holes (+) or electrons (−) into them."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        1.838,
+        2.302,
+        0.076
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        0.103,
+        1.722,
+        -0.144
+      ],
+      "color": "#fb7185",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        -1.394,
+        1.705,
+        0.718
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        -1.442,
+        2.268,
+        0.54
+      ],
+      "color": "#fb7185",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        0.248,
+        2.091,
+        0.044
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        0.244,
+        2.641,
+        -0.945
+      ],
+      "color": "#fb7185",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        0.265,
+        1.998,
+        -0.535
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        1.198,
+        2.309,
+        0.148
+      ],
+      "color": "#fb7185",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.09,
+      "position": [
+        1.144,
+        2.795,
+        -0.136
+      ],
+      "color": "#60a5fa",
+      "edges": false,
+      "step": 3
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        -1.6,
+        3.15,
+        -0.6
+      ],
+      "color": "#facc15",
+      "step": 4,
+      "label": "Qm (Na⁺, K⁺)",
+      "labelOffset": [
+        -0.3,
+        0.35,
+        0
+      ],
+      "info": "Mobile ionic charge from sodium or potassium. The ions move slowly. Their motion depends on the field and the temperature."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -1.6,
+        2.9499999999999997,
+        -0.6
+      ],
+      "to": [
+        -1.6,
+        1.55,
+        -0.6
+      ],
+      "color": "#facc15",
+      "step": 5
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        -1.6,
+        1.5,
+        -0.6
+      ],
+      "color": "#facc15",
+      "opacity": 0.45,
+      "edges": false,
+      "step": 5
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        0.4,
+        3.2,
+        0.7
+      ],
+      "color": "#facc15",
+      "step": 4
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.4,
+        3.0,
+        0.7
+      ],
+      "to": [
+        0.4,
+        1.55,
+        0.7
+      ],
+      "color": "#facc15",
+      "step": 5
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        0.4,
+        1.5,
+        0.7
+      ],
+      "color": "#facc15",
+      "opacity": 0.45,
+      "edges": false,
+      "step": 5
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        1.7,
+        3.15,
+        -0.3
+      ],
+      "color": "#facc15",
+      "step": 4
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.7,
+        2.9499999999999997,
+        -0.3
+      ],
+      "to": [
+        1.7,
+        1.55,
+        -0.3
+      ],
+      "color": "#facc15",
+      "step": 5
+    },
+    {
+      "type": "sphere",
+      "radius": 0.15,
+      "position": [
+        1.7,
+        1.5,
+        -0.3
+      ],
+      "color": "#facc15",
+      "opacity": 0.45,
+      "edges": false,
+      "step": 5,
+      "label": "ions near interface",
+      "labelOffset": [
+        0.4,
+        -0.3,
+        0
+      ],
+      "info": "A positive gate voltage pushes the ions to the Si–SiO₂ interface. Charge near the silicon shifts V_FB more, so V_FB becomes more negative."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        3.2,
+        3.55,
+        0
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 5,
+      "label": "+V on gate",
+      "labelOffset": [
+        0.3,
+        0,
+        0
+      ]
+    }
+  ]
+}
