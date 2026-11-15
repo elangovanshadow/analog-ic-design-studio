@@ -1,0 +1,843 @@
+{
+  "title": "RF small-signal model mapped onto the MOSFET",
+  "subtitle": "Press ▶ to add each group of elements. Tap an element. Drag to orbit.",
+  "background": "#10131a",
+  "camera": [
+    0.5,
+    2.0,
+    9.0
+  ],
+  "target": [
+    0,
+    -0.4,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "The MOSFET with terminals G, S, D and B.",
+    "Series resistances RG, RS and RD from the poly and the diffusions.",
+    "Gate capacitances CGS, CGD and CGB.",
+    "Junction capacitances and the substrate resistance network.",
+    "The intrinsic channel: Gm and RDS. This is the full slide 12 model."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        7.0,
+        2.2,
+        3.0
+      ],
+      "position": [
+        0,
+        -1.1,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.35,
+      "step": 0,
+      "label": "p body (B)",
+      "labelOffset": [
+        -3.0,
+        -0.9,
+        1.5499999999999998
+      ],
+      "info": "The body terminal B. At RF it is not an ideal ground: the substrate has resistance."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.5,
+        2.4
+      ],
+      "position": [
+        -2.0,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "S",
+      "labelOffset": [
+        -0.5,
+        0.35,
+        1.3
+      ],
+      "info": "The n+ source. Its internal node Si is inside the device; the terminal S is outside RS."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.6,
+        0.5,
+        2.4
+      ],
+      "position": [
+        2.0,
+        -0.245,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "D",
+      "labelOffset": [
+        0.5,
+        0.35,
+        1.3
+      ],
+      "info": "The n+ drain. Its internal node Di is inside RD."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.6,
+        0.06,
+        2.4
+      ],
+      "position": [
+        0,
+        0.03,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        0.4,
+        2.4
+      ],
+      "position": [
+        0,
+        0.26,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0,
+      "label": "G",
+      "labelOffset": [
+        0,
+        0.35,
+        -1.2
+      ],
+      "info": "The polysilicon gate. Its internal node Gi is under RG."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          0.0,
+          0.5,
+          1.35
+        ],
+        [
+          0.13,
+          0.6,
+          1.35
+        ],
+        [
+          -0.13,
+          0.7,
+          1.35
+        ],
+        [
+          0.13,
+          0.8,
+          1.35
+        ],
+        [
+          -0.13,
+          0.9,
+          1.35
+        ],
+        [
+          0.13,
+          1.0,
+          1.35
+        ],
+        [
+          -0.13,
+          1.1,
+          1.35
+        ],
+        [
+          0.13,
+          1.2,
+          1.35
+        ],
+        [
+          -0.13,
+          1.3,
+          1.35
+        ],
+        [
+          0.13,
+          1.4,
+          1.35
+        ],
+        [
+          -0.13,
+          1.5,
+          1.35
+        ],
+        [
+          0.13,
+          1.6,
+          1.35
+        ],
+        [
+          -0.13,
+          1.7,
+          1.35
+        ],
+        [
+          0.13,
+          1.8,
+          1.35
+        ],
+        [
+          0.0,
+          1.9,
+          1.35
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#f59e0b",
+      "step": 1,
+      "edges": false,
+      "label": "RG",
+      "labelOffset": [
+        0.45,
+        1.3,
+        1.3499999999999999
+      ],
+      "info": "Gate resistance of the polysilicon. At RF it adds noise and a real part to Y11. Extract it from Re{Y12}/(Im{Y11} Im{Y12})."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -3.6,
+          0.15,
+          1.55
+        ],
+        [
+          -3.5,
+          0.27,
+          1.55
+        ],
+        [
+          -3.4,
+          0.03,
+          1.55
+        ],
+        [
+          -3.3,
+          0.27,
+          1.55
+        ],
+        [
+          -3.2,
+          0.03,
+          1.55
+        ],
+        [
+          -3.1,
+          0.27,
+          1.55
+        ],
+        [
+          -3.0,
+          0.03,
+          1.55
+        ],
+        [
+          -2.9,
+          0.27,
+          1.55
+        ],
+        [
+          -2.8,
+          0.03,
+          1.55
+        ],
+        [
+          -2.7,
+          0.27,
+          1.55
+        ],
+        [
+          -2.6,
+          0.03,
+          1.55
+        ],
+        [
+          -2.5,
+          0.27,
+          1.55
+        ],
+        [
+          -2.4,
+          0.15,
+          1.55
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#f59e0b",
+      "step": 1,
+      "edges": false,
+      "label": "RS",
+      "labelOffset": [
+        -3.0,
+        0.55,
+        1.5499999999999998
+      ],
+      "info": "Source resistance from the diffusion and contacts. It appears in Re{Y11} through C_GS² R_S."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          2.4,
+          0.15,
+          1.55
+        ],
+        [
+          2.5,
+          0.27,
+          1.55
+        ],
+        [
+          2.6,
+          0.03,
+          1.55
+        ],
+        [
+          2.7,
+          0.27,
+          1.55
+        ],
+        [
+          2.8,
+          0.03,
+          1.55
+        ],
+        [
+          2.9,
+          0.27,
+          1.55
+        ],
+        [
+          3.0,
+          0.03,
+          1.55
+        ],
+        [
+          3.1,
+          0.27,
+          1.55
+        ],
+        [
+          3.2,
+          0.03,
+          1.55
+        ],
+        [
+          3.3,
+          0.27,
+          1.55
+        ],
+        [
+          3.4,
+          0.03,
+          1.55
+        ],
+        [
+          3.5,
+          0.27,
+          1.55
+        ],
+        [
+          3.6,
+          0.15,
+          1.55
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#f59e0b",
+      "step": 1,
+      "edges": false,
+      "label": "RD",
+      "labelOffset": [
+        3.0,
+        0.55,
+        1.5499999999999998
+      ],
+      "info": "Drain resistance. Slide 12 assumes that RS and RD are small against the junction-capacitance impedances."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.45,
+        0.05
+      ],
+      "position": [
+        -1.24,
+        0.2,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false,
+      "label": "CGS",
+      "labelOffset": [
+        -0.15,
+        0.55,
+        0
+      ],
+      "info": "Gate–source capacitance. With CGD and CGB it makes CGG = Im{Y11}/ω."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.45,
+        0.05
+      ],
+      "position": [
+        -1.0599999999999998,
+        0.2,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.45,
+        0.05
+      ],
+      "position": [
+        1.0599999999999998,
+        0.2,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false,
+      "label": "CGD",
+      "labelOffset": [
+        0.15,
+        0.55,
+        0
+      ],
+      "info": "Gate–drain capacitance, from Im{Y12}/ω. At VDS = 0 it equals CGS."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.05,
+        0.45,
+        0.05
+      ],
+      "position": [
+        1.24,
+        0.2,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        0.0,
+        -0.54,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false,
+      "label": "CGB",
+      "labelOffset": [
+        0.55,
+        0,
+        0
+      ],
+      "info": "Gate–body capacitance: CGB = CGG − CGS − CGD."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        0.0,
+        -0.36,
+        1.5499999999999998
+      ],
+      "color": "#38bdf8",
+      "step": 2,
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        -2.0,
+        -0.84,
+        1.5499999999999998
+      ],
+      "color": "#a3e635",
+      "step": 3,
+      "edges": false,
+      "label": "CBS",
+      "labelOffset": [
+        -0.6,
+        0,
+        0
+      ],
+      "info": "Source–body junction capacitance."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        -2.0,
+        -0.66,
+        1.5499999999999998
+      ],
+      "color": "#a3e635",
+      "step": 3,
+      "edges": false
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        2.0,
+        -0.84,
+        1.5499999999999998
+      ],
+      "color": "#a3e635",
+      "step": 3,
+      "edges": false,
+      "label": "CBD",
+      "labelOffset": [
+        0.6,
+        0,
+        0
+      ],
+      "info": "Drain–body junction capacitance."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.45,
+        0.05,
+        0.05
+      ],
+      "position": [
+        2.0,
+        -0.66,
+        1.5499999999999998
+      ],
+      "color": "#a3e635",
+      "step": 3,
+      "edges": false
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.0,
+          -1.1,
+          1.55
+        ],
+        [
+          -1.89,
+          -1.195,
+          1.55
+        ],
+        [
+          -2.11,
+          -1.29,
+          1.55
+        ],
+        [
+          -1.89,
+          -1.385,
+          1.55
+        ],
+        [
+          -2.11,
+          -1.48,
+          1.55
+        ],
+        [
+          -1.89,
+          -1.575,
+          1.55
+        ],
+        [
+          -2.11,
+          -1.67,
+          1.55
+        ],
+        [
+          -1.89,
+          -1.765,
+          1.55
+        ],
+        [
+          -2.11,
+          -1.86,
+          1.55
+        ],
+        [
+          -1.89,
+          -1.955,
+          1.55
+        ],
+        [
+          -2.0,
+          -2.05,
+          1.55
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#e879f9",
+      "step": 3,
+      "edges": false,
+      "label": "RBS",
+      "labelOffset": [
+        -2.55,
+        -1.6,
+        1.5499999999999998
+      ],
+      "info": "Substrate resistance under the source. With RBD and RDSB it forms the substrate network."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          2.0,
+          -1.1,
+          1.55
+        ],
+        [
+          2.11,
+          -1.195,
+          1.55
+        ],
+        [
+          1.89,
+          -1.29,
+          1.55
+        ],
+        [
+          2.11,
+          -1.385,
+          1.55
+        ],
+        [
+          1.89,
+          -1.48,
+          1.55
+        ],
+        [
+          2.11,
+          -1.575,
+          1.55
+        ],
+        [
+          1.89,
+          -1.67,
+          1.55
+        ],
+        [
+          2.11,
+          -1.765,
+          1.55
+        ],
+        [
+          1.89,
+          -1.86,
+          1.55
+        ],
+        [
+          2.11,
+          -1.955,
+          1.55
+        ],
+        [
+          2.0,
+          -2.05,
+          1.55
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#e879f9",
+      "step": 3,
+      "edges": false,
+      "label": "RBD",
+      "labelOffset": [
+        2.55,
+        -1.6,
+        1.5499999999999998
+      ],
+      "info": "Substrate resistance under the drain."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.5,
+          -1.25,
+          1.55
+        ],
+        [
+          -1.312,
+          -1.14,
+          1.55
+        ],
+        [
+          -1.125,
+          -1.36,
+          1.55
+        ],
+        [
+          -0.938,
+          -1.14,
+          1.55
+        ],
+        [
+          -0.75,
+          -1.36,
+          1.55
+        ],
+        [
+          -0.562,
+          -1.14,
+          1.55
+        ],
+        [
+          -0.375,
+          -1.36,
+          1.55
+        ],
+        [
+          -0.188,
+          -1.14,
+          1.55
+        ],
+        [
+          0.0,
+          -1.36,
+          1.55
+        ],
+        [
+          0.188,
+          -1.14,
+          1.55
+        ],
+        [
+          0.375,
+          -1.36,
+          1.55
+        ],
+        [
+          0.562,
+          -1.14,
+          1.55
+        ],
+        [
+          0.75,
+          -1.36,
+          1.55
+        ],
+        [
+          0.938,
+          -1.14,
+          1.55
+        ],
+        [
+          1.125,
+          -1.36,
+          1.55
+        ],
+        [
+          1.312,
+          -1.14,
+          1.55
+        ],
+        [
+          1.5,
+          -1.25,
+          1.55
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#e879f9",
+      "step": 3,
+      "edges": false,
+      "label": "RDSB",
+      "labelOffset": [
+        0,
+        -1.65,
+        1.5499999999999998
+      ],
+      "info": "Substrate resistance between the source and drain regions."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.9,
+        -0.12,
+        1.5499999999999998
+      ],
+      "to": [
+        -0.9,
+        -0.12,
+        1.5499999999999998
+      ],
+      "color": "#22c55e",
+      "step": 4,
+      "label": "Gm·vgs (RDS)",
+      "labelOffset": [
+        0,
+        -0.2,
+        1.5999999999999999
+      ],
+      "info": "The intrinsic channel: transconductance Gm and channel resistance RDS between the internal nodes. Re{Y21} gives Gm."
+    }
+  ]
+}

@@ -1,0 +1,527 @@
+{
+  "title": "BSIM4 source/drain resistance — the parts in series",
+  "subtitle": "Press ▶ to add each resistance. Tap a part. Drag to orbit.",
+  "background": "#10131a",
+  "camera": [
+    -1.0,
+    2.4,
+    8.2
+  ],
+  "target": [
+    -1.2,
+    0.0,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "Half of a MOSFET: metal 1, contact plug, salicide, n+ diffusion, LDD and gate.",
+    "Via resistance in the contact plug.",
+    "Contact resistance at the silicide interface.",
+    "Sheet resistance of the salicide and the diffusion.",
+    "LDD resistance under the spacer.",
+    "All parts in series give the source resistance RS."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        8.0,
+        1.8,
+        2.2
+      ],
+      "position": [
+        0,
+        -0.9,
+        0
+      ],
+      "color": "#7c3aed",
+      "opacity": 0.4,
+      "step": 0,
+      "label": "p body",
+      "labelOffset": [
+        -3.4,
+        -0.75,
+        1.15
+      ],
+      "info": "The p-type body."
+    },
+    {
+      "type": "box",
+      "size": [
+        3.0,
+        0.55,
+        2.0
+      ],
+      "position": [
+        -2.3,
+        -0.27,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 0,
+      "label": "n+ source/drain diffusion",
+      "labelOffset": [
+        -0.9,
+        -0.62,
+        1.1
+      ],
+      "info": "The heavily doped source region. Current spreads through it from the contact to the channel."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.22,
+        2.0
+      ],
+      "position": [
+        -0.4,
+        -0.105,
+        0
+      ],
+      "color": "#93c5fd",
+      "step": 0,
+      "label": "LDD (n−)",
+      "labelOffset": [
+        -0.4,
+        -0.45,
+        1.1
+      ],
+      "info": "The lightly doped drain extension under the spacer. Its sheet resistance is high."
+    },
+    {
+      "type": "box",
+      "size": [
+        3.0,
+        0.05,
+        1.95
+      ],
+      "position": [
+        -2.3,
+        0.025,
+        0
+      ],
+      "color": "#cbd5e1",
+      "metalness": 0.7,
+      "step": 0,
+      "label": "salicide",
+      "labelOffset": [
+        -0.6,
+        0.22,
+        1.1
+      ],
+      "info": "Self-aligned silicide on top of the diffusion. It lowers the sheet resistance of the source/drain."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.35,
+        0.5,
+        2.0
+      ],
+      "position": [
+        -0.73,
+        0.25,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0,
+      "label": "spacer",
+      "labelOffset": [
+        -0.73,
+        0.55,
+        1.1
+      ],
+      "info": "The oxide/nitride spacer. It blocks the n+ implant, so the LDD stays under it."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.6,
+        0.06,
+        2.0
+      ],
+      "position": [
+        0.95,
+        0.03,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0
+    },
+    {
+      "type": "box",
+      "size": [
+        2.4,
+        0.45,
+        2.0
+      ],
+      "position": [
+        0.95,
+        0.285,
+        0
+      ],
+      "color": "#9ca3af",
+      "metalness": 0.4,
+      "step": 0,
+      "label": "gate",
+      "labelOffset": [
+        0.95,
+        0.4,
+        0
+      ],
+      "info": "The gate. The channel starts at the end of the LDD."
+    },
+    {
+      "type": "cylinder",
+      "radius": 0.18,
+      "height": 1.4,
+      "position": [
+        -2.9,
+        0.75,
+        0.3
+      ],
+      "color": "#f59e0b",
+      "metalness": 0.8,
+      "roughness": 0.3,
+      "step": 0,
+      "label": "via / contact plug",
+      "labelOffset": [
+        0,
+        0.95,
+        0
+      ],
+      "info": "The metal contact plug from metal 1 down to the silicide."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.2,
+        0.15,
+        0.8
+      ],
+      "position": [
+        -2.9,
+        1.5,
+        0.3
+      ],
+      "color": "#fbbf24",
+      "metalness": 0.7,
+      "step": 0,
+      "label": "metal 1",
+      "labelOffset": [
+        -1.0,
+        0.25,
+        0
+      ],
+      "info": "The first metal layer. Current enters the source here."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.9,
+          1.45,
+          1.25
+        ],
+        [
+          -2.8,
+          1.317,
+          1.25
+        ],
+        [
+          -3.0,
+          1.184,
+          1.25
+        ],
+        [
+          -2.8,
+          1.051,
+          1.25
+        ],
+        [
+          -3.0,
+          0.918,
+          1.25
+        ],
+        [
+          -2.8,
+          0.785,
+          1.25
+        ],
+        [
+          -3.0,
+          0.652,
+          1.25
+        ],
+        [
+          -2.8,
+          0.519,
+          1.25
+        ],
+        [
+          -3.0,
+          0.386,
+          1.25
+        ],
+        [
+          -2.8,
+          0.253,
+          1.25
+        ],
+        [
+          -2.9,
+          0.12,
+          1.25
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#f97316",
+      "step": 1,
+      "edges": false,
+      "label": "Rvia",
+      "labelOffset": [
+        -2.3499999999999996,
+        0.7849999999999999,
+        1.25
+      ],
+      "info": "Via (plug) resistance: the metal path from metal 1 down to the silicide."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.9,
+          0.12,
+          1.25
+        ],
+        [
+          -2.83,
+          0.213,
+          1.25
+        ],
+        [
+          -2.76,
+          0.006,
+          1.25
+        ],
+        [
+          -2.69,
+          0.199,
+          1.25
+        ],
+        [
+          -2.62,
+          -0.008,
+          1.25
+        ],
+        [
+          -2.55,
+          0.185,
+          1.25
+        ],
+        [
+          -2.48,
+          -0.022,
+          1.25
+        ],
+        [
+          -2.41,
+          0.171,
+          1.25
+        ],
+        [
+          -2.34,
+          -0.036,
+          1.25
+        ],
+        [
+          -2.27,
+          0.157,
+          1.25
+        ],
+        [
+          -2.2,
+          0.05,
+          1.25
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#ef4444",
+      "step": 2,
+      "edges": false,
+      "label": "Rcontact",
+      "labelOffset": [
+        -2.55,
+        0.505,
+        1.25
+      ],
+      "info": "Contact resistance at the metal–silicide–silicon interface. Slide 30: one of the largest parts."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -2.2,
+          0.05,
+          1.25
+        ],
+        [
+          -2.1,
+          0.14,
+          1.25
+        ],
+        [
+          -2.0,
+          -0.07,
+          1.25
+        ],
+        [
+          -1.9,
+          0.12,
+          1.25
+        ],
+        [
+          -1.8,
+          -0.09,
+          1.25
+        ],
+        [
+          -1.7,
+          0.1,
+          1.25
+        ],
+        [
+          -1.6,
+          -0.11,
+          1.25
+        ],
+        [
+          -1.5,
+          0.08,
+          1.25
+        ],
+        [
+          -1.4,
+          -0.13,
+          1.25
+        ],
+        [
+          -1.3,
+          0.06,
+          1.25
+        ],
+        [
+          -1.2,
+          -0.05,
+          1.25
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#eab308",
+      "step": 3,
+      "edges": false,
+      "label": "Rsalicide / diffusion",
+      "labelOffset": [
+        -1.7000000000000002,
+        0.42,
+        1.25
+      ],
+      "info": "Sheet resistance of the salicide and the n+ diffusion between the contact and the spacer."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          -1.2,
+          -0.05,
+          1.25
+        ],
+        [
+          -1.12,
+          0.047,
+          1.25
+        ],
+        [
+          -1.04,
+          -0.156,
+          1.25
+        ],
+        [
+          -0.96,
+          0.041,
+          1.25
+        ],
+        [
+          -0.88,
+          -0.162,
+          1.25
+        ],
+        [
+          -0.8,
+          0.035,
+          1.25
+        ],
+        [
+          -0.72,
+          -0.168,
+          1.25
+        ],
+        [
+          -0.64,
+          0.029,
+          1.25
+        ],
+        [
+          -0.56,
+          -0.174,
+          1.25
+        ],
+        [
+          -0.48,
+          0.023,
+          1.25
+        ],
+        [
+          -0.4,
+          -0.08,
+          1.25
+        ]
+      ],
+      "radius": 0.045,
+      "color": "#a855f7",
+      "step": 4,
+      "edges": false,
+      "label": "RLDD",
+      "labelOffset": [
+        -0.8,
+        0.355,
+        1.25
+      ],
+      "info": "LDD sheet resistance under the spacer. Slide 30: with the contact resistance, the largest part. It depends on the gate bias."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        0.6,
+        1.5,
+        1.25
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 5,
+      "label": "RS = Rvia + Rcontact + Rsal + RLDD",
+      "labelOffset": [
+        0,
+        0,
+        0
+      ],
+      "info": "The parts are in series. BSIM4 rdsMod = 1 puts RS and RD outside the channel as separate, bias-dependent resistors. rdsMod = 0 puts one symmetric RDS inside the I–V equation."
+    }
+  ]
+}
