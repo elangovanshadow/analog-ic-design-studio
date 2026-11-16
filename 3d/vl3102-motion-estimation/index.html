@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Motion estimation and compensation</title>
+<style>
+  :root{--bg:#0f1115;--panel:rgba(20,23,30,.86);--ink:#e8ebf1;--muted:#9aa3b2;--accent:#5aa9ff}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;touch-action:none}
+  .lbl{padding:2px 7px;border-radius:6px;background:rgba(10,12,16,.78);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,255,255,.18)}
+  #hud{position:fixed;left:10px;top:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+  #title{background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;pointer-events:auto;max-width:60%}
+  #title small{display:block;font-weight:400;color:var(--muted)}
+  #tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+  button{background:var(--panel);color:var(--ink);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 10px;font:inherit;cursor:pointer}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #info{position:fixed;left:10px;bottom:10px;max-width:min(420px,calc(100% - 20px));background:var(--panel);padding:10px 12px;border-radius:10px;display:none}
+  #info b{display:block;margin-bottom:3px}
+  #steps{position:fixed;right:10px;bottom:10px;background:var(--panel);padding:6px;border-radius:10px;display:none;gap:6px;align-items:center}
+  #stepTxt{padding:0 6px;color:var(--muted);max-width:240px}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="title"></div>
+  <div id="tools">
+    <button id="bLabels" class="on">Labels</button>
+    <button id="bSpin">Spin</button>
+    <button id="bExplode">Explode</button>
+    <button id="bReset">Reset</button>
+  </div>
+</div>
+<div id="info"></div>
+<div id="steps"><button id="bPrev">◀</button><span id="stepTxt"></span><button id="bNext">▶</button></div>
+<script id="scene-data" type="application/json">{"title": "Motion estimation and compensation", "subtitle": "Press ▶ to follow the encoder one step at a time. Tap a block for its role. Drag to turn the model.", "background": "#10131a", "camera": [-6.5, 5.5, 10.5], "target": [1.8, 2.0, 0], "gridSize": 18, "steps": ["The previous frame is the reference frame. The encoder divides it into 16 × 16 macroblocks.", "The current frame comes next in time. The ball moved one macroblock to the right.", "Motion estimation starts. The encoder selects one macroblock to encode, M_T.", "The encoder looks at the same place in the reference frame. It sets a search region around that place.", "The encoder compares M_T with each candidate block in the search region. It keeps the block with the smallest difference.", "The best match is M_R. The motion vector V points from the old place to M_R.", "The encoder sends only V and the difference M_D = M_T − M_R. The DCT and the coder make M_D small.", "Motion compensation: the decoder copies M_R from the reference frame, moves it by V and adds M_D. This gives M_T again."], "objects": [{"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 0.3, -1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 0.3, -0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 0.3, 0.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 0.3, 1.5], "color": "#34495e", "step": 0, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-2.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-1.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [-0.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [0.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [1.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 3.8, -1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 3.8, -0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 3.8, 0.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [0.94, 0.08, 0.94], "position": [2.5, 3.8, 1.5], "color": "#2c3e50", "step": 1, "edges": true}, {"type": "box", "size": [6.1, 0.1, 4.1], "position": [0, 0.27999999999999997, 0], "color": "#7f8c8d", "wireframe": true, "step": 0, "label": "reference frame (previous, I or P)", "labelOffset": [-4.6, 0, 0], "info": "This frame is already coded. The decoder also has it, so the encoder can point into it."}, {"type": "box", "size": [6.1, 0.1, 4.1], "position": [0, 3.78, 0], "color": "#bdc3c7", "wireframe": true, "step": 1, "label": "current frame", "labelOffset": [-4.0, 0, 0], "info": "This frame is the next picture in time. The encoder must code it with as few bits as possible."}, {"type": "sphere", "radius": 0.33, "position": [-0.5, 0.6799999999999999, -0.5], "color": "#e67e22", "step": 0, "label": "ball at time t − 1", "labelOffset": [-1.3, 0.5, 0.2], "info": "This ball is the object that moves in the video. Here it is in the previous frame."}, {"type": "sphere", "radius": 0.33, "position": [0.5, 4.18, -0.5], "color": "#e67e22", "step": 1, "label": "ball at time t", "labelOffset": [0, 0.55, 0], "info": "The same ball in the current frame. It moved one macroblock to the right."}, {"type": "box", "size": [0.98, 0.14, 0.98], "position": [0.5, 3.86, -0.5], "color": "#22d3ee", "opacity": 0.6, "step": 2, "label": "M_T (macroblock to encode)", "labelOffset": [1.6, 0.5, -0.8], "explode": [0, 0.8, 0], "info": "M_T is the target macroblock. One macroblock has four 8 × 8 luminance blocks and two 8 × 8 colour blocks."}, {"type": "tube", "points": [[0.5, 3.75, -0.5], [0.5, 0.4, -0.5]], "radius": 0.025, "color": "#95a5a6", "step": 3}, {"type": "box", "size": [0.98, 0.12, 0.98], "position": [0.5, 0.36, -0.5], "color": "#ffffff", "opacity": 0.35, "step": 3, "info": "This block is at the same position as M_T, but in the reference frame. The search starts here."}, {"type": "box", "size": [3.0, 0.3, 3.0], "position": [0.5, 0.44999999999999996, -0.5], "color": "#f39c12", "opacity": 0.22, "step": 3, "label": "search region", "labelOffset": [1.9, 0.05, 1.2], "info": "The encoder looks for M_T only inside this region. A small region keeps the number of comparisons low."}, {"type": "box", "size": [0.9, 0.2, 0.9], "position": [1.5, 0.42, -1.5], "color": "#f5f5f5", "opacity": 0.3, "step": 4}, {"type": "box", "size": [0.9, 0.2, 0.9], "position": [-0.5, 0.42, 0.5], "color": "#f5f5f5", "opacity": 0.3, "step": 4}, {"type": "box", "size": [0.9, 0.2, 0.9], "position": [1.5, 0.42, 0.5], "color": "#f5f5f5", "opacity": 0.3, "step": 4}, {"type": "box", "size": [0.9, 0.2, 0.9], "position": [1.5, 0.42, -0.5], "color": "#f5f5f5", "opacity": 0.3, "step": 4, "label": "candidate blocks", "labelOffset": [1.0, 0.1, -0.9], "info": "Each candidate is a block in the search region. The encoder measures the difference between it and M_T."}, {"type": "box", "size": [0.98, 0.14, 0.98], "position": [-0.5, 0.37, -0.5], "color": "#22d3ee", "opacity": 0.65, "step": 5, "label": "M_R (best match)", "labelOffset": [-1.2, 0.2, 0.9], "info": "M_R is the block in the reference frame that is most similar to M_T. Here it holds the ball."}, {"type": "arrow", "from": [0.5, 0.62, -0.5], "to": [-0.4, 0.62, -0.5], "color": "#fde047", "step": 5, "label": "motion vector V", "labelOffset": [0.0, 1.4000000000000001, -2.2], "info": "V gives the move from the same place to the best match, in pixels across and down."}, {"type": "box", "size": [1.8, 1.0, 1.2], "position": [6.2, 2.0, 0], "color": "#16a085", "step": 6, "label": "DCT + quantization + coder", "labelOffset": [0, -0.9, 0], "info": "The DCT changes M_D into frequency values. Quantization and run-length and Huffman coding make the bit stream short."}, {"type": "tube", "points": [[1.0, 3.8, -0.5], [4.2, 3.0, -0.3], [5.3, 2.2, 0]], "radius": 0.04, "color": "#22d3ee", "step": 6, "label": "M_D = M_T − M_R", "labelOffset": [4.6, 3.4, -0.4]}, {"type": "tube", "points": [[0.0, 0.5, -0.5], [4.2, 0.9, -0.3], [5.3, 1.8, 0]], "radius": 0.04, "color": "#22d3ee", "step": 6}, {"type": "arrow", "from": [7.1, 2.0, 0], "to": [8.4, 2.0, 0], "color": "#ecf0f1", "step": 6, "label": "bit stream (V and M_D)", "labelOffset": [9.6, 2.0, 0]}, {"type": "arrow", "from": [-0.5, 0.8, -0.5], "to": [0.5, 3.65, -0.5], "color": "#2ecc71", "step": 7, "label": "decoder: M_R moved by V, plus M_D", "labelOffset": [-3.4, 2.2, -0.5], "info": "The decoder rebuilds M_T. It copies M_R, moves it by V and adds the difference M_D."}]}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const S = JSON.parse(document.getElementById('scene-data').textContent);
+const deg = d => d * Math.PI / 180;
+const stage = document.getElementById('stage');
+document.getElementById('title').innerHTML = (S.title||'3D model') + (S.subtitle ? `<small>${S.subtitle}</small>` : '');
+if (S.background) document.documentElement.style.setProperty('--bg', S.background);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+stage.appendChild(renderer.domElement);
+const labelR = new CSS2DRenderer();
+labelR.setSize(innerWidth, innerHeight);
+Object.assign(labelR.domElement.style, { position: 'fixed', inset: '0', pointerEvents: 'none' });
+document.body.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(S.background || '#0f1115');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 2000);
+const camPos = S.camera || [6, 5, 8], target = S.target || [0, 0, 0];
+camera.position.set(...camPos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(...target); controls.enableDamping = true; controls.update();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 10, 7); scene.add(sun);
+if (S.grid !== false) { const g = new THREE.GridHelper(S.gridSize || 20, 20, 0x334055, 0x222a36); g.position.y = S.gridY ?? -0.001; scene.add(g); }
+
+const pickable = [], items = [];
+function material(o) {
+  return new THREE.MeshStandardMaterial({
+    color: o.color || '#8899aa', metalness: o.metalness ?? 0.1, roughness: o.roughness ?? 0.6,
+    transparent: (o.opacity ?? 1) < 1, opacity: o.opacity ?? 1, wireframe: !!o.wireframe,
+    side: (o.opacity ?? 1) < 1 ? THREE.DoubleSide : THREE.FrontSide, depthWrite: (o.opacity ?? 1) >= 1 });
+}
+function geometry(o) {
+  switch (o.type) {
+    case 'box': return new THREE.BoxGeometry(...(o.size || [1, 1, 1]));
+    case 'cylinder': return new THREE.CylinderGeometry(o.radiusTop ?? o.radius ?? 0.5, o.radiusBottom ?? o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'cone': return new THREE.ConeGeometry(o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'sphere': return new THREE.SphereGeometry(o.radius ?? 0.5, 48, 32);
+    case 'torus': return new THREE.TorusGeometry(o.radius ?? 1, o.tube ?? 0.2, 24, 96);
+    case 'plane': return new THREE.PlaneGeometry(...(o.size || [1, 1]));
+    case 'tube': return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(o.points.map(p => new THREE.Vector3(...p)), false, 'catmullrom', 0), 64 * o.points.length, o.radius ?? 0.05, 12, false);
+    case 'extrude': { const sh = new THREE.Shape(o.shape.map(p => new THREE.Vector2(...p))); return new THREE.ExtrudeGeometry(sh, { depth: o.depth ?? 1, bevelEnabled: false }); }
+  }
+  return null;
+}
+function addLabel(obj, o) {
+  if (!o.label) return;
+  const d = document.createElement('div'); d.className = 'lbl'; d.textContent = o.label;
+  const l = new CSS2DObject(d); l.position.set(...(o.labelOffset || [0, 0, 0])); obj.add(l);
+}
+function place(obj, o) {
+  obj.position.set(...(o.position || [0, 0, 0]));
+  if (o.rotation) obj.rotation.set(...o.rotation.map(deg));
+  if (o.scale) typeof o.scale === 'number' ? obj.scale.setScalar(o.scale) : obj.scale.set(...o.scale);
+  obj.userData = { o, home: obj.position.clone() };
+  addLabel(obj, o); scene.add(obj); items.push(obj);
+}
+const loader = new GLTFLoader();
+for (const o of S.objects || []) {
+  if (o.type === 'gltf') { loader.load(o.url, g => { place(g.scene, o); g.scene.traverse(m => { if (m.isMesh) { m.userData.root = g.scene; pickable.push(m); } }); applyStep(); }); continue; }
+  if (o.type === 'arrow') {
+    const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), len = dir.length();
+    const ar = new THREE.ArrowHelper(dir.normalize(), a, len, new THREE.Color(o.color || '#ffcc33'), Math.min(0.35, len * 0.3), Math.min(0.2, len * 0.18));
+    const g = new THREE.Group(); g.add(ar); place(g, { ...o, position: [0, 0, 0] }); g.userData.o = o; continue;
+  }
+  const geo = geometry(o); if (!geo) { console.warn('unknown type', o.type); continue; }
+  const m = new THREE.Mesh(geo, material(o)); place(m, o); m.userData.root = m; pickable.push(m);
+  if (o.edges !== false && (o.opacity ?? 1) >= 1) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .35 })); m.add(e); }
+}
+
+// Steps: objects with "step": n appear at step n (build-up walkthrough)
+const steps = S.steps || []; let cur = steps.length ? 0 : -1;
+const stepsBox = document.getElementById('steps'), stepTxt = document.getElementById('stepTxt');
+function applyStep() {
+  if (cur < 0) return;
+  // CSS2DRenderer draws labels of hidden parents, so hide each label with its part
+  for (const it of items) { const s = it.userData.o.step ?? 0; it.visible = s <= cur; it.traverse(c => { if (c.isCSS2DObject) c.visible = it.visible; }); }
+  stepTxt.textContent = `${cur + 1}/${steps.length} · ${steps[cur]}`;
+}
+if (steps.length) { stepsBox.style.display = 'flex'; applyStep(); }
+document.getElementById('bPrev').onclick = () => { if (cur > 0) { cur--; applyStep(); } };
+document.getElementById('bNext').onclick = () => { if (cur < steps.length - 1) { cur++; applyStep(); } };
+
+// Click / tap an object for its info
+const info = document.getElementById('info'), ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  ptr.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickable.filter(m => m.userData.root?.visible !== false), false)[0];
+  const o = hit?.object.userData.root?.userData.o || hit?.object.userData.o;
+  if (o && (o.label || o.info)) { info.innerHTML = `<b>${o.label || ''}</b>${o.info || ''}`; info.style.display = 'block'; } else info.style.display = 'none';
+});
+
+let spin = !!S.autoRotate, labels = true, exploded = false;
+const tog = (id, v) => document.getElementById(id).classList.toggle('on', v);
+tog('bSpin', spin); controls.autoRotate = spin;
+document.getElementById('bSpin').onclick = () => { spin = !spin; controls.autoRotate = spin; tog('bSpin', spin); };
+document.getElementById('bLabels').onclick = () => { labels = !labels; labelR.domElement.style.display = labels ? '' : 'none'; tog('bLabels', labels); };
+document.getElementById('bReset').onclick = () => { camera.position.set(...camPos); controls.target.set(...target); controls.update(); };
+const bEx = document.getElementById('bExplode');
+if (!S.objects?.some(o => o.explode)) bEx.style.display = 'none';
+bEx.onclick = () => { exploded = !exploded; tog('bExplode', exploded); };
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta(), k = 1 - Math.pow(0.001, dt);
+  for (const it of items) {
+    const o = it.userData.o, home = it.userData.home;
+    if (o.explode && home) it.position.lerp(exploded ? home.clone().add(new THREE.Vector3(...o.explode)) : home, k);
+    if (o.spin) it.rotation.y += deg(o.spin) * dt;
+  }
+  controls.update(); renderer.render(scene, camera); labelR.render(scene, camera);
+});
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); labelR.setSize(innerWidth, innerHeight); });
+window.__ready = true;
+</script>
+</body>
+</html>

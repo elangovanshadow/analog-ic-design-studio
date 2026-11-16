@@ -1,0 +1,1197 @@
+{
+  "title": "Motion estimation and compensation",
+  "subtitle": "Press ▶ to follow the encoder one step at a time. Tap a block for its role. Drag to turn the model.",
+  "background": "#10131a",
+  "camera": [
+    -6.5,
+    5.5,
+    10.5
+  ],
+  "target": [
+    1.8,
+    2.0,
+    0
+  ],
+  "gridSize": 18,
+  "steps": [
+    "The previous frame is the reference frame. The encoder divides it into 16 × 16 macroblocks.",
+    "The current frame comes next in time. The ball moved one macroblock to the right.",
+    "Motion estimation starts. The encoder selects one macroblock to encode, M_T.",
+    "The encoder looks at the same place in the reference frame. It sets a search region around that place.",
+    "The encoder compares M_T with each candidate block in the search region. It keeps the block with the smallest difference.",
+    "The best match is M_R. The motion vector V points from the old place to M_R.",
+    "The encoder sends only V and the difference M_D = M_T − M_R. The DCT and the coder make M_D small.",
+    "Motion compensation: the decoder copies M_R from the reference frame, moves it by V and adds M_D. This gives M_T again."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        0.3,
+        -1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        0.3,
+        -0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        0.3,
+        0.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        0.3,
+        1.5
+      ],
+      "color": "#34495e",
+      "step": 0,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -2.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -1.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        -0.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        0.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        1.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        3.8,
+        -1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        3.8,
+        -0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        3.8,
+        0.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        0.94,
+        0.08,
+        0.94
+      ],
+      "position": [
+        2.5,
+        3.8,
+        1.5
+      ],
+      "color": "#2c3e50",
+      "step": 1,
+      "edges": true
+    },
+    {
+      "type": "box",
+      "size": [
+        6.1,
+        0.1,
+        4.1
+      ],
+      "position": [
+        0,
+        0.27999999999999997,
+        0
+      ],
+      "color": "#7f8c8d",
+      "wireframe": true,
+      "step": 0,
+      "label": "reference frame (previous, I or P)",
+      "labelOffset": [
+        -4.6,
+        0,
+        0
+      ],
+      "info": "This frame is already coded. The decoder also has it, so the encoder can point into it."
+    },
+    {
+      "type": "box",
+      "size": [
+        6.1,
+        0.1,
+        4.1
+      ],
+      "position": [
+        0,
+        3.78,
+        0
+      ],
+      "color": "#bdc3c7",
+      "wireframe": true,
+      "step": 1,
+      "label": "current frame",
+      "labelOffset": [
+        -4.0,
+        0,
+        0
+      ],
+      "info": "This frame is the next picture in time. The encoder must code it with as few bits as possible."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.33,
+      "position": [
+        -0.5,
+        0.6799999999999999,
+        -0.5
+      ],
+      "color": "#e67e22",
+      "step": 0,
+      "label": "ball at time t − 1",
+      "labelOffset": [
+        -1.3,
+        0.5,
+        0.2
+      ],
+      "info": "This ball is the object that moves in the video. Here it is in the previous frame."
+    },
+    {
+      "type": "sphere",
+      "radius": 0.33,
+      "position": [
+        0.5,
+        4.18,
+        -0.5
+      ],
+      "color": "#e67e22",
+      "step": 1,
+      "label": "ball at time t",
+      "labelOffset": [
+        0,
+        0.55,
+        0
+      ],
+      "info": "The same ball in the current frame. It moved one macroblock to the right."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.98,
+        0.14,
+        0.98
+      ],
+      "position": [
+        0.5,
+        3.86,
+        -0.5
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.6,
+      "step": 2,
+      "label": "M_T (macroblock to encode)",
+      "labelOffset": [
+        1.6,
+        0.5,
+        -0.8
+      ],
+      "explode": [
+        0,
+        0.8,
+        0
+      ],
+      "info": "M_T is the target macroblock. One macroblock has four 8 × 8 luminance blocks and two 8 × 8 colour blocks."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          0.5,
+          3.75,
+          -0.5
+        ],
+        [
+          0.5,
+          0.4,
+          -0.5
+        ]
+      ],
+      "radius": 0.025,
+      "color": "#95a5a6",
+      "step": 3
+    },
+    {
+      "type": "box",
+      "size": [
+        0.98,
+        0.12,
+        0.98
+      ],
+      "position": [
+        0.5,
+        0.36,
+        -0.5
+      ],
+      "color": "#ffffff",
+      "opacity": 0.35,
+      "step": 3,
+      "info": "This block is at the same position as M_T, but in the reference frame. The search starts here."
+    },
+    {
+      "type": "box",
+      "size": [
+        3.0,
+        0.3,
+        3.0
+      ],
+      "position": [
+        0.5,
+        0.44999999999999996,
+        -0.5
+      ],
+      "color": "#f39c12",
+      "opacity": 0.22,
+      "step": 3,
+      "label": "search region",
+      "labelOffset": [
+        1.9,
+        0.05,
+        1.2
+      ],
+      "info": "The encoder looks for M_T only inside this region. A small region keeps the number of comparisons low."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.2,
+        0.9
+      ],
+      "position": [
+        1.5,
+        0.42,
+        -1.5
+      ],
+      "color": "#f5f5f5",
+      "opacity": 0.3,
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.2,
+        0.9
+      ],
+      "position": [
+        -0.5,
+        0.42,
+        0.5
+      ],
+      "color": "#f5f5f5",
+      "opacity": 0.3,
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.2,
+        0.9
+      ],
+      "position": [
+        1.5,
+        0.42,
+        0.5
+      ],
+      "color": "#f5f5f5",
+      "opacity": 0.3,
+      "step": 4
+    },
+    {
+      "type": "box",
+      "size": [
+        0.9,
+        0.2,
+        0.9
+      ],
+      "position": [
+        1.5,
+        0.42,
+        -0.5
+      ],
+      "color": "#f5f5f5",
+      "opacity": 0.3,
+      "step": 4,
+      "label": "candidate blocks",
+      "labelOffset": [
+        1.0,
+        0.1,
+        -0.9
+      ],
+      "info": "Each candidate is a block in the search region. The encoder measures the difference between it and M_T."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.98,
+        0.14,
+        0.98
+      ],
+      "position": [
+        -0.5,
+        0.37,
+        -0.5
+      ],
+      "color": "#22d3ee",
+      "opacity": 0.65,
+      "step": 5,
+      "label": "M_R (best match)",
+      "labelOffset": [
+        -1.2,
+        0.2,
+        0.9
+      ],
+      "info": "M_R is the block in the reference frame that is most similar to M_T. Here it holds the ball."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        0.5,
+        0.62,
+        -0.5
+      ],
+      "to": [
+        -0.4,
+        0.62,
+        -0.5
+      ],
+      "color": "#fde047",
+      "step": 5,
+      "label": "motion vector V",
+      "labelOffset": [
+        0.0,
+        1.4000000000000001,
+        -2.2
+      ],
+      "info": "V gives the move from the same place to the best match, in pixels across and down."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.8,
+        1.0,
+        1.2
+      ],
+      "position": [
+        6.2,
+        2.0,
+        0
+      ],
+      "color": "#16a085",
+      "step": 6,
+      "label": "DCT + quantization + coder",
+      "labelOffset": [
+        0,
+        -0.9,
+        0
+      ],
+      "info": "The DCT changes M_D into frequency values. Quantization and run-length and Huffman coding make the bit stream short."
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          1.0,
+          3.8,
+          -0.5
+        ],
+        [
+          4.2,
+          3.0,
+          -0.3
+        ],
+        [
+          5.3,
+          2.2,
+          0
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#22d3ee",
+      "step": 6,
+      "label": "M_D = M_T − M_R",
+      "labelOffset": [
+        4.6,
+        3.4,
+        -0.4
+      ]
+    },
+    {
+      "type": "tube",
+      "points": [
+        [
+          0.0,
+          0.5,
+          -0.5
+        ],
+        [
+          4.2,
+          0.9,
+          -0.3
+        ],
+        [
+          5.3,
+          1.8,
+          0
+        ]
+      ],
+      "radius": 0.04,
+      "color": "#22d3ee",
+      "step": 6
+    },
+    {
+      "type": "arrow",
+      "from": [
+        7.1,
+        2.0,
+        0
+      ],
+      "to": [
+        8.4,
+        2.0,
+        0
+      ],
+      "color": "#ecf0f1",
+      "step": 6,
+      "label": "bit stream (V and M_D)",
+      "labelOffset": [
+        9.6,
+        2.0,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -0.5,
+        0.8,
+        -0.5
+      ],
+      "to": [
+        0.5,
+        3.65,
+        -0.5
+      ],
+      "color": "#2ecc71",
+      "step": 7,
+      "label": "decoder: M_R moved by V, plus M_D",
+      "labelOffset": [
+        -3.4,
+        2.2,
+        -0.5
+      ],
+      "info": "The decoder rebuilds M_T. It copies M_R, moves it by V and adds the difference M_D."
+    }
+  ]
+}
