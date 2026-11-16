@@ -1,0 +1,401 @@
+{
+  "title": "SOI wafer fabrication (hydrogen split)",
+  "subtitle": "Press ▶ for each process step. Tap a part. Drag to orbit.",
+  "background": "#10131a",
+  "camera": [
+    0,
+    8.0,
+    19.5
+  ],
+  "target": [
+    0,
+    0.4,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "Oxidize wafer A: a thin SiO2 layer grows on its surface.",
+    "Implant hydrogen: the hydrogen peaks at depth D.",
+    "Turn wafer A over and bond it to wafer B.",
+    "Anneal: hydrogen bubbles split the wafer at depth D.",
+    "Polish: a smooth silicon film on the buried oxide."
+  ],
+  "objects": [
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        -8.4,
+        0.3,
+        0
+      ],
+      "color": "#9ca3af",
+      "step": 0,
+      "label": "wafer A",
+      "labelOffset": [
+        0,
+        -0.7,
+        1.5
+      ],
+      "info": "A plain silicon wafer A."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        -8.4,
+        0.66,
+        0
+      ],
+      "color": "#f8fafc",
+      "step": 0,
+      "label": "thermal SiO2",
+      "labelOffset": [
+        0,
+        0.5,
+        0
+      ],
+      "info": "Thermal oxidation grows a thin SiO2 layer on wafer A. This layer becomes the buried oxide."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        -4.2,
+        0.3,
+        0
+      ],
+      "color": "#9ca3af",
+      "step": 1
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        -4.2,
+        0.66,
+        0
+      ],
+      "color": "#f8fafc",
+      "step": 1
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.03,
+      "position": [
+        -4.2,
+        0.45,
+        0
+      ],
+      "color": "#ef4444",
+      "step": 1,
+      "edges": false,
+      "label": "H peak at depth D",
+      "labelOffset": [
+        0,
+        -0.95,
+        1.5
+      ],
+      "info": "Hydrogen ions go through the oxide. Their concentration peaks at a depth D under the surface."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -5.0,
+        2.2,
+        0
+      ],
+      "to": [
+        -5.0,
+        0.85,
+        0
+      ],
+      "color": "#fca5a5",
+      "step": 1
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -4.2,
+        2.2,
+        0
+      ],
+      "to": [
+        -4.2,
+        0.85,
+        0
+      ],
+      "color": "#fca5a5",
+      "step": 1,
+      "label": "H⁺ ions",
+      "labelOffset": [
+        -4.2,
+        2.5,
+        0
+      ]
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -3.4000000000000004,
+        2.2,
+        0
+      ],
+      "to": [
+        -3.4000000000000004,
+        0.85,
+        0
+      ],
+      "color": "#fca5a5",
+      "step": 1
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        0,
+        0.3,
+        0
+      ],
+      "color": "#cbd5e1",
+      "step": 2,
+      "label": "wafer B",
+      "labelOffset": [
+        0,
+        -0.7,
+        1.5
+      ],
+      "info": "A second plain silicon wafer B. It becomes the handle substrate."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        0,
+        0.66,
+        0
+      ],
+      "color": "#f8fafc",
+      "step": 2
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        0,
+        1.02,
+        0
+      ],
+      "color": "#9ca3af",
+      "step": 2,
+      "label": "wafer A (upside down)",
+      "labelOffset": [
+        0,
+        0.6,
+        0
+      ],
+      "info": "The process turns wafer A over. Atomic forces bond it to wafer B. The oxide is now between the two wafers."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.03,
+      "position": [
+        0,
+        0.87,
+        0
+      ],
+      "color": "#ef4444",
+      "step": 2,
+      "edges": false
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        4.2,
+        0.3,
+        0
+      ],
+      "color": "#cbd5e1",
+      "step": 3
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        4.2,
+        0.66,
+        0
+      ],
+      "color": "#f8fafc",
+      "step": 3
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.14,
+      "position": [
+        4.2,
+        0.79,
+        0
+      ],
+      "color": "#a78bfa",
+      "step": 3,
+      "label": "thin Si film",
+      "labelOffset": [
+        0,
+        -1.3,
+        1.5
+      ],
+      "info": "The anneal forms hydrogen bubbles at depth D. The wafer splits there, so a thin silicon film stays on the oxide."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.46,
+      "position": [
+        4.2,
+        1.55,
+        0
+      ],
+      "color": "#9ca3af",
+      "step": 3,
+      "opacity": 0.6,
+      "label": "rest of wafer A (reused)",
+      "labelOffset": [
+        0,
+        0.55,
+        0
+      ],
+      "info": "The rest of wafer A comes off at the split plane. Manufacturers use it again."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.6,
+      "position": [
+        8.4,
+        0.3,
+        0
+      ],
+      "color": "#cbd5e1",
+      "step": 4,
+      "label": "SOI wafer",
+      "labelOffset": [
+        0,
+        -0.7,
+        1.5
+      ],
+      "info": "The finished SOI wafer: substrate, buried oxide and a thin, high-quality silicon film."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        8.4,
+        0.66,
+        0
+      ],
+      "color": "#f8fafc",
+      "step": 4,
+      "label": "BOX",
+      "labelOffset": [
+        1.9,
+        0,
+        0
+      ],
+      "info": "The buried oxide (BOX)."
+    },
+    {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 0.12,
+      "position": [
+        8.4,
+        0.78,
+        0
+      ],
+      "color": "#a78bfa",
+      "step": 4,
+      "label": "polished Si film",
+      "labelOffset": [
+        0,
+        0.5,
+        0
+      ],
+      "info": "A polish step makes the split surface smooth. The film is ready for IC fabrication."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -6.75,
+        0.5,
+        0
+      ],
+      "to": [
+        -5.8500000000000005,
+        0.5,
+        0
+      ],
+      "color": "#fde047",
+      "step": 1
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -2.5500000000000003,
+        0.5,
+        0
+      ],
+      "to": [
+        -1.65,
+        0.5,
+        0
+      ],
+      "color": "#fde047",
+      "step": 2
+    },
+    {
+      "type": "arrow",
+      "from": [
+        1.65,
+        0.5,
+        0
+      ],
+      "to": [
+        2.5500000000000003,
+        0.5,
+        0
+      ],
+      "color": "#fde047",
+      "step": 3
+    },
+    {
+      "type": "arrow",
+      "from": [
+        5.8500000000000005,
+        0.5,
+        0
+      ],
+      "to": [
+        6.75,
+        0.5,
+        0
+      ],
+      "color": "#fde047",
+      "step": 4
+    }
+  ]
+}

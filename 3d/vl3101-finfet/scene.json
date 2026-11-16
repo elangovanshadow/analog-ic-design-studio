@@ -1,0 +1,411 @@
+{
+  "title": "FinFET — a double-gate MOSFET on its side",
+  "subtitle": "Press ▶ to build the FinFET. Tap a part. Drag to orbit.",
+  "background": "#10131a",
+  "camera": [
+    6.0,
+    3.8,
+    8.5
+  ],
+  "target": [
+    0,
+    0.5,
+    0
+  ],
+  "grid": false,
+  "steps": [
+    "Start with an SOI wafer: substrate and buried oxide.",
+    "Lithography and etching form a thin silicon fin.",
+    "Gate oxide grows around the fin.",
+    "The poly gate wraps the fin on three sides.",
+    "Implantation forms the source and drain at the fin ends.",
+    "The channel: two side walls plus the top. W = 2·Hfin + Wfin.",
+    "The key dimensions: Lg, Hfin and Wfin."
+  ],
+  "objects": [
+    {
+      "type": "box",
+      "size": [
+        8,
+        0.6,
+        4.5
+      ],
+      "position": [
+        0,
+        -0.9,
+        0
+      ],
+      "color": "#6b7280",
+      "step": 0,
+      "label": "Si substrate",
+      "labelOffset": [
+        -3.3,
+        -0.2,
+        2.3
+      ],
+      "info": "The substrate wafer under the buried oxide."
+    },
+    {
+      "type": "box",
+      "size": [
+        8,
+        0.6,
+        4.5
+      ],
+      "position": [
+        0,
+        -0.3,
+        0
+      ],
+      "color": "#e5e7eb",
+      "step": 0,
+      "label": "buried oxide",
+      "labelOffset": [
+        -3.3,
+        0.1,
+        2.3
+      ],
+      "info": "The buried oxide of an SOI wafer. A bulk FinFET uses isolation oxide in its place."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.4,
+        1.4,
+        0.45
+      ],
+      "position": [
+        0,
+        0.7,
+        0
+      ],
+      "color": "#a78bfa",
+      "step": 1,
+      "opacity": 0.95,
+      "label": "Si fin",
+      "labelOffset": [
+        0,
+        0.5,
+        -1.2
+      ],
+      "info": "A thin silicon fin, made by lithography and etching. The fin body looks like the fin of a fish."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.3,
+        1.4,
+        0.45
+      ],
+      "position": [
+        -1.8499999999999999,
+        0.7,
+        0
+      ],
+      "color": "#a78bfa",
+      "step": 1
+    },
+    {
+      "type": "box",
+      "size": [
+        2.29,
+        1.41,
+        0.46
+      ],
+      "position": [
+        -1.8499999999999999,
+        0.7,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 4,
+      "label": "source",
+      "labelOffset": [
+        -0.6,
+        -0.49999999999999994,
+        0.725
+      ],
+      "info": "The source: the fin end, doped n+ by implantation after the gate."
+    },
+    {
+      "type": "box",
+      "size": [
+        2.3,
+        1.4,
+        0.45
+      ],
+      "position": [
+        1.8499999999999999,
+        0.7,
+        0
+      ],
+      "color": "#a78bfa",
+      "step": 1
+    },
+    {
+      "type": "box",
+      "size": [
+        2.29,
+        1.41,
+        0.46
+      ],
+      "position": [
+        1.8499999999999999,
+        0.7,
+        0
+      ],
+      "color": "#3b82f6",
+      "step": 4,
+      "label": "drain",
+      "labelOffset": [
+        0.6,
+        -0.49999999999999994,
+        0.725
+      ],
+      "info": "The drain: the fin end, doped n+ by implantation after the gate."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.4,
+        1.47,
+        0.5900000000000001
+      ],
+      "position": [
+        0,
+        0.735,
+        0
+      ],
+      "color": "#f8fafc",
+      "opacity": 0.45,
+      "step": 2,
+      "label": "gate oxide",
+      "labelOffset": [
+        -1.0,
+        0.6,
+        1.625
+      ],
+      "info": "The gate oxide grows on the two side walls and on the top of the fin."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.4,
+        0.4,
+        2.1900000000000004
+      ],
+      "position": [
+        0,
+        1.67,
+        0
+      ],
+      "color": "#9ca3af",
+      "opacity": 0.55,
+      "metalness": 0.3,
+      "step": 3,
+      "explode": [
+        0,
+        1.0,
+        0
+      ],
+      "label": "gate (wraps the fin)",
+      "labelOffset": [
+        0,
+        0.5,
+        0
+      ],
+      "info": "The poly gate crosses the fin and covers both sides and the top. It is a double-gate MOSFET turned on its side."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.4,
+        1.47,
+        0.8
+      ],
+      "position": [
+        0,
+        0.735,
+        -0.6950000000000001
+      ],
+      "color": "#9ca3af",
+      "opacity": 0.55,
+      "metalness": 0.3,
+      "step": 3,
+      "explode": [
+        0,
+        0,
+        -1.0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.4,
+        1.47,
+        0.8
+      ],
+      "position": [
+        0,
+        0.735,
+        0.6950000000000001
+      ],
+      "color": "#9ca3af",
+      "opacity": 0.55,
+      "metalness": 0.3,
+      "step": 3,
+      "explode": [
+        0,
+        0,
+        1.0
+      ]
+    },
+    {
+      "type": "box",
+      "size": [
+        1.38,
+        1.38,
+        0.02
+      ],
+      "position": [
+        0,
+        0.7,
+        0.23700000000000002
+      ],
+      "color": "#22d3ee",
+      "edges": false,
+      "step": 5,
+      "label": "side channel (Hfin)",
+      "labelOffset": [
+        0,
+        -0.2,
+        0.9
+      ],
+      "info": "One vertical side wall of the fin. Its channel width is the fin height Hfin."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.38,
+        1.38,
+        0.02
+      ],
+      "position": [
+        0,
+        0.7,
+        -0.23700000000000002
+      ],
+      "color": "#22d3ee",
+      "edges": false,
+      "step": 5,
+      "info": "The other side wall. Its channel width is also Hfin."
+    },
+    {
+      "type": "box",
+      "size": [
+        1.38,
+        0.02,
+        0.43
+      ],
+      "position": [
+        0,
+        1.412,
+        0
+      ],
+      "color": "#22d3ee",
+      "edges": false,
+      "step": 5,
+      "label": "top channel (Wfin)",
+      "labelOffset": [
+        -1.6,
+        0.8,
+        0
+      ],
+      "info": "The top surface of the fin. Its channel width is the fin width Wfin."
+    },
+    {
+      "type": "box",
+      "size": [
+        0.01,
+        0.01,
+        0.01
+      ],
+      "position": [
+        0,
+        3.8,
+        0
+      ],
+      "color": "#10131a",
+      "edges": false,
+      "step": 5,
+      "label": "W = 2·Hfin + Wfin",
+      "info": "The total channel width is the sum of the two side walls and the top: W = 2·Hfin + Wfin. Engineers add more fins in parallel for more current."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        -0.7,
+        -0.05,
+        1.125
+      ],
+      "to": [
+        0.7,
+        -0.05,
+        1.125
+      ],
+      "color": "#fde047",
+      "step": 6,
+      "label": "Lg",
+      "labelOffset": [
+        0,
+        0.2,
+        1.3250000000000002
+      ],
+      "info": "Gate length along the fin."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        3.2,
+        0,
+        0
+      ],
+      "to": [
+        3.2,
+        1.4,
+        0
+      ],
+      "color": "#fde047",
+      "step": 6,
+      "label": "Hfin",
+      "labelOffset": [
+        3.6,
+        0.7,
+        0
+      ],
+      "info": "Fin height."
+    },
+    {
+      "type": "arrow",
+      "from": [
+        2.7,
+        1.5499999999999998,
+        -0.225
+      ],
+      "to": [
+        2.7,
+        1.5499999999999998,
+        0.225
+      ],
+      "color": "#fde047",
+      "step": 6,
+      "label": "Wfin",
+      "labelOffset": [
+        2.7,
+        1.9,
+        0
+      ],
+      "info": "Fin width. A thin fin keeps every leakage path close to a gate."
+    }
+  ]
+}
