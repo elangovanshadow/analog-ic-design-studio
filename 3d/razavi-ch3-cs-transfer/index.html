@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>CS stage — walk along the Vout–Vin curve</title>
+<style>
+  :root{--bg:#0f1115;--panel:rgba(20,23,30,.86);--ink:#e8ebf1;--muted:#9aa3b2;--accent:#5aa9ff}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;touch-action:none}
+  .lbl{padding:2px 7px;border-radius:6px;background:rgba(10,12,16,.78);color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,255,255,.18)}
+  #hud{position:fixed;left:10px;top:10px;right:10px;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+  #title{background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;pointer-events:auto;max-width:60%}
+  #title small{display:block;font-weight:400;color:var(--muted)}
+  #tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;pointer-events:auto}
+  button{background:var(--panel);color:var(--ink);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 10px;font:inherit;cursor:pointer}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #info{position:fixed;left:10px;bottom:10px;max-width:min(420px,calc(100% - 20px));background:var(--panel);padding:10px 12px;border-radius:10px;display:none}
+  #info b{display:block;margin-bottom:3px}
+  #steps{position:fixed;right:10px;bottom:10px;background:var(--panel);padding:6px;border-radius:10px;display:none;gap:6px;align-items:center}
+  #stepTxt{padding:0 6px;color:var(--muted);max-width:240px}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div id="hud">
+  <div id="title"></div>
+  <div id="tools">
+    <button id="bLabels" class="on">Labels</button>
+    <button id="bSpin">Spin</button>
+    <button id="bExplode">Explode</button>
+    <button id="bReset">Reset</button>
+  </div>
+</div>
+<div id="info"></div>
+<div id="steps"><button id="bPrev">◀</button><span id="stepTxt"></span><button id="bNext">▶</button></div>
+<script id="scene-data" type="application/json">{"title": "CS stage — walk along the Vout–Vin curve", "subtitle": "Press ▶ to move along the curve. Tap a part or a region for its role. Data: Razavi Problem 3.3.", "background": "#10131a", "camera": [0.6, 0.6, 12.5], "target": [0.4, -0.1, 0], "grid": false, "steps": ["The circuit: M1 with the resistor RD to VDD.", "Vin is below VTH = 0.7 V. M1 is off and Vout = VDD.", "Vin is above VTH. M1 is in saturation and Vout falls along a parabola.", "At point A, Vout = Vin − VTH. M1 is at the edge of triode.", "Past point A, M1 is in triode and the curve becomes flat.", "The lower plot shows the gain. It is largest at point A."], "objects": [{"type": "box", "size": [2.2, 0.12, 0.5], "position": [-4.0, 3.2, 0], "color": "#ef4444", "label": "VDD = 3 V", "labelOffset": [0, 0.3, 0], "info": "The supply rail. The output can never go above VDD.", "step": 0}, {"type": "box", "size": [0.4, 1.0, 0.4], "position": [-4.0, 2.55, 0], "color": "#f59e0b", "label": "RD = 2 kΩ", "labelOffset": [0.75, 0, 0], "info": "The load resistor. The drain current flows through RD and makes the voltage drop RD·ID.", "step": 0}, {"type": "sphere", "radius": 0.16, "position": [-4.0, 1.9, 0], "color": "#22d3ee", "label": "Vout", "labelOffset": [0.55, 0.05, 0], "info": "The output node. Vout = VDD − RD·ID, so a larger drain current gives a lower Vout.", "step": 0}, {"type": "box", "size": [0.7, 1.0, 0.7], "position": [-4.0, 1.2, 0], "color": "#3b82f6", "label": "M1 (W/L = 50/0.5)", "labelOffset": [0.95, -0.1, 0], "info": "The input transistor. Its gate-source voltage is Vin. It changes Vin into a drain current.", "step": 0}, {"type": "box", "size": [0.12, 0.8, 0.6], "position": [-4.55, 1.2, 0], "color": "#9ca3af", "label": "gate (Vin)", "labelOffset": [-0.6, 0, 0], "info": "The input. The gate draws no DC current, so the input resistance is very high at low frequencies.", "step": 0}, {"type": "box", "size": [2.2, 0.12, 0.5], "position": [-4.0, 0.06, 0], "color": "#64748b", "label": "ground", "labelOffset": [0, -0.3, 0], "step": 0}, {"type": "cylinder", "radius": 0.05, "height": 0.6, "position": [-4.0, 0.4, 0], "color": "#cbd5e1", "edges": false, "step": 0}, {"type": "arrow", "from": [0.0, 0, 0], "to": [6.3, 0, 0], "color": "#e5e7eb", "label": "Vin (0 to 3 V)", "labelOffset": [6.2, -0.35, 0], "step": 0}, {"type": "arrow", "from": [0.0, 0, 0], "to": [0.0, 3.5, 0], "color": "#e5e7eb", "label": "Vout", "labelOffset": [-0.4, 3.4, 0], "step": 0}, {"type": "box", "size": [1.4, 7.2, 0.04], "position": [0.7, -0.2, -0.06], "color": "#64748b", "opacity": 0.22, "edges": false, "label": "cutoff", "labelOffset": [0, 3.85, 0], "info": "Vin is below VTH. M1 is off, ID is zero and Vout stays at VDD.", "step": 1}, {"type": "box", "size": [0.8737738606616081, 7.2, 0.04], "position": [1.836886930330804, -0.2, -0.06], "color": "#22c55e", "opacity": 0.22, "edges": false, "label": "saturation", "labelOffset": [0, 3.85, 0], "info": "M1 is on and in saturation. Vout falls along a parabola. This is the useful amplifier region.", "step": 2}, {"type": "box", "size": [3.726226139338392, 7.2, 0.04], "position": [4.136886930330804, -0.2, -0.06], "color": "#ef4444", "opacity": 0.22, "edges": false, "label": "triode", "labelOffset": [0, 3.85, 0], "info": "Vout is lower than Vin − VTH. M1 acts like a resistor and the gain becomes small.", "step": 4}, {"type": "tube", "points": [[0.0, 3.0, 0], [0.07, 3.0, 0], [0.14, 3.0, 0], [0.21, 3.0, 0], [0.28, 3.0, 0], [0.35, 3.0, 0], [0.42, 3.0, 0], [0.49, 3.0, 0], [0.56, 3.0, 0], [0.63, 3.0, 0], [0.7, 3.0, 0], [0.77, 3.0, 0], [0.84, 3.0, 0], [0.91, 3.0, 0], [0.98, 3.0, 0], [1.05, 3.0, 0], [1.12, 3.0, 0], [1.19, 3.0, 0], [1.26, 3.0, 0], [1.33, 3.0, 0], [1.4, 3.0, 0]], "radius": 0.05, "color": "#cbd5e1", "label": "Vout = VDD", "labelOffset": [0.7, 3.25, 0.1], "info": "In cutoff no current flows through RD, so the drop across RD is zero.", "step": 1}, {"type": "tube", "points": [[1.4, 3.0, 0], [1.4146, 2.9993, 0], [1.4291, 2.9972, 0], [1.4437, 2.9936, 0], [1.4583, 2.9886, 0], [1.4728, 2.9822, 0], [1.4874, 2.9744, 0], [1.5019, 2.9651, 0], [1.5165, 2.9544, 0], [1.5311, 2.9423, 0], [1.5456, 2.9288, 0], [1.5602, 2.9139, 0], [1.5748, 2.8975, 0], [1.5893, 2.8797, 0], [1.6039, 2.8605, 0], [1.6184, 2.8398, 0], [1.633, 2.8177, 0], [1.6476, 2.7942, 0], [1.6621, 2.7693, 0], [1.6767, 2.743, 0], [1.6913, 2.7152, 0], [1.7058, 2.686, 0], [1.7204, 2.6554, 0], [1.7349, 2.6234, 0], [1.7495, 2.5899, 0], [1.7641, 2.555, 0], [1.7786, 2.5187, 0], [1.7932, 2.481, 0], [1.8078, 2.4418, 0], [1.8223, 2.4012, 0], [1.8369, 2.3592, 0], [1.8514, 2.3158, 0], [1.866, 2.2709, 0], [1.8806, 2.2247, 0], [1.8951, 2.177, 0], [1.9097, 2.1278, 0], [1.9243, 2.0773, 0], [1.9388, 2.0253, 0], [1.9534, 1.9719, 0], [1.968, 1.9171, 0], [1.9825, 1.8608, 0], [1.9971, 1.8032, 0], [2.0116, 1.7441, 0], [2.0262, 1.6836, 0], [2.0408, 1.6216, 0], [2.0553, 1.5582, 0], [2.0699, 1.4935, 0], [2.0845, 1.4272, 0], [2.099, 1.3596, 0], [2.1136, 1.2905, 0], [2.1281, 1.2201, 0], [2.1427, 1.1482, 0], [2.1573, 1.0748, 0], [2.1718, 1.0001, 0], [2.1864, 0.9239, 0], [2.201, 0.8463, 0], [2.2155, 0.7672, 0], [2.2301, 0.6868, 0], [2.2446, 0.6049, 0], [2.2592, 0.5216, 0], [2.2738, 0.4369, 0]], "radius": 0.06, "color": "#4ade80", "label": "slope = −gm·RD", "labelOffset": [2.1, 2.35, 0.1], "info": "In saturation, Vout = VDD − RD·(1/2)µnCox(W/L)(Vin − VTH)². The slope of this curve is the small-signal gain.", "step": 2}, {"type": "sphere", "radius": 0.13, "position": [2.273773860661608, 0.43688693033080195, 0], "color": "#facc15", "label": "point A: Vin = 1.14 V, Vout = 0.44 V", "labelOffset": [0.4, 0.45, 0], "info": "At point A, Vout = Vin − VTH. M1 is at the edge of the triode region. Here the gain is at its maximum, about 11.7.", "step": 3}, {"type": "tube", "points": [[2.2738, 0.4369, 0], [2.3359, 0.3269, 0], [2.398, 0.283, 0], [2.4601, 0.2536, 0], [2.5222, 0.2315, 0], [2.5843, 0.2138, 0], [2.6464, 0.1992, 0], [2.7085, 0.1868, 0], [2.7706, 0.176, 0], [2.8327, 0.1667, 0], [2.8948, 0.1583, 0], [2.9569, 0.1509, 0], [3.019, 0.1442, 0], [3.0811, 0.1381, 0], [3.1432, 0.1326, 0], [3.2053, 0.1275, 0], [3.2674, 0.1228, 0], [3.3295, 0.1185, 0], [3.3916, 0.1145, 0], [3.4537, 0.1107, 0], [3.5158, 0.1072, 0], [3.578, 0.104, 0], [3.6401, 0.1009, 0], [3.7022, 0.098, 0], [3.7643, 0.0953, 0], [3.8264, 0.0928, 0], [3.8885, 0.0904, 0], [3.9506, 0.0881, 0], [4.0127, 0.0859, 0], [4.0748, 0.0838, 0], [4.1369, 0.0818, 0], [4.199, 0.08, 0], [4.2611, 0.0782, 0], [4.3232, 0.0765, 0], [4.3853, 0.0748, 0], [4.4474, 0.0733, 0], [4.5095, 0.0718, 0], [4.5716, 0.0703, 0], [4.6337, 0.069, 0], [4.6958, 0.0676, 0], [4.7579, 0.0664, 0], [4.82, 0.0651, 0], [4.8821, 0.064, 0], [4.9442, 0.0628, 0], [5.0063, 0.0617, 0], [5.0684, 0.0607, 0], [5.1305, 0.0596, 0], [5.1927, 0.0587, 0], [5.2548, 0.0577, 0], [5.3169, 0.0568, 0], [5.379, 0.0559, 0], [5.4411, 0.055, 0], [5.5032, 0.0542, 0], [5.5653, 0.0534, 0], [5.6274, 0.0526, 0], [5.6895, 0.0518, 0], [5.7516, 0.0511, 0], [5.8137, 0.0503, 0], [5.8758, 0.0496, 0], [5.9379, 0.049, 0], [6.0, 0.0483, 0]], "radius": 0.05, "color": "#f87171", "label": "deep triode", "labelOffset": [5.2, 0.55, 0.1], "info": "For a high Vin, Vout ≈ VDD·Ron/(Ron + RD). The curve becomes flat, so the gain is small.", "step": 4}, {"type": "arrow", "from": [0.0, -3.6, 0], "to": [6.3, -3.6, 0], "color": "#94a3b8", "label": "Vin", "labelOffset": [6.2, -3.95, 0], "step": 5}, {"type": "arrow", "from": [0.0, -3.6, 0], "to": [0.0, -0.8999999999999999, 0], "color": "#94a3b8", "label": "|Av|", "labelOffset": [-0.45, -0.94, 0], "step": 5}, {"type": "tube", "points": [[0.0, -3.6, 0.0], [0.04, -3.6, 0.0], [0.08, -3.6, 0.0], [0.12, -3.6, 0.0], [0.16, -3.6, 0.0], [0.2, -3.6, 0.0], [0.24, -3.6, 0.0], [0.28, -3.6, 0.0], [0.32, -3.6, 0.0], [0.36, -3.6, 0.0], [0.4, -3.6, 0.0], [0.44, -3.6, 0.0], [0.48, -3.6, 0.0], [0.52, -3.6, 0.0], [0.56, -3.6, 0.0], [0.6, -3.6, 0.0], [0.64, -3.6, 0.0], [0.68, -3.6, 0.0], [0.72, -3.6, 0.0], [0.76, -3.6, 0.0], [0.8, -3.6, 0.0], [0.84, -3.6, 0.0], [0.88, -3.6, 0.0], [0.92, -3.6, 0.0], [0.96, -3.6, 0.0], [1.0, -3.6, 0.0], [1.04, -3.6, 0.0], [1.08, -3.6, 0.0], [1.12, -3.6, 0.0], [1.16, -3.6, 0.0], [1.2, -3.6, 0.0], [1.24, -3.6, 0.0], [1.28, -3.6, 0.0], [1.32, -3.6, 0.0], [1.36, -3.6, 0.0], [1.4, -3.6, 0.0], [1.44, -3.4926, 0.0], [1.48, -3.3851, 0.0], [1.52, -3.2777, 0.0], [1.56, -3.1703, 0.0], [1.6, -3.0629, 0.0], [1.64, -2.9554, 0.0], [1.68, -2.848, 0.0], [1.72, -2.7406, 0.0], [1.76, -2.6331, 0.0], [1.8, -2.5257, 0.0], [1.84, -2.4183, 0.0], [1.88, -2.3109, 0.0], [1.92, -2.2034, 0.0], [1.96, -2.096, 0.0], [2.0, -1.9886, 0.0], [2.04, -1.8811, 0.0], [2.08, -1.7737, 0.0], [2.12, -1.6663, 0.0], [2.16, -1.5589, 0.0], [2.2, -1.4514, 0.0], [2.24, -1.344, 0.0], [2.28, -2.3525, 0.0], [2.32, -3.1559, 0.0], [2.36, -3.3075, 0.0], [2.4, -3.3793, 0.0], [2.44, -3.4224, 0.0], [2.48, -3.4516, 0.0], [2.52, -3.4728, 0.0], [2.56, -3.489, 0.0], [2.6, -3.5018, 0.0], [2.64, -3.5122, 0.0], [2.68, -3.5207, 0.0], [2.72, -3.5279, 0.0], [2.76, -3.5341, 0.0], [2.8, -3.5394, 0.0], [2.84, -3.544, 0.0], [2.88, -3.5481, 0.0], [2.92, -3.5516, 0.0], [2.96, -3.5548, 0.0], [3.0, -3.5577, 0.0], [3.04, -3.5603, 0.0], [3.08, -3.5626, 0.0], [3.12, -3.5647, 0.0], [3.16, -3.5666, 0.0], [3.2, -3.5684, 0.0], [3.24, -3.57, 0.0], [3.28, -3.5715, 0.0], [3.32, -3.5729, 0.0], [3.36, -3.5741, 0.0], [3.4, -3.5753, 0.0], [3.44, -3.5764, 0.0], [3.48, -3.5774, 0.0], [3.52, -3.5784, 0.0], [3.56, -3.5793, 0.0], [3.6, -3.5801, 0.0], [3.64, -3.5809, 0.0], [3.68, -3.5816, 0.0], [3.72, -3.5823, 0.0], [3.76, -3.583, 0.0], [3.8, -3.5836, 0.0], [3.84, -3.5842, 0.0], [3.88, -3.5847, 0.0], [3.92, -3.5852, 0.0], [3.96, -3.5857, 0.0], [4.0, -3.5862, 0.0], [4.04, -3.5866, 0.0], [4.08, -3.5871, 0.0], [4.12, -3.5875, 0.0], [4.16, -3.5879, 0.0], [4.2, -3.5882, 0.0], [4.24, -3.5886, 0.0], [4.28, -3.5889, 0.0], [4.32, -3.5892, 0.0], [4.36, -3.5895, 0.0], [4.4, -3.5898, 0.0], [4.44, -3.5901, 0.0], [4.48, -3.5904, 0.0], [4.52, -3.5906, 0.0], [4.56, -3.5909, 0.0], [4.6, -3.5911, 0.0], [4.64, -3.5913, 0.0], [4.68, -3.5916, 0.0], [4.72, -3.5918, 0.0], [4.76, -3.592, 0.0], [4.8, -3.5922, 0.0], [4.84, -3.5923, 0.0], [4.88, -3.5925, 0.0], [4.92, -3.5927, 0.0], [4.96, -3.5929, 0.0], [5.0, -3.593, 0.0], [5.04, -3.5932, 0.0], [5.08, -3.5933, 0.0], [5.12, -3.5935, 0.0], [5.16, -3.5936, 0.0], [5.2, -3.5938, 0.0], [5.24, -3.5939, 0.0], [5.28, -3.594, 0.0], [5.32, -3.5942, 0.0], [5.36, -3.5943, 0.0], [5.4, -3.5944, 0.0], [5.44, -3.5945, 0.0], [5.48, -3.5946, 0.0], [5.52, -3.5947, 0.0], [5.56, -3.5948, 0.0], [5.6, -3.5949, 0.0], [5.64, -3.595, 0.0], [5.68, -3.5951, 0.0], [5.72, -3.5952, 0.0], [5.76, -3.5953, 0.0], [5.8, -3.5954, 0.0], [5.84, -3.5955, 0.0], [5.88, -3.5955, 0.0], [5.92, -3.5956, 0.0], [5.96, -3.5957, 0.0], [6.0, -3.5958, 0.0]], "radius": 0.06, "color": "#c084fc", "label": "|Av| = gm·RD", "labelOffset": [1.1, -2.2, 0.1], "info": "The gain is zero in cutoff. It rises in saturation because gm rises with Vin. It falls quickly in triode.", "step": 5}, {"type": "sphere", "radius": 0.12, "position": [2.273773860661608, -1.2532992635296436, 0], "color": "#facc15", "label": "peak |Av| ≈ 11.7", "labelOffset": [1.2, 0.15, 0], "info": "The gain peaks at point A. A designer keeps the bias to the left of point A, with some margin for the signal swing.", "step": 5}]}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const S = JSON.parse(document.getElementById('scene-data').textContent);
+const deg = d => d * Math.PI / 180;
+const stage = document.getElementById('stage');
+document.getElementById('title').innerHTML = (S.title||'3D model') + (S.subtitle ? `<small>${S.subtitle}</small>` : '');
+if (S.background) document.documentElement.style.setProperty('--bg', S.background);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+stage.appendChild(renderer.domElement);
+const labelR = new CSS2DRenderer();
+labelR.setSize(innerWidth, innerHeight);
+Object.assign(labelR.domElement.style, { position: 'fixed', inset: '0', pointerEvents: 'none' });
+document.body.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(S.background || '#0f1115');
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 2000);
+const camPos = S.camera || [6, 5, 8], target = S.target || [0, 0, 0];
+camera.position.set(...camPos);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(...target); controls.enableDamping = true; controls.update();
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4); sun.position.set(5, 10, 7); scene.add(sun);
+if (S.grid !== false) { const g = new THREE.GridHelper(S.gridSize || 20, 20, 0x334055, 0x222a36); g.position.y = S.gridY ?? -0.001; scene.add(g); }
+
+const pickable = [], items = [];
+function material(o) {
+  return new THREE.MeshStandardMaterial({
+    color: o.color || '#8899aa', metalness: o.metalness ?? 0.1, roughness: o.roughness ?? 0.6,
+    transparent: (o.opacity ?? 1) < 1, opacity: o.opacity ?? 1, wireframe: !!o.wireframe,
+    side: (o.opacity ?? 1) < 1 ? THREE.DoubleSide : THREE.FrontSide, depthWrite: (o.opacity ?? 1) >= 1 });
+}
+function geometry(o) {
+  switch (o.type) {
+    case 'box': return new THREE.BoxGeometry(...(o.size || [1, 1, 1]));
+    case 'cylinder': return new THREE.CylinderGeometry(o.radiusTop ?? o.radius ?? 0.5, o.radiusBottom ?? o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'cone': return new THREE.ConeGeometry(o.radius ?? 0.5, o.height ?? 1, o.segments || 48);
+    case 'sphere': return new THREE.SphereGeometry(o.radius ?? 0.5, 48, 32);
+    case 'torus': return new THREE.TorusGeometry(o.radius ?? 1, o.tube ?? 0.2, 24, 96);
+    case 'plane': return new THREE.PlaneGeometry(...(o.size || [1, 1]));
+    case 'tube': return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(o.points.map(p => new THREE.Vector3(...p)), false, 'catmullrom', 0), 64 * o.points.length, o.radius ?? 0.05, 12, false);
+    case 'extrude': { const sh = new THREE.Shape(o.shape.map(p => new THREE.Vector2(...p))); return new THREE.ExtrudeGeometry(sh, { depth: o.depth ?? 1, bevelEnabled: false }); }
+  }
+  return null;
+}
+function addLabel(obj, o) {
+  if (!o.label) return;
+  const d = document.createElement('div'); d.className = 'lbl'; d.textContent = o.label;
+  const l = new CSS2DObject(d); l.position.set(...(o.labelOffset || [0, 0, 0])); obj.add(l);
+}
+function place(obj, o) {
+  obj.position.set(...(o.position || [0, 0, 0]));
+  if (o.rotation) obj.rotation.set(...o.rotation.map(deg));
+  if (o.scale) typeof o.scale === 'number' ? obj.scale.setScalar(o.scale) : obj.scale.set(...o.scale);
+  obj.userData = { o, home: obj.position.clone() };
+  addLabel(obj, o); scene.add(obj); items.push(obj);
+}
+const loader = new GLTFLoader();
+for (const o of S.objects || []) {
+  if (o.type === 'gltf') { loader.load(o.url, g => { place(g.scene, o); g.scene.traverse(m => { if (m.isMesh) { m.userData.root = g.scene; pickable.push(m); } }); applyStep(); }); continue; }
+  if (o.type === 'arrow') {
+    const a = new THREE.Vector3(...o.from), b = new THREE.Vector3(...o.to), dir = b.clone().sub(a), len = dir.length();
+    const ar = new THREE.ArrowHelper(dir.normalize(), a, len, new THREE.Color(o.color || '#ffcc33'), Math.min(0.35, len * 0.3), Math.min(0.2, len * 0.18));
+    const g = new THREE.Group(); g.add(ar); place(g, { ...o, position: [0, 0, 0] }); g.userData.o = o; continue;
+  }
+  const geo = geometry(o); if (!geo) { console.warn('unknown type', o.type); continue; }
+  const m = new THREE.Mesh(geo, material(o)); place(m, o); m.userData.root = m; pickable.push(m);
+  if (o.edges !== false && (o.opacity ?? 1) >= 1) { const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .35 })); m.add(e); }
+}
+
+// Steps: objects with "step": n appear at step n (build-up walkthrough)
+const steps = S.steps || []; let cur = steps.length ? 0 : -1;
+const stepsBox = document.getElementById('steps'), stepTxt = document.getElementById('stepTxt');
+function applyStep() {
+  if (cur < 0) return;
+  // CSS2DRenderer draws labels of hidden parents, so hide each label with its part
+  for (const it of items) { const s = it.userData.o.step ?? 0; it.visible = s <= cur; it.traverse(c => { if (c.isCSS2DObject) c.visible = it.visible; }); }
+  stepTxt.textContent = `${cur + 1}/${steps.length} · ${steps[cur]}`;
+}
+if (steps.length) { stepsBox.style.display = 'flex'; applyStep(); }
+document.getElementById('bPrev').onclick = () => { if (cur > 0) { cur--; applyStep(); } };
+document.getElementById('bNext').onclick = () => { if (cur < steps.length - 1) { cur++; applyStep(); } };
+
+// Click / tap an object for its info
+const info = document.getElementById('info'), ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down;
+renderer.domElement.addEventListener('pointerdown', e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+  ptr.set(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1); ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickable.filter(m => m.userData.root?.visible !== false), false)[0];
+  const o = hit?.object.userData.root?.userData.o || hit?.object.userData.o;
+  if (o && (o.label || o.info)) { info.innerHTML = `<b>${o.label || ''}</b>${o.info || ''}`; info.style.display = 'block'; } else info.style.display = 'none';
+});
+
+let spin = !!S.autoRotate, labels = true, exploded = false;
+const tog = (id, v) => document.getElementById(id).classList.toggle('on', v);
+tog('bSpin', spin); controls.autoRotate = spin;
+document.getElementById('bSpin').onclick = () => { spin = !spin; controls.autoRotate = spin; tog('bSpin', spin); };
+document.getElementById('bLabels').onclick = () => { labels = !labels; labelR.domElement.style.display = labels ? '' : 'none'; tog('bLabels', labels); };
+document.getElementById('bReset').onclick = () => { camera.position.set(...camPos); controls.target.set(...target); controls.update(); };
+const bEx = document.getElementById('bExplode');
+if (!S.objects?.some(o => o.explode)) bEx.style.display = 'none';
+bEx.onclick = () => { exploded = !exploded; tog('bExplode', exploded); };
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = clock.getDelta(), k = 1 - Math.pow(0.001, dt);
+  for (const it of items) {
+    const o = it.userData.o, home = it.userData.home;
+    if (o.explode && home) it.position.lerp(exploded ? home.clone().add(new THREE.Vector3(...o.explode)) : home, k);
+    if (o.spin) it.rotation.y += deg(o.spin) * dt;
+  }
+  controls.update(); renderer.render(scene, camera); labelR.render(scene, camera);
+});
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); labelR.setSize(innerWidth, innerHeight); });
+window.__ready = true;
+</script>
+</body>
+</html>
